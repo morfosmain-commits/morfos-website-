@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Frostbreak — Hard to break. Easy to remember.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e0e0e;
+    --ink:#d6d6d6;
+    --ink-dim:#7c7c7c;
+    --ink-faint:#5a5a5a;
+    --line:rgba(255,255,255,.16);
+    --line-soft:rgba(255,255,255,.09);
+    --sans:"Inter Tight","Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{height:100%}
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow:hidden;
+  }
+
+  /* ---------- stage ---------- */
+  .hero{
+    position:relative;
+    height:100svh;
+    min-height:560px;
+    width:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  /* soft light pooling behind the ice, and a vignette pulling the corners down */
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(58% 46% at 50% 34%, rgba(255,255,255,.075), transparent 68%),
+      radial-gradient(120% 90% at 50% 50%, transparent 42%, rgba(0,0,0,.72) 100%);
+    z-index:1;
+    pointer-events:none;
+  }
+
+  /* film grain */
+  .grain{
+    position:absolute;
+    inset:-50%;
+    z-index:6;
+    pointer-events:none;
+    opacity:.11;
+    mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'>\
+<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation:grainShift 700ms steps(2,end) infinite;
+  }
+  @keyframes grainShift{
+    0%{transform:translate(0,0)}
+    50%{transform:translate(-1.5%,1%)}
+    100%{transform:translate(1%,-1.5%)}
+  }
+
+  #ice{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:absolute;
+    top:0;left:0;right:0;
+    z-index:5;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    padding:24px clamp(18px,1.9vw,28px);
+    gap:20px;
+  }
+
+  .brand{
+    display:inline-flex;
+    align-items:center;
+    gap:11px;
+    width:fit-content;
+    text-decoration:none;
+    color:#fff;
+  }
+  .brand svg{display:block;width:15px;height:17px;flex:none}
+  .brand span{
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+
+  .menu{
+    display:flex;
+    align-items:center;
+    gap:clamp(20px,2.4vw,32px);
+    justify-self:center;
+  }
+  .menu a{
+    color:var(--ink-dim);
+    text-decoration:none;
+    font-size:11px;
+    font-weight:400;
+    letter-spacing:.01em;
+    transition:color .25s ease;
+  }
+  .menu a:hover,.menu a:focus-visible{color:#e8e8e8}
+
+  .nav-cta{justify-self:end}
+
+  /* ---------- buttons ---------- */
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.005em;
+    line-height:1;
+    padding:8px 17px;
+    text-decoration:none;
+    cursor:pointer;
+    white-space:nowrap;
+    border:1px solid transparent;
+    transition:background-color .28s ease,color .28s ease,border-color .28s ease,transform .28s ease;
+  }
+  .pill:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:3px}
+
+  .pill--ghost{
+    background:transparent;
+    color:#e2e2e2;
+    border-color:var(--line);
+    backdrop-filter:blur(2px);
+  }
+  .pill--ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.05)}
+
+  .pill--solid{
+    background:#f2f2f2;
+    color:#0c0c0c;
+  }
+  .pill--solid:hover{background:#fff;transform:translateY(-1px)}
+
+  .nav .pill{padding:8px 15px;font-size:10.5px}
+
+  /* ---------- centre content ---------- */
+  .stage{
+    position:relative;
+    z-index:4;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:0 clamp(20px,4vw,48px);
+    pointer-events:none;
+  }
+  .stage > *{pointer-events:auto}
+
+  h1{
+    font-size:clamp(2.6rem,9.38vw,9.5rem);
+    font-weight:500;
+    line-height:.97;
+    letter-spacing:-.007em;
+    color:var(--ink);
+    text-wrap:balance;
+    margin-top:clamp(64px,26.5vh,265px);
+  }
+  h1 .ln{display:block;overflow:hidden}
+  h1 .ln > i{
+    display:block;
+    font-style:normal;
+    transform:translateY(105%);
+    animation:riseIn 1.15s cubic-bezier(.16,.84,.28,1) forwards;
+  }
+  h1 .ln:nth-child(1) > i{animation-delay:.15s}
+  h1 .ln:nth-child(2) > i{animation-delay:.28s}
+  @keyframes riseIn{to{transform:translateY(0)}}
+
+  .sub{
+    margin-top:clamp(18px,3vh,30px);
+    max-width:min(46ch,90vw);
+    font-size:clamp(11px,.92vw,13px);
+    font-weight:400;
+    line-height:1.75;
+    color:var(--ink-dim);
+    letter-spacing:.005em;
+  }
+
+  .actions{
+    margin-top:clamp(22px,3.6vh,36px);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .sub,.actions{
+    opacity:0;
+    animation:fadeUp .9s cubic-bezier(.22,.8,.3,1) forwards;
+  }
+  .sub{animation-delay:.72s}
+  .actions{animation-delay:.86s}
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(14px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ---------- scroll cue ---------- */
+  .scroll{
+    position:absolute;
+    left:50%;
+    bottom:clamp(16px,2.6vh,26px);
+    transform:translateX(-50%);
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    opacity:0;
+    animation:fadeUp .9s cubic-bezier(.22,.8,.3,1) 1.05s forwards;
+  }
+  .scroll span{
+    font-size:9.5px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .scroll .rail{
+    position:relative;
+    width:1px;
+    height:26px;
+    background:rgba(255,255,255,.1);
+    overflow:hidden;
+  }
+  .scroll .rail::after{
+    content:"";
+    position:absolute;
+    left:0;
+    top:-60%;
+    width:1px;
+    height:60%;
+    background:linear-gradient(to bottom,transparent,rgba(255,255,255,.85));
+    animation:railDrop 2.1s cubic-bezier(.5,0,.3,1) infinite;
+  }
+  @keyframes railDrop{
+    0%{top:-60%}
+    60%,100%{top:100%}
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:760px){
+    .nav{grid-template-columns:1fr auto;padding:20px}
+    .menu{display:none}
+    h1{font-size:clamp(2.2rem,10.4vw,3.6rem);margin-top:clamp(26px,7vh,60px)}
+    .sub{max-width:32ch}
+    .brk{display:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .grain{animation:none}
+    h1 .ln > i{transform:none;animation:none}
+    .sub,.actions,.scroll{opacity:1;animation:none}
+    .scroll .rail::after{animation:none;top:20%}
+  }
+</style>
+</head>
+<body>
+
+<main class="hero">
+  <canvas id="ice" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 34 38" fill="none" aria-hidden="true">
+        <path d="M17 2.6 30.2 10.3v15.4L17 33.4 3.8 25.7V10.3L17 2.6Z"
+              stroke="currentColor" stroke-width="5.2" stroke-linejoin="round"/>
+      </svg>
+      <span>Frostbreak</span>
+    </a>
+
+    <div class="menu">
+      <a href="#">Manifesto</a>
+      <a href="#">Work</a>
+    </div>
+
+    <div class="nav-cta">
+      <a class="pill pill--ghost" href="#">Say hello</a>
+    </div>
+  </nav>
+
+  <div class="stage">
+    <h1>
+      <span class="ln"><i>Hard to break.</i></span>
+      <span class="ln"><i>Easy to remember.</i></span>
+    </h1>
+
+    <p class="sub">An identity system built to take pressure. Break it,<br class="brk" /> watch it come back, and know exactly what holds.</p>
+
+    <div class="actions">
+      <a class="pill pill--solid" href="#">Start a project</a>
+      <a class="pill pill--ghost" href="#">See the work</a>
+    </div>
+  </div>
+
+  <div class="scroll" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="rail"></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const canvas = document.getElementById("ice");
+  const ctx = canvas.getContext("2d");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let W = 0, H = 0, DPR = 1;
+  let cx = 0, cy = 0, R = 0;
+
+  /* ---------------------------------------------------------------
+     Shard geometry: repeatedly slice a hexagon with random chords so
+     the pieces always tile back into the original block.
+  ---------------------------------------------------------------- */
+
+  // the block reads wider than it is tall, matching the reference silhouette
+  const SQUASH = 0.8;
+
+  function hexagon(radius) {
+    const pts = [];
+    for (let i = 0; i < 6; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 3;
+      pts.push({ x: Math.cos(a) * radius, y: Math.sin(a) * radius * SQUASH });
+    }
+    return pts;
+  }
+
+  // Sutherland–Hodgman clip of a convex polygon against a half-plane.
+  function clip(poly, px, py, nx, ny) {
+    const out = [];
+    const side = p => (p.x - px) * nx + (p.y - py) * ny;
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      const sa = side(a), sb = side(b);
+      if (sa >= 0) out.push(a);
+      if ((sa >= 0) !== (sb >= 0)) {
+        const t = sa / (sa - sb);
+        out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    return out;
+  }
+
+  function centroid(poly) {
+    let x = 0, y = 0;
+    for (const p of poly) { x += p.x; y += p.y; }
+    return { x: x / poly.length, y: y / poly.length };
+  }
+
+  function area(poly) {
+    let a = 0;
+    for (let i = 0; i < poly.length; i++) {
+      const p = poly[i], q = poly[(i + 1) % poly.length];
+      a += p.x * q.y - q.x * p.y;
+    }
+    return Math.abs(a) / 2;
+  }
+
+  function fracture(radius, pieces) {
+    let parts = [hexagon(radius)];
+    let guard = 0;
+    while (parts.length < pieces && guard++ < pieces * 12) {
+      // always split the biggest remaining piece — keeps sizes even
+      parts.sort((a, b) => area(b) - area(a));
+      const target = parts.shift();
+      const c = centroid(target);
+      const jitter = radius * 0.3;
+      const px = c.x + (Math.random() - 0.5) * jitter;
+      const py = c.y + (Math.random() - 0.5) * jitter;
+      const ang = Math.random() * Math.PI;
+      const nx = Math.cos(ang), ny = Math.sin(ang);
+      const a = clip(target, px, py, nx, ny);
+      const b = clip(target, px, py, -nx, -ny);
+      if (a.length > 2 && b.length > 2) parts.push(a, b);
+      else parts.push(target);
+    }
+    return parts;
+  }
+
+  /* ---------------------------------------------------------------
+     Scene state
+  ---------------------------------------------------------------- */
+
+  let shards = [];
+  let motes = [];
+  const CYCLE = 8200;          // ms for one break / reform loop
+  let start = performance.now();
+  let pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+
+  function buildShards() {
+    const raw = fracture(R, 58);
+    shards = raw.map(poly => {
+      const c = centroid(poly);
+      const dist = Math.hypot(c.x, c.y) / R || 0.001;
+      const dir = Math.atan2(c.y, c.x);
+      return {
+        poly: poly.map(p => ({ x: p.x - c.x, y: p.y - c.y })), // local space
+        ox: c.x,
+        oy: c.y,
+        dir,
+        // outward throw distance and spin, biased by where the piece sat
+        throwDist: R * (0.42 + dist * 1.15 + Math.random() * 0.7),
+        spin: (Math.random() - 0.5) * 2.6,
+        drift: (Math.random() - 0.5) * R * 0.45,
+        // the outer skin lets go first; the core holds on a beat longer
+        delay: (1 - Math.min(dist, 1)) * 0.13 + Math.random() * 0.05,
+        tone: 0.55 + Math.random() * 0.45,
+        depth: 0.75 + Math.random() * 0.5
+      };
+    });
+  }
+
+  function buildMotes() {
+    const count = Math.round(Math.min(150, (W * H) / 11000));
+    motes = Array.from({ length: count }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.7 + 0.35,
+      vy: 0.07 + Math.random() * 0.34,
+      vx: (Math.random() - 0.5) * 0.16,
+      a: 0.06 + Math.random() * 0.4,
+      ph: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth;
+    H = canvas.clientHeight;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    cx = W / 2;
+    // the block floats above centre so the headline crosses its lower third
+    cy = H * 0.29;
+    R = Math.max(74, Math.min(W * 0.135, H * 0.25));
+
+    buildShards();
+    buildMotes();
+  }
+
+  /* ---------------------------------------------------------------
+     Easing + cycle phase
+  ---------------------------------------------------------------- */
+
+  const easeOutCubic  = t => 1 - Math.pow(1 - t, 3);
+  const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const clamp01 = t => t < 0 ? 0 : t > 1 ? 1 : t;
+
+  // 0 = solid block, 1 = fully scattered
+  function breakAmount(p, delay) {
+    const d = delay;
+    if (p < 0.14) return 0;
+    if (p < 0.46) return easeOutCubic(clamp01((p - 0.14 - d) / (0.32 - d)));
+    if (p < 0.60) return 1;
+    if (p < 0.92) return 1 - easeInOutCubic(clamp01((p - 0.60 - d) / (0.32 - d)));
+    return 0;
+  }
+
+  /* ---------------------------------------------------------------
+     Drawing
+  ---------------------------------------------------------------- */
+
+  function drawShard(s, k, tilt, pulse) {
+    const eased = k;
+    const x = s.ox + Math.cos(s.dir) * s.throwDist * eased;
+    const y = s.oy + Math.sin(s.dir) * s.throwDist * eased + s.drift * eased * eased;
+    const rot = s.spin * eased;
+    // pieces shrink very slightly as they fly, reading as depth
+    const scale = 1 - eased * 0.14;
+
+    ctx.save();
+    ctx.translate(cx + x * tilt.sx + tilt.px * s.depth, cy + y + tilt.py * s.depth);
+    ctx.rotate(rot);
+    ctx.scale(scale, scale);
+
+    ctx.beginPath();
+    ctx.moveTo(s.poly[0].x, s.poly[0].y);
+    for (let i = 1; i < s.poly.length; i++) ctx.lineTo(s.poly[i].x, s.poly[i].y);
+    ctx.closePath();
+
+    const b = s.tone * (1 - eased * 0.35) * pulse;
+    const g = ctx.createLinearGradient(-R * 0.4, -R * 0.5, R * 0.4, R * 0.5);
+    g.addColorStop(0,   `rgba(255,255,255,${(0.62 * b).toFixed(3)})`);
+    g.addColorStop(0.42,`rgba(226,231,236,${(0.30 * b).toFixed(3)})`);
+    g.addColorStop(1,   `rgba(148,156,165,${(0.13 * b).toFixed(3)})`);
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    // frosted facet edge
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = `rgba(255,255,255,${(0.24 * b).toFixed(3)})`;
+    ctx.stroke();
+
+    // a brighter specular nick along one edge
+    const e0 = s.poly[0], e1 = s.poly[1 % s.poly.length];
+    ctx.beginPath();
+    ctx.moveTo(e0.x, e0.y);
+    ctx.lineTo(e1.x, e1.y);
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = `rgba(255,255,255,${(0.5 * b).toFixed(3)})`;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function frame(now) {
+    const elapsed = now - start;
+    const p = reduced ? 0 : (elapsed % CYCLE) / CYCLE;
+    const t = elapsed / 1000;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // pointer parallax, eased
+    pointer.x += (pointer.tx - pointer.x) * 0.055;
+    pointer.y += (pointer.ty - pointer.y) * 0.055;
+
+    // ambient frost
+    for (const m of motes) {
+      if (!reduced) {
+        m.y += m.vy;
+        m.x += m.vx + Math.sin(t * 0.55 + m.ph) * 0.14;
+        if (m.y > H + 6) { m.y = -6; m.x = Math.random() * W; }
+        if (m.x < -6) m.x = W + 6;
+        if (m.x > W + 6) m.x = -6;
+      }
+      const twinkle = reduced ? 1 : 0.62 + 0.38 * Math.sin(t * 1.5 + m.ph);
+      ctx.beginPath();
+      ctx.arc(m.x + pointer.x * 0.3, m.y + pointer.y * 0.3, m.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${(m.a * twinkle).toFixed(3)})`;
+      ctx.fill();
+    }
+
+    // breathing float on the block itself
+    const bob = reduced ? 0 : Math.sin(t * 0.72) * R * 0.045;
+    const tilt = {
+      sx: 1,
+      px: pointer.x,
+      py: pointer.y + bob
+    };
+
+    // the core flares a touch just as it lets go, then again as it seats
+    const solidity = 1 - breakAmount(p, 0);
+    const pulse = 1 + solidity * 0.18 + Math.max(0, Math.sin(p * Math.PI * 2)) * 0.05;
+
+    // glow core behind the block while it is whole
+    if (solidity > 0.02) {
+      const gr = ctx.createRadialGradient(
+        cx + tilt.px, cy + tilt.py, 0,
+        cx + tilt.px, cy + tilt.py, R * 2.4
+      );
+      gr.addColorStop(0, `rgba(255,255,255,${(0.085 * solidity).toFixed(3)})`);
+      gr.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = gr;
+      ctx.fillRect(cx - R * 2.6 + tilt.px, cy - R * 2.6 + tilt.py, R * 5.2, R * 5.2);
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (const s of shards) drawShard(s, breakAmount(p, s.delay), tilt, pulse);
+    ctx.restore();
+
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------------------------------------------------------------
+     Wiring
+  ---------------------------------------------------------------- */
+
+  window.addEventListener("resize", resize);
+
+  window.addEventListener("pointermove", e => {
+    pointer.tx = (e.clientX / window.innerWidth - 0.5) * 26;
+    pointer.ty = (e.clientY / window.innerHeight - 0.5) * 18;
+  }, { passive: true });
+
+  // click anywhere on the stage to break it again from the top
+  canvas.addEventListener("pointerdown", () => {
+    if (reduced) return;
+    buildShards();
+    start = performance.now() - 0.14 * CYCLE;
+  });
+
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

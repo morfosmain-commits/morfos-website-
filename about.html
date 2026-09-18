@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About — MORFOS</title>
+<meta name="description" content="Morfos builds Shopify stores for e-commerce founders. Fixed price, seven days, backed in writing." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://api.fontshare.com/v2/css?f%5B%5D=general-sans@300,400,500,600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@600;700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     MORFOS — About. Laid out as a broadsheet: a masthead, rules
+     between everything, a drop-capped lead, oversized display type
+     and boxed columns. The structure is the newspaper; the colour
+     and the faces are the brand's own.
+     ============================================================ */
+  :root{
+    --sans:"General Sans","Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+    --logo-serif:"Playfair Display",Georgia,"Times New Roman",serif;
+
+    --red:#fd2702;
+    --black:#000000;
+    --yellow:#F6F167;
+    --page:#050505;
+    --paper:#0c0c0c;
+    --rule:rgba(255,255,255,.12);
+    --rule-strong:rgba(255,255,255,.32);
+    --muted:#8d8d8d;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--page);color:#f2f2f2;
+    font-family:var(--sans);font-size:15px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit}
+  img,svg{display:block;max-width:100%}
+
+  .wrap{width:min(1240px,92vw);margin:0 auto}
+
+  /* small caps label, used for every piece of furniture on the page */
+  .lab{
+    font-family:var(--sans);
+    font-size:10.5px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .lab b{color:var(--yellow);font-weight:600}
+
+  /* ---------- masthead ---------- */
+  .mast{border-bottom:1px solid var(--rule)}
+  .mast-top{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:13px 0;
+  }
+  .mast-top a{text-decoration:none;transition:color .2s}
+  .mast-top a:hover{color:#fff}
+  .mast-name{
+    padding:clamp(20px,4vh,34px) 0 clamp(14px,2.6vh,22px);
+    border-top:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;gap:clamp(14px,3vw,34px);
+  }
+  .mast-name .word{
+    font-family:var(--logo-serif);font-weight:500;
+    font-size:clamp(34px,7.2vw,86px);
+    letter-spacing:.2em;text-indent:.2em;      /* the tracking adds a phantom gap at the end */
+    line-height:1;color:#fff;white-space:nowrap;
+  }
+  .mast-name .flank{flex:1;height:1px;background:var(--rule)}
+  .mast-sub{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 0 12px;border-top:1px solid var(--rule-strong);flex-wrap:wrap;
+  }
+
+  /* ---------- the lead ---------- */
+  .lead{padding:clamp(34px,6vh,66px) 0 clamp(28px,5vh,52px)}
+  .lead-grid{display:grid;grid-template-columns:1fr;gap:clamp(22px,4vh,40px)}
+  @media (min-width:900px){
+    .lead-grid{grid-template-columns:minmax(210px,.62fr) 1.9fr;gap:clamp(26px,3.4vw,54px)}
+  }
+
+  .lead-col p{
+    font-family:var(--serif);
+    font-size:clamp(15px,1.25vw,18.5px);
+    line-height:1.5;color:#dcdcdc;
+  }
+  .lead-col p + p{margin-top:12px}
+  /* the drop cap is the one place the page borrows a real newspaper trick */
+  .lead-col p:first-of-type::first-letter{
+    float:left;
+    font-family:var(--serif);
+    font-size:3.55em;line-height:.76;
+    padding:.06em .12em 0 0;
+    color:var(--red);
+  }
+
+  .lead-head h1{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(2.5rem,7.4vw,6.4rem);
+    line-height:.94;letter-spacing:-.015em;
+    text-transform:uppercase;color:#fff;
+  }
+  .lead-head h1 span{
+    display:block;
+    border-bottom:1px solid var(--rule-strong);
+    padding-bottom:.06em;
+  }
+  .lead-head h1 span:last-child{border-bottom:none}
+  .lead-head h1 em{font-style:normal;color:var(--red)}
+
+  /* ---------- the black panel + its stamp ---------- */
+  .panel-row{
+    display:grid;grid-template-columns:1fr;gap:14px;
+    padding-bottom:clamp(28px,5vh,54px);
+  }
+  @media (min-width:900px){.panel-row{grid-template-columns:1fr minmax(210px,.42fr)}}
+
+  .panel{
+    background:var(--black);border:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;
+    padding:clamp(18px,3.2vh,34px) clamp(14px,2vw,28px);
+    overflow:hidden;
+  }
+  .panel b{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(2.6rem,10.4vw,9rem);
+    line-height:.9;letter-spacing:-.02em;
+    text-transform:uppercase;color:#f4f1e6;
+    white-space:nowrap;
+  }
+
+  .stamp{
+    border:1px solid var(--rule);background:var(--paper);
+    padding:16px 16px 13px;
+    display:flex;flex-direction:column;gap:11px;
+  }
+  .stamp-art{
+    border:1px dashed var(--rule-strong);
+    aspect-ratio:1/.8;display:grid;place-items:center;
+  }
+  .stamp-art svg{width:46%;height:auto}
+  .stamp p{font-size:11.5px;line-height:1.5;color:var(--muted)}
+  .stamp .no{
+    font-family:var(--sans);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--yellow);
+  }
+
+  /* ---------- statistics strip ---------- */
+  .stats{
+    border-top:1px solid var(--rule-strong);
+    border-bottom:1px solid var(--rule-strong);
+    display:grid;grid-template-columns:repeat(2,1fr);
+  }
+  @media (min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{
+    padding:clamp(16px,3vh,26px) clamp(12px,1.6vw,22px);
+    border-right:1px solid var(--rule);
+    display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+  }
+  .stat:last-child{border-right:none}
+  @media (max-width:759px){
+    .stat:nth-child(2n){border-right:none}
+    .stat:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  }
+  .stat .lab{max-width:11ch;line-height:1.35}
+  .stat i{
+    font-family:var(--serif);font-style:normal;font-weight:400;
+    font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:.8;
+    color:#fff;
+  }
+  .stat:nth-child(2) i,.stat:nth-child(4) i{color:var(--red)}
+
+  /* ---------- a run of section rules ---------- */
+  .rule-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:clamp(28px,5vh,52px) 0 14px;flex-wrap:wrap;
+  }
+  .rule-head h2{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.9rem,4.6vw,3.6rem);line-height:1;
+    letter-spacing:-.01em;text-transform:uppercase;color:#fff;
+  }
+  .rule-line{border-top:1px solid var(--rule-strong)}
+
+  /* ---------- feature band: giant word beside a plate ---------- */
+  .band{
+    display:grid;grid-template-columns:1fr;
+    border-bottom:1px solid var(--rule);
+  }
+  @media (min-width:860px){
+    .band{grid-template-columns:.78fr 1.6fr}
+    .band.flip{grid-template-columns:1.6fr .78fr}
+    .band.flip .band-art{order:2}
+  }
+  .band-art{
+    border-right:1px solid var(--rule);
+    min-height:180px;display:grid;place-items:center;
+    background:linear-gradient(168deg,#160b0c,#070405 58%,#140a0b);
+    padding:22px;
+  }
+  .band.flip .band-art{border-right:none;border-left:1px solid var(--rule)}
+  .band-art svg{width:min(150px,54%);height:auto}
+  .band-word{
+    display:flex;align-items:center;
+    padding:clamp(10px,2.4vh,26px) clamp(14px,2.4vw,30px);
+  }
+  .band-word b{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(2.6rem,9.6vw,8.2rem);line-height:.86;
+    letter-spacing:-.025em;text-transform:uppercase;color:#fff;
+  }
+  .band-word b em{font-style:normal;color:var(--red)}
+
+  /* ---------- principle cards ---------- */
+  .cards{display:grid;grid-template-columns:1fr;gap:0}
+  @media (min-width:620px){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media (min-width:1000px){.cards{grid-template-columns:repeat(4,1fr)}}
+  .card{
+    border:1px dashed var(--rule-strong);
+    margin:-0.5px 0 0 -0.5px;                 /* collapse the dashed borders */
+    padding:clamp(16px,2.6vh,24px) clamp(14px,1.6vw,20px);
+    display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+  }
+  .card q{
+    font-family:var(--serif);font-size:clamp(15px,1.35vw,19px);
+    line-height:1.35;color:#ececec;quotes:none;
+  }
+  .card q::before,.card q::after{content:""}
+  .card-by{display:flex;align-items:center;gap:10px}
+  .card-by .dot{
+    flex:none;width:26px;height:26px;border-radius:50%;
+    border:1px solid var(--rule-strong);display:grid;place-items:center;
+  }
+  .card-by .dot svg{width:11px;height:auto}
+  .card-by span{display:block}
+  .card-by .who{
+    font-family:var(--serif);font-size:13px;letter-spacing:.06em;
+    text-transform:uppercase;color:#fff;line-height:1.2;
+  }
+  .card-by .role{font-size:10.5px;color:var(--muted);line-height:1.3}
+
+  /* ---------- three-column article ---------- */
+  .cols{
+    display:grid;grid-template-columns:1fr;gap:0;
+    border-top:1px solid var(--rule-strong);
+  }
+  @media (min-width:820px){.cols{grid-template-columns:repeat(3,1fr)}}
+  .col{
+    padding:clamp(20px,3.4vh,32px) clamp(14px,1.8vw,26px);
+    border-right:1px solid var(--rule);
+  }
+  .col:last-child{border-right:none}
+  @media (max-width:819px){
+    .col{border-right:none;border-bottom:1px solid var(--rule)}
+    .col:last-child{border-bottom:none}
+  }
+  .col h3{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.3rem,2.4vw,1.95rem);line-height:1.05;
+    text-transform:uppercase;color:#fff;margin:12px 0 10px;
+  }
+  .col p{font-size:13px;line-height:1.72;color:#c3c3c3}
+  .col p + p{margin-top:10px}
+  .col .lab{display:block;margin-bottom:2px}
+
+  /* the banned-words column sets its list as running copy, like a notice */
+  .banned{
+    font-family:var(--serif);font-size:15px;line-height:1.55;color:#9c9c9c;
+    margin-top:10px;
+  }
+  .banned s{color:#5c5c5c}
+
+  /* ---------- founders slot ---------- */
+  .who-row{
+    display:grid;grid-template-columns:1fr;gap:0;
+    border-top:1px solid var(--rule-strong);
+    border-bottom:1px solid var(--rule-strong);
+  }
+  @media (min-width:700px){.who-row{grid-template-columns:repeat(2,1fr)}}
+  .who-cell{
+    padding:clamp(20px,3.4vh,32px) clamp(14px,1.8vw,26px);
+    border-right:1px solid var(--rule);
+    display:flex;gap:16px;align-items:flex-start;
+  }
+  .who-cell:last-child{border-right:none}
+  @media (max-width:699px){
+    .who-cell{border-right:none;border-bottom:1px solid var(--rule)}
+    .who-cell:last-child{border-bottom:none}
+  }
+  .who-mark{
+    flex:none;width:54px;height:54px;border:1px solid var(--rule-strong);
+    display:grid;place-items:center;
+  }
+  .who-mark svg{width:20px;height:auto}
+  .who-cell h4{
+    font-family:var(--serif);font-weight:400;font-size:clamp(1.15rem,2vw,1.6rem);
+    text-transform:uppercase;color:#fff;line-height:1.1;margin-bottom:5px;
+  }
+  .who-cell p{font-size:12.5px;line-height:1.65;color:#b6b6b6}
+
+  /* ---------- marquee CTA ---------- */
+  .cta{
+    border-top:1px solid var(--rule-strong);
+    border-bottom:1px solid var(--rule-strong);
+    overflow:hidden;padding:clamp(16px,3vh,26px) 0;background:var(--paper);
+  }
+  .cta-in{display:flex;width:max-content;animation:slide 30s linear infinite}
+  .cta-in span{
+    display:flex;align-items:center;gap:22px;
+    font-family:var(--serif);font-size:clamp(1.5rem,4.4vw,3.4rem);
+    line-height:1;text-transform:uppercase;color:#fff;
+    padding-right:22px;white-space:nowrap;
+  }
+  .cta-in a{
+    border:1px solid var(--rule-strong);background:var(--black);
+    color:var(--yellow);text-decoration:none;
+    font-family:var(--sans);font-size:clamp(11px,1.1vw,14px);
+    font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    padding:.55em .9em;transition:background .2s,color .2s;
+  }
+  .cta-in a:hover{background:var(--red);color:#fff}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* ---------- footer (same system as the home page) ---------- */
+  .foot{background:var(--black);padding:clamp(40px,7vh,72px) 0 clamp(18px,3vh,30px)}
+  .foot-row{
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    padding:18px 0;display:flex;align-items:center;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;
+  }
+  .foot-social{display:flex;align-items:center;gap:20px}
+  .foot-social a{display:block;width:17px;height:17px;color:#9a9a9a;transition:color .2s}
+  .foot-social a:hover{color:#fff}
+  .foot-social svg{width:100%;height:100%;display:block;fill:currentColor}
+  .foot-legal{
+    display:flex;align-items:center;gap:clamp(14px,2vw,30px);flex-wrap:wrap;
+    font-size:11.5px;line-height:1.4;color:#6f6f6f;
+  }
+  .foot-legal a{color:#9a9a9a;text-decoration:none;transition:color .2s}
+  .foot-legal a:hover{color:#fff}
+  .foot-mark{margin-top:clamp(26px,5vh,54px);line-height:0}
+  .foot-mark svg{width:100%;height:auto;display:block}
+  .foot-mark .glyph{fill:#fff;font-family:var(--logo-serif);font-weight:500}
+  @media (max-width:760px){
+    .foot-row{flex-direction:column;align-items:flex-start;gap:16px;padding:16px 0 18px}
+    .foot-legal{gap:10px 16px;font-size:11px}
+    .foot-legal .rights{flex:0 0 100%}
+  }
+
+  /* ---------- word-level mask reveal, as on the home page ---------- */
+  .wd{
+    display:inline-block;vertical-align:top;overflow:hidden;
+    padding-bottom:.16em;margin-bottom:-.16em;
+  }
+  .wd .wi{
+    display:inline-block;
+    font:inherit;line-height:inherit;color:inherit;letter-spacing:inherit;
+    text-transform:inherit;font-style:inherit;
+    /* 100% of the word plus a little more than the mask padding, so the
+       word clears the box at any line-height — a tight one (.86) leaves
+       115% short and the word peeks out before it is meant to */
+    transform:translateY(calc(100% + .25em));
+    transition:transform .92s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal .wd .wi{transform:translateY(0)}
+
+  .up{opacity:0;transform:translateY(22px);
+      transition:opacity .8s cubic-bezier(.2,.8,.3,1),transform .8s cubic-bezier(.2,.8,.3,1)}
+  .up.in{opacity:1;transform:none}
+
+  /* ---------- cursor ---------- */
+  .cur,.cur-dot{
+    position:fixed;left:0;top:0;z-index:90;pointer-events:none;
+    border-radius:50%;mix-blend-mode:difference;display:none;
+  }
+  .cur{width:34px;height:34px;border:1px solid #fff;
+       transition:width .22s,height .22s,background .22s}
+  .cur-dot{width:4px;height:4px;background:#fff}
+  body.has-cursor .cur,body.has-cursor .cur-dot{display:block}
+  body.has-cursor,body.has-cursor *{cursor:none !important}
+  body.has-cursor .cur.hot{width:52px;height:52px;background:rgba(255,255,255,.18)}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .up{opacity:1;transform:none;transition:none}
+    .wd .wi{transform:none;transition:none}
+    .cta-in{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= masthead ================= -->
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-top">
+      <span class="lab">Founded <b>2026</b> &middot; Remote</span>
+      <a class="lab" href="morfos.html" data-hot>&#8592; Back to the site</a>
+    </div>
+
+    <div class="mast-name">
+      <i class="flank" aria-hidden="true"></i>
+      <span class="word">Morfos</span>
+      <i class="flank" aria-hidden="true"></i>
+    </div>
+
+    <div class="mast-sub">
+      <span class="lab">About the studio</span>
+      <span class="lab">No. <b>01</b> &middot; The founding batch edition</span>
+      <span class="lab"><b>12</b> builds a month</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= lead ================= -->
+<section class="lead">
+  <div class="wrap">
+    <div class="lead-grid">
+      <!-- no word-split here: ::first-letter cannot reach text that sits
+           inside the split spans, and the drop cap is the point of this column -->
+      <div class="lead-col up">
+        <p>Morfos exists so e-commerce founders never have to gamble on a website build again.</p>
+        <p>Most people who call us have been quoted unfairly, ghosted mid-project, or handed a store that does not look credible enough to sell from. We fixed all three structurally rather than promising harder.</p>
+        <p>The price is agreed in writing before work starts. The launch date sits in the contract. And if what we hand over is not what you signed for, we rebuild it.</p>
+      </div>
+
+      <div class="lead-head">
+        <h1>
+          <span data-split>Shopify builds</span>
+          <span data-split>fixed in writing</span>
+          <span data-split>live in <em>7 days</em></span>
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= panel ================= -->
+<section>
+  <div class="wrap">
+    <div class="panel-row">
+      <div class="panel"><b>No ghosting</b></div>
+
+      <aside class="stamp up">
+        <div class="stamp-art">
+          <!-- the mark's own coordinates: branch at -92.13, pod tip at 105 -->
+          <svg viewBox="-70 -95 140 203" aria-hidden="true" fill="#fff">
+            <g id="stampMark"></g>
+          </svg>
+        </div>
+        <p class="no">Guarantee &middot; stamped</p>
+        <p>A named founder signs every scope. There is no account-manager layer for a dropped ball to hide behind.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= statistics ================= -->
+<section>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><span class="lab">Days to launch</span><i>7</i></div>
+      <div class="stat"><span class="lab">Builds a month</span><i>12</i></div>
+      <div class="stat"><span class="lab">Day refund</span><i>14</i></div>
+      <div class="stat"><span class="lab">Day safety net</span><i>30</i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= what we are ================= -->
+<section>
+  <div class="wrap">
+    <div class="rule-head">
+      <h2 data-split>What we are</h2>
+      <span class="lab">Section <b>02</b></span>
+    </div>
+
+    <div class="band">
+      <div class="band-art">
+        <svg viewBox="0 0 740 1120" aria-hidden="true">
+          <rect x="17" y="41" width="711" height="38" fill="#fd2702"/>
+          <rect x="351" y="70" width="48" height="118" fill="#fd2702"/>
+          <path d="M372.5 178C482 178 677 360 677 640s-195 462-304.5 462S68 920 68 640s195-462 304.5-462Z"
+                fill="none" stroke="#fff" stroke-width="40"/>
+        </svg>
+      </div>
+      <div class="band-word"><b data-split>A build shop, <em>not</em> an agency</b></div>
+    </div>
+
+    <div class="band flip">
+      <div class="band-art">
+        <svg viewBox="0 0 740 1120" aria-hidden="true">
+          <rect x="17" y="41" width="711" height="38" fill="#F6F167"/>
+          <rect x="351" y="70" width="48" height="118" fill="#F6F167"/>
+          <path d="M372.5 178C482 178 677 360 677 640s-195 462-304.5 462S68 920 68 640s195-462 304.5-462Z"
+                fill="none" stroke="#fff" stroke-width="40"/>
+        </svg>
+      </div>
+      <div class="band-word"><b data-split>Two founders. <em>No</em> middle layer</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= principles ================= -->
+<section>
+  <div class="wrap">
+    <div class="rule-head">
+      <h2 data-split>What we sign</h2>
+      <span class="lab">Section <b>03</b> &middot; Backed, not claimed</span>
+    </div>
+
+    <div class="cards">
+      <article class="card up">
+        <q>A real guarantee, not a promise. Unconditional 14-day refund, and we rebuild until it is right.</q>
+        <div class="card-by">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17l9-10" stroke="#F6F167" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>
+            <span class="who">Key message 01</span>
+            <span class="role">Backed by: absent from every competitor researched</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="card up">
+        <q>A price that cannot creep. Fixed in writing before work starts, and held through launch.</q>
+        <div class="card-by">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17l9-10" stroke="#F6F167" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>
+            <span class="who">Key message 02</span>
+            <span class="role">Backed by: signed scope document before deposit</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="card up">
+        <q>Seven days, not &ldquo;soon.&rdquo; A contractual date, and it does not move because our week got busy.</q>
+        <div class="card-by">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17l9-10" stroke="#F6F167" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>
+            <span class="who">Key message 03</span>
+            <span class="role">Backed by: the internal 7-Day Launch SOP</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="card up">
+        <q>Reachable the whole time. A named contact, and a reply inside 24 hours.</q>
+        <div class="card-by">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17l9-10" stroke="#F6F167" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>
+            <span class="who">Key message 04</span>
+            <span class="role">Backed by: Always-On Contact + 30-Day Safety Net</span>
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= how we work / what we refuse ================= -->
+<section>
+  <div class="wrap">
+    <div class="rule-head">
+      <h2 data-split>House rules</h2>
+      <span class="lab">Section <b>04</b></span>
+    </div>
+
+    <div class="cols">
+      <article class="col up">
+        <span class="lab">Rule one</span>
+        <h3>We do not ship what we would not stake our name on</h3>
+        <p>The rebuild-until-right guarantee is the rule written down, not a slogan bolted onto it. If it is not right, it is not finished, and the clock is ours.</p>
+        <p>That is only possible because capacity is capped at 12 builds a month. The guarantee holds because the workload does.</p>
+      </article>
+
+      <article class="col up">
+        <span class="lab">Rule two</span>
+        <h3>Every client is founder-accountable</h3>
+        <p>You get a named founder on your project. Not an account manager, not a shared inbox, and not a ticket number.</p>
+        <p>We stay reachable until you do not need us. That is built directly against the thing this category fails at most: the vendor who goes quiet.</p>
+      </article>
+
+      <article class="col up">
+        <span class="lab">Rule three</span>
+        <h3>Words you will not find on this site</h3>
+        <p>Plain language is a policy here, not a style preference. These are struck from every page, deck and email we send.</p>
+        <p class="banned">
+          <s>Affordable</s> &middot; <s>seamless</s> &middot; <s>cutting-edge</s> &middot; <s>scalable</s> &middot;
+          <s>end-to-end</s> &middot; <s>revolutionary</s> &middot; <s>world-class</s> &middot;
+          <s>game-changing</s> &middot; <s>synergy</s> &middot; <s>streamlined</s> &middot;
+          <s>holistic</s> &middot; <s>best-in-class</s> &middot; <s>innovative</s>
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= who ================= -->
+<section>
+  <div class="wrap">
+    <div class="rule-head">
+      <h2 data-split>Who you talk to</h2>
+      <span class="lab">Section <b>05</b> &middot; Two people</span>
+    </div>
+
+    <div class="who-row">
+      <div class="who-cell up">
+        <span class="who-mark">
+          <svg viewBox="0 0 740 1120" aria-hidden="true">
+            <rect x="17" y="41" width="711" height="38" fill="#fff"/>
+            <rect x="351" y="70" width="48" height="118" fill="#fff"/>
+            <path d="M372.5 178C482 178 677 360 677 640s-195 462-304.5 462S68 920 68 640s195-462 304.5-462Z"
+                  fill="none" stroke="#fff" stroke-width="40"/>
+          </svg>
+        </span>
+        <div>
+          <h4>Founder, build</h4>
+          <p>Scopes the store, writes the fixed price, and runs the 7-day build. Signs the scope document you get before any deposit.</p>
+        </div>
+      </div>
+
+      <div class="who-cell up">
+        <span class="who-mark">
+          <svg viewBox="0 0 740 1120" aria-hidden="true">
+            <rect x="17" y="41" width="711" height="38" fill="#fff"/>
+            <rect x="351" y="70" width="48" height="118" fill="#fff"/>
+            <path d="M372.5 178C482 178 677 360 677 640s-195 462-304.5 462S68 920 68 640s195-462 304.5-462Z"
+                  fill="none" stroke="#fff" stroke-width="40"/>
+          </svg>
+        </span>
+        <div>
+          <h4>Founder, launch</h4>
+          <p>Handles handover, the 30-Day Safety Net, and everything after launch. The named contact on your Always-On line.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="lab" style="padding:14px 0 0">Names and photographs go here once you send them &mdash; nothing invented in the meantime.</p>
+  </div>
+</section>
+
+<!-- ================= cta marquee ================= -->
+<div class="cta" aria-label="Book a call">
+  <div class="cta-in" id="ctaIn"></div>
+</div>
+
+<!-- ================= footer ================= -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="foot-social">
+        <a href="#" aria-label="Morfos on LinkedIn" data-hot>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C21.4 8.75 22 11.1 22 14.2V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21h-4V9Z"/></svg>
+        </a>
+        <a href="#" aria-label="Morfos on X" data-hot>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.25 2.5h3.3l-7.2 8.24L22.8 21.5h-6.63l-5.2-6.79-5.94 6.79H1.72l7.7-8.8L1.2 2.5h6.8l4.7 6.21 5.55-6.21Zm-1.16 17h1.83L7.0 4.4H5.04l12.05 15.1Z"/></svg>
+        </a>
+        <a href="#" aria-label="Morfos on Instagram" data-hot>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2Zm0 1.8c-3.14 0-3.5.01-4.74.07-1.14.05-1.76.24-2.17.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.17C2.41 10.1 2.4 10.46 2.4 12s.01 1.9.06 3.13c.05 1.14.24 1.76.4 2.17.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.17.4 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1.14-.05 1.76-.24 2.17-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.17.06-1.24.07-1.6.07-3.13s-.01-1.9-.07-3.13c-.05-1.14-.24-1.76-.4-2.17a3.6 3.6 0 0 0-.88-1.35 3.6 3.6 0 0 0-1.35-.88c-.41-.16-1.03-.35-2.17-.4C15.5 4.01 15.14 4 12 4Zm0 3.03a4.97 4.97 0 1 1 0 9.94 4.97 4.97 0 0 1 0-9.94Zm0 1.8a3.17 3.17 0 1 0 0 6.34 3.17 3.17 0 0 0 0-6.34Zm5.2-3.2a1.17 1.17 0 1 1 0 2.34 1.17 1.17 0 0 1 0-2.34Z"/></svg>
+        </a>
+        <a href="mailto:hello@morfos.studio" aria-label="Email Morfos" data-hot>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 5.5A1.5 1.5 0 0 1 4 4h16a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-13Zm2.1.5 7.4 5.9L19.4 6H4.6Zm14.9 1.3-6.9 5.5a1.8 1.8 0 0 1-2.2 0L3.5 7.3V18h16V7.3Z"/></svg>
+        </a>
+      </div>
+
+      <div class="foot-legal">
+        <span class="rights">&copy; 2026 Morfos &mdash; All rights reserved</span>
+        <a href="morfos.html#work" data-hot>Work</a>
+        <a href="morfos.html#services" data-hot>Services</a>
+        <a href="morfos.html#guarantee" data-hot>Guarantee</a>
+        <a href="client-roster.html" data-hot>Client login</a>
+        <a href="morfos.html#book" data-hot>Contact</a>
+      </div>
+    </div>
+
+    <div class="foot-mark" id="footMark" aria-label="Morfos" role="img"></div>
+  </div>
+</footer>
+
+<div class="cur" id="cur" aria-hidden="true"></div>
+<div class="cur-dot" id="curDot" aria-hidden="true"></div>
+
+<script>
+/* ===================================================================
+   MORFOS mark — the exact geometry of the supplied logo.
+
+   The pod outline and the five interior shapes are traced straight off
+   the artwork rather than drawn by hand, so the loader, the footer
+   lockup and anything else that draws the mark are the same shape to
+   within a fraction of a pixel. Coordinates are the lockup's own space:
+   the pod runs from y -69 to y 105 with its centre on x 0, which is the
+   slot the wordmark leaves for it.
+=================================================================== */
+window.MORFOS_MARK = (() => {
+  // The pod at rest and the card it grows out of, sampled to the same
+  // number of points and started at the same place, so the morph is a
+  // straight lerp with nothing crossing over itself.
+  const POD  = [[-3.93,-68.82],[-0.48,-69.17],[3.01,-69.15],[6.49,-68.78],[9.9,-68.05],[13.21,-66.97],[16.42,-65.57],[19.49,-63.9],[22.43,-62],[25.22,-59.9],[27.88,-57.63],[30.4,-55.2],[32.77,-52.63],[35,-49.95],[37.11,-47.15],[39.1,-44.28],[40.97,-41.32],[42.72,-38.3],[44.34,-35.2],[45.84,-32.05],[47.24,-28.84],[48.53,-25.59],[49.73,-22.31],[50.84,-18.99],[51.86,-15.65],[52.78,-12.28],[53.6,-8.88],[54.3,-5.45],[54.88,-2],[55.34,1.46],[55.69,4.94],[55.93,8.43],[56.04,11.92],[56.01,15.42],[55.84,18.91],[55.53,22.39],[55.08,25.86],[54.51,29.31],[53.85,32.74],[53.09,36.15],[52.23,39.54],[51.27,42.9],[50.22,46.24],[49.09,49.55],[47.88,52.83],[46.6,56.08],[45.23,59.29],[43.75,62.46],[42.18,65.58],[40.52,68.67],[38.79,71.7],[36.96,74.68],[35.03,77.6],[32.99,80.43],[30.83,83.18],[28.55,85.83],[26.18,88.4],[23.71,90.88],[21.16,93.27],[18.51,95.55],[15.74,97.68],[12.84,99.65],[9.81,101.41],[6.64,102.92],[3.34,104.06],[-0.07,104.73],[-3.53,104.85],[-6.96,104.38],[-10.3,103.38],[-13.48,101.93],[-16.49,100.13],[-19.32,98.07],[-21.99,95.8],[-24.51,93.37],[-26.89,90.81],[-29.14,88.13],[-31.27,85.36],[-33.3,82.51],[-35.22,79.59],[-37.06,76.62],[-38.81,73.59],[-40.46,70.51],[-42.02,67.38],[-43.47,64.2],[-44.85,60.99],[-46.17,57.75],[-47.44,54.49],[-48.65,51.21],[-49.78,47.91],[-50.82,44.57],[-51.78,41.21],[-52.65,37.82],[-53.46,34.42],[-54.17,31],[-54.8,27.55],[-55.31,24.1],[-55.68,20.62],[-55.91,17.14],[-56.01,13.64],[-56,10.14],[-55.89,6.65],[-55.66,3.16],[-55.28,-0.31],[-54.76,-3.76],[-54.1,-7.2],[-53.34,-10.61],[-52.48,-14],[-51.51,-17.36],[-50.44,-20.69],[-49.25,-23.98],[-47.94,-27.22],[-46.51,-30.41],[-44.97,-33.55],[-43.32,-36.63],[-41.54,-39.64],[-39.63,-42.56],[-37.57,-45.39],[-35.39,-48.12],[-33.1,-50.76],[-30.69,-53.3],[-28.18,-55.73],[-25.55,-58.03],[-22.79,-60.18],[-19.91,-62.16],[-16.92,-63.98],[-13.82,-65.61],[-10.61,-67],[-7.32,-68.09]];
+  const CARD = [[0,-112],[15.12,-112],[30.25,-112],[45.37,-112],[60.49,-112],[75.61,-112],[90.74,-112],[105.86,-112],[120.98,-112],[136.1,-112],[151.23,-112],[166.35,-112],[181.47,-112],[196.59,-112],[211.72,-112],[226.84,-112],[241.96,-112],[257.08,-112],[272.21,-112],[287.33,-112],[302.45,-112],[317.56,-111.58],[332.5,-109.28],[346.98,-104.99],[360.76,-98.78],[373.58,-90.79],[385.21,-81.13],[395.42,-70],[404.05,-57.59],[410.93,-44.13],[415.93,-29.88],[418.98,-15.08],[420,0],[418.98,15.08],[415.93,29.88],[410.93,44.13],[404.05,57.59],[395.42,70],[385.21,81.13],[373.58,90.79],[360.76,98.78],[346.98,104.99],[332.5,109.28],[317.56,111.58],[302.45,112],[287.33,112],[272.21,112],[257.08,112],[241.96,112],[226.84,112],[211.72,112],[196.59,112],[181.47,112],[166.35,112],[151.23,112],[136.1,112],[120.98,112],[105.86,112],[90.74,112],[75.61,112],[60.49,112],[45.37,112],[30.25,112],[15.12,112],[0,112],[-15.12,112],[-30.25,112],[-45.37,112],[-60.49,112],[-75.61,112],[-90.74,112],[-105.86,112],[-120.98,112],[-136.1,112],[-151.23,112],[-166.35,112],[-181.47,112],[-196.59,112],[-211.72,112],[-226.84,112],[-241.96,112],[-257.08,112],[-272.21,112],[-287.33,112],[-302.45,112],[-317.56,111.58],[-332.5,109.28],[-346.98,104.99],[-360.76,98.78],[-373.58,90.79],[-385.21,81.13],[-395.42,70],[-404.05,57.59],[-410.93,44.13],[-415.93,29.88],[-418.98,15.08],[-420,0],[-418.98,-15.08],[-415.93,-29.88],[-410.93,-44.13],[-404.05,-57.59],[-395.42,-70],[-385.21,-81.13],[-373.58,-90.79],[-360.76,-98.78],[-346.98,-104.99],[-332.5,-109.28],[-317.56,-111.58],[-302.45,-112],[-287.33,-112],[-272.21,-112],[-257.08,-112],[-241.96,-112],[-226.84,-112],[-211.72,-112],[-196.59,-112],[-181.47,-112],[-166.35,-112],[-151.23,-112],[-136.1,-112],[-120.98,-112],[-105.86,-112],[-90.74,-112],[-75.61,-112],[-60.49,-112],[-45.37,-112],[-30.25,-112],[-15.12,-112]];
+
+  /* Centripetal Catmull-Rom through the points, emitted as cubics.
+
+     The uniform version is simpler but it overshoots wherever the spacing
+     between points changes, and part-way through the morph the spacing
+     changes a lot: a card point and a pod point that are paired by arc
+     length end up at quite different distances from their neighbours.
+     Square-rooting the chord lengths is what keeps the curve from
+     rippling there, and it cannot cusp or loop. */
+  function path(P) {
+    const n = P.length, at = i => P[(i % n + n) % n];
+    const r = v => v.toFixed(2);
+    const A = 0.5;                                   // centripetal
+    let d = "M " + r(P[0][0]) + " " + r(P[0][1]);
+    for (let i = 0; i < n; i++) {
+      const p0 = at(i - 1), p1 = at(i), p2 = at(i + 1), p3 = at(i + 2);
+      const e = 1e-6;
+      const d1 = Math.pow(Math.hypot(p1[0]-p0[0], p1[1]-p0[1]), A) + e;
+      const d2 = Math.pow(Math.hypot(p2[0]-p1[0], p2[1]-p1[1]), A) + e;
+      const d3 = Math.pow(Math.hypot(p3[0]-p2[0], p3[1]-p2[1]), A) + e;
+      const b1 = 3 * d1 * (d1 + d2), b2 = 3 * d3 * (d3 + d2);
+      const c = [0, 1].map(k =>
+        (d1*d1*p2[k] - d2*d2*p0[k] + (2*d1*d1 + 3*d1*d2 + d2*d2) * p1[k]) / b1);
+      const g = [0, 1].map(k =>
+        (d3*d3*p1[k] - d2*d2*p3[k] + (2*d3*d3 + 3*d3*d2 + d2*d2) * p2[k]) / b2);
+      d += " C " + r(c[0]) + " " + r(c[1]) + ", " + r(g[0]) + " " + r(g[1]) +
+           ", "  + r(p2[0]) + " " + r(p2[1]);
+    }
+    return d + " Z";
+  }
+
+  /* t = 0 is the card, t = 1 is the pod */
+  function morph(t) {
+    if (t >= 1) return path(POD);
+    if (t <= 0) return path(CARD);
+    const P = new Array(POD.length);
+    for (let i = 0; i < POD.length; i++)
+      P[i] = [CARD[i][0] + (POD[i][0] - CARD[i][0]) * t,
+              CARD[i][1] + (POD[i][1] - CARD[i][1]) * t];
+    return path(P);
+  }
+
+  return {
+    POD, CARD, path, morph,
+    podD: path(POD),
+    // the ring's centre line, for the small outline version of the mark
+    ringD: "M -3.32 -64.98 C 0.08 -65.5, 3.8 -65.35, 7.19 -64.66 C 10.57 -63.97, 13.94 -62.52, 16.99 -60.84 C 20.04 -59.15, 22.87 -56.91, 25.47 -54.56 C 28.06 -52.21, 30.4 -49.5, 32.56 -46.73 C 34.72 -43.97, 36.67 -40.99, 38.43 -37.95 C 40.2 -34.91, 41.74 -31.72, 43.15 -28.5 C 44.56 -25.27, 45.78 -21.95, 46.87 -18.61 C 47.97 -15.26, 48.94 -11.86, 49.71 -8.42 C 50.48 -4.99, 51.08 -1.5, 51.49 1.99 C 51.9 5.49, 52.15 9.02, 52.15 12.54 C 52.16 16.06, 51.93 19.59, 51.52 23.09 C 51.11 26.58, 50.46 30.06, 49.7 33.5 C 48.94 36.93, 48 40.34, 46.95 43.7 C 45.89 47.06, 44.71 50.39, 43.38 53.66 C 42.06 56.92, 40.59 60.14, 38.99 63.27 C 37.39 66.4, 35.68 69.5, 33.77 72.46 C 31.87 75.42, 29.81 78.3, 27.57 81.01 C 25.33 83.72, 22.9 86.32, 20.34 88.72 C 17.77 91.12, 15.1 93.51, 12.17 95.41 C 9.24 97.32, 6.08 99.37, 2.77 100.16 C -0.52 100.94, -4.37 100.97, -7.63 100.13 C -10.91 99.29, -14.05 97.14, -16.84 95.07 C -19.64 93, -22.09 90.35, -24.41 87.72 C -26.74 85.08, -28.81 82.2, -30.77 79.28 C -32.74 76.36, -34.54 73.32, -36.21 70.22 C -37.87 67.11, -39.35 63.9, -40.76 60.68 C -42.16 57.45, -43.46 54.16, -44.65 50.84 C -45.83 47.53, -46.92 44.17, -47.86 40.77 C -48.8 37.38, -49.65 33.95, -50.31 30.49 C -50.97 27.03, -51.53 23.54, -51.83 20.03 C -52.12 16.53, -52.19 12.98, -52.09 9.47 C -51.99 5.95, -51.73 2.42, -51.24 -1.06 C -50.74 -4.55, -50 -8.01, -49.13 -11.42 C -48.25 -14.83, -47.23 -18.22, -46.01 -21.52 C -44.79 -24.82, -43.39 -28.07, -41.8 -31.21 C -40.2 -34.34, -38.45 -37.43, -36.45 -40.32 C -34.46 -43.21, -32.22 -45.98, -29.83 -48.56 C -27.45 -51.13, -24.88 -53.61, -22.12 -55.77 C -19.36 -57.93, -16.4 -59.98, -13.26 -61.51 C -10.13 -63.05, -6.73 -64.46, -3.32 -64.98 Z", ringW: 7.77,
+    // the pattern, as black shapes cut out of the white pod, top to bottom
+    cuts: [
+      "M -0.54 -63.94 C -0.01 -64.15, 2.94 -63.93, 4.52 -63.76 C 5.93 -63.61, 7.16 -63.41, 8.49 -63.04 C 9.92 -62.64, 11.44 -62.05, 12.83 -61.41 C 14.21 -60.78, 15.46 -60.09, 16.8 -59.24 C 18.29 -58.31, 19.92 -57.15, 21.32 -55.99 C 22.68 -54.86, 23.81 -53.76, 25.12 -52.38 C 26.68 -50.71, 29.04 -47.9, 29.99 -46.6 C 30.45 -45.97, 30.78 -45.56, 30.9 -45.15 C 30.97 -44.88, 31.04 -44.69, 30.9 -44.43 C 30.57 -43.82, 29.01 -43.01, 27.64 -42.26 C 25.61 -41.13, 22.28 -39.6, 19.69 -38.64 C 17.35 -37.78, 15.26 -37.16, 12.83 -36.66 C 10.17 -36.11, 7.3 -35.73, 4.34 -35.57 C 1.12 -35.4, -3.08 -35.57, -5.78 -35.75 C -7.59 -35.88, -8.83 -36.05, -10.3 -36.3 C -11.72 -36.53, -13 -36.82, -14.45 -37.2 C -16.11 -37.64, -18.19 -38.28, -19.69 -38.83 C -20.87 -39.25, -21.6 -39.57, -22.77 -40.09 C -24.36 -40.81, -26.89 -41.97, -28.37 -42.8 C -29.4 -43.38, -30.78 -43.69, -30.9 -44.43 C -31.05 -45.34, -29.19 -46.71, -28.01 -48.04 C -26.38 -49.86, -23.85 -52.43, -21.86 -54.18 C -20.19 -55.66, -18.56 -56.91, -16.98 -57.98 C -15.62 -58.9, -14.32 -59.65, -13.01 -60.33 C -11.79 -60.96, -10.7 -61.46, -9.4 -61.95 C -7.95 -62.5, -6.21 -63.1, -4.7 -63.4 C -3.33 -63.67, -1.18 -63.55, -0.72 -63.76 C -0.61 -63.81, -0.66 -63.89, -0.54 -63.94 Z",
+      "M -34.69 -38.83 C -34.03 -38.93, -29.86 -36.16, -27.28 -35.03 C -24.63 -33.86, -21.7 -32.79, -18.97 -31.96 C -16.41 -31.18, -13.69 -30.59, -11.38 -30.15 C -9.48 -29.8, -8.17 -29.59, -6.14 -29.43 C -3.36 -29.21, 1.19 -29.16, 3.79 -29.25 C 5.48 -29.31, 6.48 -29.42, 7.95 -29.61 C 9.64 -29.82, 11.57 -30.13, 13.37 -30.51 C 15.19 -30.91, 17 -31.39, 18.79 -31.96 C 20.61 -32.53, 22.24 -33.06, 24.21 -33.95 C 26.76 -35.09, 31.73 -38.82, 32.7 -38.46 C 33.01 -38.35, 32.98 -37.99, 33.07 -37.56 C 33.25 -36.62, 33.18 -34.42, 33.07 -32.86 C 32.95 -31.29, 32.73 -29.78, 32.34 -28.17 C 31.92 -26.36, 31.33 -24.38, 30.54 -22.56 C 29.72 -20.7, 28.6 -18.76, 27.46 -17.14 C 26.42 -15.66, 25.3 -14.41, 24.03 -13.17 C 22.72 -11.88, 21.14 -10.61, 19.69 -9.55 C 18.37 -8.59, 17.21 -7.85, 15.72 -7.02 C 13.96 -6.04, 12.02 -5.08, 9.76 -4.13 C 6.93 -2.96, 2.62 -0.15, 0 -0.7 C -2.18 -1.16, -3.35 -4.02, -5.24 -5.58 C -7.24 -7.23, -9.55 -8.89, -11.74 -10.28 C -13.83 -11.59, -16.11 -12.79, -18.07 -13.71 C -19.68 -14.47, -21.15 -15.02, -22.59 -15.52 C -23.85 -15.96, -24.9 -16.29, -26.2 -16.6 C -27.69 -16.96, -29.28 -17.32, -31.08 -17.5 C -33.24 -17.73, -36.05 -17.77, -38.31 -17.69 C -40.29 -17.61, -43.23 -16.33, -43.91 -17.14 C -44.6 -17.98, -42.91 -20.89, -42.28 -22.74 C -41.64 -24.63, -41 -26.29, -40.11 -28.35 C -38.99 -30.94, -36.94 -35.29, -35.96 -37.02 C -35.51 -37.8, -35.09 -38.38, -34.87 -38.64 C -34.79 -38.74, -34.81 -38.81, -34.69 -38.83 Z",
+      "M 39.39 -26.18 C 39.56 -26.16, 39.85 -25.6, 40.11 -25.09 C 40.63 -24.09, 41.26 -22.35, 41.92 -20.4 C 42.98 -17.25, 44.66 -11.59, 45.53 -7.93 C 46.21 -5.1, 46.57 -3.01, 46.98 -0.34 C 47.43 2.62, 47.85 5.88, 48.06 9.06 C 48.28 12.32, 48.31 16.21, 48.24 18.99 C 48.19 21.02, 48.09 22.28, 47.88 24.23 C 47.61 26.73, 47.12 30.15, 46.62 32.73 C 46.19 34.9, 45.77 36.66, 45.17 38.69 C 44.53 40.87, 43.71 43.31, 42.82 45.37 C 42.01 47.26, 41.08 49.04, 40.11 50.61 C 39.26 52.01, 38.49 53.12, 37.4 54.41 C 36.1 55.94, 34.27 57.81, 32.7 59.11 C 31.38 60.21, 30.21 61.01, 28.73 61.82 C 27.06 62.72, 24.77 63.69, 23.13 64.17 C 21.92 64.51, 21.07 64.61, 19.88 64.71 C 18.42 64.83, 16.38 64.8, 15 64.71 C 13.96 64.64, 13.16 64.56, 12.29 64.35 C 11.42 64.14, 10.59 63.8, 9.76 63.44 C 8.9 63.08, 7.99 62.63, 7.23 62.18 C 6.56 61.78, 6.06 61.45, 5.42 60.91 C 4.58 60.21, 3.52 59.25, 2.71 58.2 C 1.82 57.05, 0.94 55.56, 0.36 54.23 C -0.16 53.03, -0.48 51.72, -0.72 50.61 C -0.92 49.7, -1.03 49.07, -1.08 48.08 C -1.16 46.69, -1.12 44.76, -0.9 43.02 C -0.67 41.15, -0.13 39, 0.36 37.24 C 0.79 35.73, 1.17 34.64, 1.81 33.09 C 2.67 30.99, 3.93 28.26, 5.24 25.86 C 6.62 23.32, 8.15 20.85, 9.94 18.27 C 11.94 15.38, 14.09 12.67, 16.8 9.42 C 20.35 5.17, 26.73 -1.24, 29.63 -4.86 C 31.28 -6.91, 32.18 -8.18, 33.25 -9.92 C 34.28 -11.61, 35.25 -13.63, 35.96 -15.16 C 36.49 -16.3, 36.85 -17.23, 37.22 -18.23 C 37.57 -19.15, 37.84 -19.89, 38.12 -20.94 C 38.51 -22.35, 38.92 -25.47, 39.21 -26 C 39.27 -26.11, 39.31 -26.18, 39.39 -26.18 Z",
+      "M -39.39 -10.64 C -38.73 -10.9, -33.91 -10.65, -31.98 -10.46 C -30.73 -10.33, -30.04 -10.18, -28.91 -9.92 C -27.46 -9.57, -25.68 -9.09, -24.03 -8.47 C -22.25 -7.79, -20.28 -6.83, -18.61 -5.94 C -17.11 -5.14, -15.9 -4.4, -14.45 -3.41 C -12.74 -2.24, -10.13 -0.22, -9.03 0.74 C -8.51 1.2, -8.07 1.54, -7.95 1.83 C -7.89 1.97, -7.9 2.07, -7.95 2.19 C -8.02 2.37, -8.18 2.5, -8.49 2.73 C -9.57 3.51, -14.17 5.4, -16.44 6.71 C -18.25 7.74, -19.49 8.58, -21.14 9.78 C -23.12 11.22, -25.56 13.13, -27.46 14.84 C -29.19 16.39, -30.8 18.02, -32.16 19.54 C -33.33 20.84, -34.24 21.97, -35.23 23.33 C -36.3 24.79, -37.33 26.38, -38.31 28.03 C -39.32 29.75, -40.37 31.63, -41.2 33.45 C -41.98 35.19, -42.67 37.76, -43.18 38.69 C -43.39 39.06, -43.56 39.43, -43.73 39.41 C -43.92 39.39, -44.08 38.83, -44.27 38.33 C -44.65 37.3, -45.1 35.39, -45.53 33.45 C -46.17 30.62, -47.07 26.31, -47.52 22.97 C -47.93 19.95, -48.14 17.3, -48.24 14.3 C -48.35 11.06, -48.26 7.15, -48.06 4.18 C -47.91 1.82, -47.69 0, -47.34 -2.15 C -46.97 -4.4, -46.52 -8.04, -45.89 -9.01 C -45.67 -9.36, -45.46 -9.41, -45.17 -9.55 C -44.82 -9.73, -44.46 -9.8, -43.91 -9.92 C -42.9 -10.12, -40.05 -10.22, -39.57 -10.46 C -39.45 -10.51, -39.51 -10.59, -39.39 -10.64 Z",
+      "M 10.48 6.89 C 10.61 6.86, 10.97 6.9, 11.02 7.07 C 11.23 7.76, 7.02 11.94, 5.06 14.66 C 2.92 17.62, 0.49 21.27, -1.26 24.23 C -2.71 26.67, -3.87 28.94, -4.88 31.1 C -5.74 32.94, -6.41 34.56, -7.05 36.34 C -7.68 38.12, -8.28 40.02, -8.67 41.76 C -9.03 43.32, -9.29 44.66, -9.4 46.28 C -9.51 48.12, -9.5 50.32, -9.21 52.24 C -8.94 54.11, -8.45 55.96, -7.77 57.66 C -7.11 59.32, -6.02 61.19, -5.24 62.36 C -4.73 63.13, -4.39 63.52, -3.79 64.17 C -2.98 65.04, -1.71 66.26, -0.72 67.06 C 0.09 67.71, 0.77 68.16, 1.63 68.68 C 2.57 69.25, 3.52 69.8, 4.7 70.31 C 6.19 70.96, 8.24 71.69, 9.94 72.12 C 11.48 72.5, 12.94 72.72, 14.45 72.84 C 15.96 72.96, 17.64 72.92, 18.97 72.84 C 20.05 72.77, 20.74 72.7, 21.86 72.48 C 23.47 72.15, 25.74 71.6, 27.64 70.85 C 29.66 70.06, 32.56 68.03, 33.61 67.78 C 33.95 67.7, 34.24 67.62, 34.33 67.78 C 34.61 68.26, 32.33 71.58, 31.08 73.56 C 29.67 75.79, 27.9 78.28, 26.2 80.43 C 24.58 82.48, 22.86 84.44, 21.14 86.21 C 19.54 87.85, 18.03 89.27, 16.26 90.73 C 14.37 92.29, 12.15 93.96, 10.12 95.24 C 8.3 96.39, 6.27 97.44, 4.7 98.13 C 3.55 98.64, 2.55 98.97, 1.63 99.22 C 0.9 99.41, 0.43 99.51, -0.36 99.58 C -1.52 99.68, -3.27 99.78, -4.7 99.58 C -6.16 99.37, -7.8 98.8, -9.03 98.31 C -10.01 97.93, -10.68 97.57, -11.56 97.05 C -12.64 96.42, -13.79 95.66, -15 94.7 C -16.52 93.48, -18.2 91.95, -19.88 90.18 C -21.91 88.04, -24.24 85.24, -26.2 82.6 C -28.16 79.94, -29.97 77.16, -31.62 74.28 C -33.28 71.38, -34.87 68.22, -36.14 65.25 C -37.31 62.5, -38.66 59.52, -39.03 57.12 C -39.3 55.32, -39 53.67, -38.85 52.24 C -38.73 51.09, -38.56 50.28, -38.31 49.17 C -37.99 47.8, -37.52 46.06, -37.04 44.65 C -36.61 43.37, -36.18 42.32, -35.6 41.04 C -34.9 39.52, -33.89 37.58, -33.07 36.16 C -32.39 35, -31.89 34.22, -31.08 33.09 C -30.01 31.59, -28.56 29.67, -27.1 28.03 C -25.56 26.29, -23.79 24.53, -22.04 22.97 C -20.35 21.46, -18.48 20.02, -16.8 18.81 C -15.36 17.78, -14.09 16.96, -12.65 16.1 C -11.15 15.21, -9.72 14.41, -7.95 13.57 C -5.78 12.54, -3.27 11.5, -0.54 10.5 C 2.71 9.32, 9.48 7.57, 10.3 7.07 C 10.42 6.99, 10.4 6.91, 10.48 6.89 Z"
+    ],
+    bar:  { x: -67.4, y: -92.13, w: 134.97, h: 7.05 },
+    stem: { x: -3.43, y: -85.08, w: 8.13, h: 16.26 }
+  };
+})();
+</script>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ---------- marquee ---------- */
+  const cta = document.getElementById("ctaIn");
+  if (cta) {
+    const unit = '<span>Let us build something that holds ' +
+      '<a href="morfos.html#book" data-hot>Book a 15-min call</a></span>';
+    cta.innerHTML = unit.repeat(8);   // two identical halves -> seamless -50% loop
+  }
+
+  /* ---------- word-by-word mask reveal ---------- */
+  document.querySelectorAll("[data-split]").forEach(el => {
+    // Walk the child nodes rather than flattening textContent: an inline
+    // <em> inside the heading carries the accent colour, and reading the
+    // text out would throw that markup away. Each word keeps a clone of
+    // whatever inline element it came from.
+    const source = [...el.childNodes];
+    el.textContent = "";
+    let n = 0;
+
+    const emit = (word, wrapper) => {
+      const box = document.createElement("span");
+      box.className = "wd";
+      const inner = document.createElement("span");
+      inner.className = "wi";
+      inner.textContent = word;
+      // the stagger is capped so a long paragraph still finishes
+      // in about the same time as a short headline
+      inner.style.transitionDelay = Math.min(n * 46, 620) + "ms";
+      n++;
+      if (wrapper) {
+        const w = wrapper.cloneNode(false);
+        w.appendChild(inner);
+        box.appendChild(w);
+      } else {
+        box.appendChild(inner);
+      }
+      el.appendChild(box);
+    };
+
+    const walk = (node, wrapper) => {
+      if (node.nodeType === 3) {
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          // a real space, so the sentence survives being copied and read aloud
+          if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(" ")); return; }
+          emit(part, wrapper);
+        });
+      } else if (node.nodeType === 1) {
+        [...node.childNodes].forEach(child => walk(child, node));
+      }
+    };
+
+    source.forEach(node => walk(node, null));
+  });
+
+  /* ---------- scroll-appear ---------- */
+  const revealAll = () => document.querySelectorAll(".up, [data-split]").forEach(el =>
+    el.classList.add(el.hasAttribute("data-split") ? "reveal" : "in"));
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add(e.target.hasAttribute("data-split") ? "reveal" : "in");
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: .15 });
+    document.querySelectorAll(".up, [data-split]").forEach(el => io.observe(el));
+    // if nothing has shown shortly after load, show it all rather than
+    // leaving the page blank
+    setTimeout(() => { if (!document.querySelector(".up.in, [data-split].reveal")) revealAll(); }, 2200);
+  } else revealAll();
+
+  document.querySelectorAll(".cards, .cols, .who-row").forEach(g => {
+    [...g.children].forEach((c, i) => { c.style.transitionDelay = (i * 90) + "ms"; });
+  });
+
+  window.__reveal = {
+    get total() { return document.querySelectorAll("[data-split]").length; },
+    get words() { return document.querySelectorAll(".wd .wi").length; },
+    get done() { return document.querySelectorAll("[data-split].reveal").length; },
+    force: revealAll
+  };
+
+  /* ---------- the stamp mark ----------
+     The guarantee stamp draws the mark as an outline rather than as the
+     filled pod, because at that size the pattern inside it would not
+     read. The silhouette is the traced one, so it matches the footer. */
+  (() => {
+    const M = window.MORFOS_MARK;
+    const g = document.getElementById("stampMark");
+    if (!M || !g) return;
+    const NS = "http://www.w3.org/2000/svg";
+    g.replaceChildren();
+    [M.bar, M.stem].forEach(r => {
+      const e = document.createElementNS(NS, "rect");
+      e.setAttribute("x", r.x); e.setAttribute("y", r.y);
+      e.setAttribute("width", r.w); e.setAttribute("height", r.h);
+      g.appendChild(e);
+    });
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", M.ringD);
+    p.setAttribute("fill", "none");
+    p.setAttribute("stroke", "#fff");
+    p.setAttribute("stroke-width", M.ringW);
+    g.appendChild(p);
+  })();
+
+  /* ---------- footer wordmark ---------- */
+  (() => {
+    const host = document.getElementById("footMark");
+    if (!host) return;
+    const NS = "http://www.w3.org/2000/svg";
+    // the same traced geometry the home page uses
+    const MARK = window.MORFOS_MARK;
+    const FONT_SIZE = 196, BASELINE = 68, GLYPHS = ["M", "R", "F", "O", "S"];
+    const el = (n, a) => { const e = document.createElementNS(NS, n);
+      for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+    const build = () => {
+      const svg = el("svg", { xmlns: NS, "aria-hidden": "true" });
+      const lock = el("g", {});
+      svg.appendChild(lock);
+      lock.appendChild(el("path", { d: MARK.podD, fill: "#fff" }));
+
+      const cutsG = el("g", { fill: "#000" });
+      MARK.cuts.forEach(d => cutsG.appendChild(el("path", { d })));
+      lock.appendChild(cutsG);
+
+      const rect = o => el("rect", { x: o.x, y: o.y, width: o.w, height: o.h, fill: "#fff" });
+      lock.appendChild(rect(MARK.stem));
+      lock.appendChild(rect(MARK.bar));
+
+      const letters = el("g", {});
+      lock.appendChild(letters);
+      host.replaceChildren(svg);
+
+      const mk = ch => { const t = el("text", { class: "glyph", "font-size": FONT_SIZE,
+        "text-anchor": "middle", y: BASELINE }); t.textContent = ch;
+        letters.appendChild(t); return t; };
+
+      const probe = mk("O");
+      const oAdv = probe.getComputedTextLength();
+      probe.remove();
+      if (!oAdv) return false;
+
+      const items = GLYPHS.map(ch => { const e = mk(ch);
+        return { ch, el: e, w: e.getComputedTextLength() }; });
+      const order = [items[0], { slot: true, w: oAdv }, items[1], items[2], items[3], items[4]];
+      const track = FONT_SIZE * 0.045;
+
+      let cur = 0, slotCentre = 0, minX = Infinity, maxX = -Infinity;
+      const placed = [];
+      for (const it of order) {
+        const centre = cur + it.w / 2;
+        if (it.slot) slotCentre = centre; else { it.centre = centre; placed.push(it); }
+        minX = Math.min(minX, cur); maxX = Math.max(maxX, cur + it.w);
+        cur += it.w + track;
+      }
+      placed.forEach(it => { it.centre -= slotCentre;
+        it.el.setAttribute("x", it.centre.toFixed(2)); });
+      minX -= slotCentre; maxX -= slotCentre;
+
+      // a text element's getBBox() is the em box, not the ink, so the crop
+      // is taken from canvas metrics instead
+      let inkTop = -FONT_SIZE * 0.72, inkBottom = FONT_SIZE * 0.02;
+      try {
+        const cx = document.createElement("canvas").getContext("2d");
+        const fam = getComputedStyle(document.documentElement)
+          .getPropertyValue("--logo-serif").trim() || "Georgia, serif";
+        cx.font = "500 " + FONT_SIZE + "px " + fam;
+        const m = cx.measureText(GLYPHS.join(""));
+        if (m.actualBoundingBoxAscent) {
+          inkTop = BASELINE - m.actualBoundingBoxAscent;
+          inkBottom = BASELINE + m.actualBoundingBoxDescent;
+        }
+      } catch (e) {}
+
+      const BAR_TOP = MARK.bar.y;
+      const top = Math.min(inkTop, BAR_TOP);
+      const bottom = Math.max(inkBottom, 105);
+      const padX = FONT_SIZE * 0.015;
+      svg.setAttribute("viewBox",
+        [(minX - padX).toFixed(2), top.toFixed(2),
+         (maxX - minX + padX * 2).toFixed(2), (bottom - top).toFixed(2)].join(" "));
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      return true;
+    };
+
+    if (!build()) setTimeout(build, 400);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build).catch(() => {});
+    [600, 1600].forEach(d => setTimeout(build, d));
+
+    window.__footMark = {
+      build,
+      get viewBox() { const v = host.querySelector("svg"); return v && v.getAttribute("viewBox"); },
+      get glyphs() { return [...host.querySelectorAll(".glyph")].map(t => t.textContent).join(""); }
+    };
+  })();
+
+  /* ---------- cursor ---------- */
+  (() => {
+    const ring = document.getElementById("cur"), dot = document.getElementById("curDot");
+    if (!ring || !dot) return;
+    const HOT = "a,button,input,textarea,[data-hot],.card,.stat,.col,.who-cell";
+    let x = -99, y = -99, rx = -99, ry = -99, on = false, raf = 0;
+
+    const enable = () => {
+      if (on) return;
+      on = true;
+      document.body.classList.add("has-cursor");
+      loop();
+    };
+    const loop = () => {
+      rx += (x - rx) * 0.19; ry += (y - ry) * 0.19;
+      ring.style.transform = "translate(" + (rx - 17) + "px," + (ry - 17) + "px)";
+      dot.style.transform = "translate(" + (x - 2) + "px," + (y - 2) + "px)";
+      raf = requestAnimationFrame(loop);
+    };
+    addEventListener("pointermove", e => {
+      x = e.clientX; y = e.clientY;
+      if (e.pointerType === "mouse") enable();
+      const n = e.target;
+      ring.classList.toggle("hot", !!(n && n.nodeType === 1 && n.closest(HOT)));
+    }, { passive: true });
+
+    window.__cursor = {
+      get on() { return on; },
+      get hot() { return ring.classList.contains("hot"); },
+      enable, get pos() { return [Math.round(x), Math.round(y)]; }
+    };
+  })();
+})();
+</script>
+</body>
+</html>
