@@ -3,10 +3,48 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>About — MORFOS</title>
-<meta name="description" content="Morfos builds Shopify stores for e-commerce founders. Fixed price, seven days, backed in writing." />
+<title>About Morfos — the Shopify studio that puts it in writing</title>
+<meta name="description" content="Morfos builds Shopify stores for Indian D2C and e-commerce founders from Mumbai. Fixed price, live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules." />
+<link rel="canonical" href="https://www.morfos.in/about.html" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#050505" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Morfos" />
+<meta property="og:locale" content="en_IN" />
+<meta property="og:url" content="https://www.morfos.in/about.html" />
+<meta property="og:title" content="About Morfos — the Shopify studio that puts it in writing" />
+<meta property="og:description" content="Morfos builds Shopify stores for Indian D2C and e-commerce founders from Mumbai. Fixed price, live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules." />
+<meta property="og:image" content="https://www.morfos.in/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="About Morfos — the Shopify studio that puts it in writing" />
+<meta name="twitter:description" content="Morfos builds Shopify stores for Indian D2C and e-commerce founders from Mumbai. Fixed price, live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules." />
+<meta name="twitter:image" content="https://www.morfos.in/og-image.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "url": "https://www.morfos.in/about.html",
+  "name": "About Morfos — the Shopify studio that puts it in writing",
+  "description": "Morfos builds Shopify stores for Indian D2C and e-commerce founders from Mumbai. Fixed price, live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules.",
+  "inLanguage": "en-IN",
+  "mainEntity": {
+    "@type": "Organization",
+    "@id": "https://www.morfos.in/#org",
+    "name": "Morfos",
+    "url": "https://www.morfos.in/"
+  }
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=general-sans@300,400,500,600&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@600;700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet" />
 <style>
@@ -29,6 +67,9 @@
     --rule:rgba(255,255,255,.12);
     --rule-strong:rgba(255,255,255,.32);
     --muted:#8d8d8d;
+
+    /* the same artwork the homepage inlines as a data URI, as a file */
+    --butterfly:url("butterfly.png");
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
@@ -53,29 +94,58 @@
   }
   .lab b{color:var(--yellow);font-weight:600}
 
+  /* ---------- site header ----------
+     The same bar as the homepage. Sticky rather than fixed, because
+     there is no hero here to scroll past: it sits in the flow from the
+     first paint, so nothing needs a padding-top to clear it and there
+     is no magic number to keep in sync with the bar's height. */
+  .mk-lock{
+    position:relative;display:inline-block;
+    font-family:var(--logo-serif);font-weight:500;
+    letter-spacing:.055em;text-transform:uppercase;line-height:1;
+    color:#fff;white-space:nowrap;
+    padding-right:.24em;            /* room for the butterfly */
+  }
+  .mk-lock i{
+    position:absolute;right:0;top:-.04em;
+    width:.26em;height:.30em;
+    background:var(--butterfly) center / contain no-repeat;
+  }
+  .bar{
+    position:sticky;top:0;z-index:40;
+    /* two children now, not three: space-between would throw the nav
+       against the right edge, so it sits beside the wordmark instead */
+    display:flex;align-items:center;justify-content:flex-start;
+    gap:clamp(22px,4vw,54px);padding:12px clamp(18px,3vw,34px);
+    background:rgba(5,5,5,.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--rule);
+  }
+  .bar .mk{display:block;text-decoration:none}
+  .bar .mk .mk-lock{font-size:14px}
+  .bar nav{display:flex;gap:clamp(14px,2vw,26px)}
+  .bar nav a{color:var(--muted);text-decoration:none;font-size:11.5px;transition:color .2s}
+  .bar nav a:hover{color:#fff}
+  /* the page you are on should not look like somewhere to go */
+  .bar nav a[aria-current="page"]{color:#fff}
+  /* 760 matches the homepage exactly; the nav still clears the CTA by
+     20px at that width. Below it the homepage drops the nav entirely,
+     but this page is not the homepage — the way back stays visible
+     rather than resting on the logo alone. */
+  @media (max-width:760px){
+    .bar nav a:not([href="index.html"]){display:none}
+    .bar nav{gap:0}
+    /* the surviving link is the way home on a phone, so it gets a real
+       target instead of the 18px the bare text measured */
+    .bar nav a{display:grid;place-items:center;min-height:44px;padding:0 10px;margin:-11px 0}
+    .bar .mk{display:grid;place-items:center;min-height:44px;margin:-11px 0}
+  }
+
   /* ---------- masthead ---------- */
   .mast{border-bottom:1px solid var(--rule)}
-  .mast-top{
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:13px 0;
-  }
-  .mast-top a{text-decoration:none;transition:color .2s}
-  .mast-top a:hover{color:#fff}
-  .mast-name{
-    padding:clamp(20px,4vh,34px) 0 clamp(14px,2.6vh,22px);
-    border-top:1px solid var(--rule);
-    display:flex;align-items:center;justify-content:center;gap:clamp(14px,3vw,34px);
-  }
-  .mast-name .word{
-    font-family:var(--logo-serif);font-weight:500;
-    font-size:clamp(34px,7.2vw,86px);
-    letter-spacing:.2em;text-indent:.2em;      /* the tracking adds a phantom gap at the end */
-    line-height:1;color:#fff;white-space:nowrap;
-  }
-  .mast-name .flank{flex:1;height:1px;background:var(--rule)}
   .mast-sub{
     display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding:10px 0 12px;border-top:1px solid var(--rule-strong);flex-wrap:wrap;
+    padding:clamp(13px,2vh,18px) 0 clamp(13px,2vh,18px);flex-wrap:wrap;
   }
 
   /* ---------- the lead ---------- */
@@ -334,10 +404,13 @@
     padding:18px 0;display:flex;align-items:center;justify-content:space-between;
     gap:20px;flex-wrap:wrap;
   }
-  .foot-social{display:flex;align-items:center;gap:20px}
-  .foot-social a{display:block;width:17px;height:17px;color:#9a9a9a;transition:color .2s}
+  .foot-social{display:flex;align-items:center;gap:0;margin-left:-11px}
+  /* 17px was the icon and the whole tap target; the target is now 40 */
+  .foot-social a{display:grid;place-items:center;width:40px;height:40px;
+                 color:#9a9a9a;transition:color .2s}
   .foot-social a:hover{color:#fff}
-  .foot-social svg{width:100%;height:100%;display:block;fill:currentColor}
+  .foot-social a:focus-visible{outline:2px solid var(--yellow);outline-offset:-6px;border-radius:3px}
+  .foot-social svg{width:17px;height:17px;display:block;fill:currentColor}
   .foot-legal{
     display:flex;align-items:center;gap:clamp(14px,2vw,30px);flex-wrap:wrap;
     font-size:11.5px;line-height:1.4;color:#6f6f6f;
@@ -396,20 +469,24 @@
 </head>
 <body>
 
+<!-- ================= site header =================
+     Same bar as the homepage. The anchors are cross-page from here,
+     so they carry index.html in front of the fragment. -->
+<header class="bar" id="siteBar">
+  <a class="mk" href="index.html" data-hot aria-label="Morfos — home"><span class="mk-lock" aria-hidden="true">Morfos<i></i></span></a>
+  <nav aria-label="Primary">
+    <a href="index.html" data-hot>Home</a>
+    <a href="index.html#calculator" data-hot>Shopify Store Calculator</a>
+    <a href="index.html#guarantee" data-hot>Guarantee</a>
+    <a href="about.html" data-hot aria-current="page">About Us</a>
+    <a href="client-roster.html" data-hot>Client login</a>
+    <a href="index.html#book" data-hot>Contact</a>
+  </nav>
+</header>
+
 <!-- ================= masthead ================= -->
 <header class="mast">
   <div class="wrap">
-    <div class="mast-top">
-      <span class="lab">Founded <b>2026</b> &middot; Remote</span>
-      <a class="lab" href="morfos.html" data-hot>&#8592; Back to the site</a>
-    </div>
-
-    <div class="mast-name">
-      <i class="flank" aria-hidden="true"></i>
-      <span class="word">Morfos</span>
-      <i class="flank" aria-hidden="true"></i>
-    </div>
-
     <div class="mast-sub">
       <span class="lab">About the studio</span>
       <span class="lab">No. <b>01</b> &middot; The founding batch edition</span>
@@ -655,27 +732,31 @@
   <div class="wrap">
     <div class="foot-row">
       <div class="foot-social">
-        <a href="#" aria-label="Morfos on LinkedIn" data-hot>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C21.4 8.75 22 11.1 22 14.2V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21h-4V9Z"/></svg>
-        </a>
-        <a href="#" aria-label="Morfos on X" data-hot>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.25 2.5h3.3l-7.2 8.24L22.8 21.5h-6.63l-5.2-6.79-5.94 6.79H1.72l7.7-8.8L1.2 2.5h6.8l4.7 6.21 5.55-6.21Zm-1.16 17h1.83L7.0 4.4H5.04l12.05 15.1Z"/></svg>
-        </a>
-        <a href="#" aria-label="Morfos on Instagram" data-hot>
+        <a href="https://www.instagram.com/morfos.social/" aria-label="Morfos on Instagram" data-hot
+           target="_blank" rel="noopener me">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2Zm0 1.8c-3.14 0-3.5.01-4.74.07-1.14.05-1.76.24-2.17.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.17C2.41 10.1 2.4 10.46 2.4 12s.01 1.9.06 3.13c.05 1.14.24 1.76.4 2.17.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.17.4 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1.14-.05 1.76-.24 2.17-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.17.06-1.24.07-1.6.07-3.13s-.01-1.9-.07-3.13c-.05-1.14-.24-1.76-.4-2.17a3.6 3.6 0 0 0-.88-1.35 3.6 3.6 0 0 0-1.35-.88c-.41-.16-1.03-.35-2.17-.4C15.5 4.01 15.14 4 12 4Zm0 3.03a4.97 4.97 0 1 1 0 9.94 4.97 4.97 0 0 1 0-9.94Zm0 1.8a3.17 3.17 0 1 0 0 6.34 3.17 3.17 0 0 0 0-6.34Zm5.2-3.2a1.17 1.17 0 1 1 0 2.34 1.17 1.17 0 0 1 0-2.34Z"/></svg>
         </a>
-        <a href="mailto:hello@morfos.studio" aria-label="Email Morfos" data-hot>
+        <!-- TODO: no LinkedIn or X account yet. When they exist, paste the
+             URLs in below, uncomment, and add them to sameAs in the JSON-LD.
+        <a href="#" aria-label="Morfos on LinkedIn" data-hot>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C21.4 8.75 22 11.1 22 14.2V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21h-4V9Z"/></svg>
+                </a>
+                <a href="#" aria-label="Morfos on X" data-hot>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.25 2.5h3.3l-7.2 8.24L22.8 21.5h-6.63l-5.2-6.79-5.94 6.79H1.72l7.7-8.8L1.2 2.5h6.8l4.7 6.21 5.55-6.21Zm-1.16 17h1.83L7.0 4.4H5.04l12.05 15.1Z"/></svg>
+                </a>
+        -->
+        <a href="mailto:support.morfos@gmail.com" aria-label="Email Morfos" data-hot>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 5.5A1.5 1.5 0 0 1 4 4h16a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-13Zm2.1.5 7.4 5.9L19.4 6H4.6Zm14.9 1.3-6.9 5.5a1.8 1.8 0 0 1-2.2 0L3.5 7.3V18h16V7.3Z"/></svg>
         </a>
       </div>
 
       <div class="foot-legal">
         <span class="rights">&copy; 2026 Morfos &mdash; All rights reserved</span>
-        <a href="morfos.html#work" data-hot>Work</a>
-        <a href="morfos.html#services" data-hot>Services</a>
-        <a href="morfos.html#guarantee" data-hot>Guarantee</a>
+        <a href="index.html#work" data-hot>Work</a>
+        <a href="index.html#services" data-hot>Services</a>
+        <a href="index.html#guarantee" data-hot>Guarantee</a>
         <a href="client-roster.html" data-hot>Client login</a>
-        <a href="morfos.html#book" data-hot>Contact</a>
+        <a href="index.html#book" data-hot>Contact</a>
       </div>
     </div>
 
@@ -772,7 +853,7 @@ window.MORFOS_MARK = (() => {
   const cta = document.getElementById("ctaIn");
   if (cta) {
     const unit = '<span>Let us build something that holds ' +
-      '<a href="morfos.html#book" data-hot>Book a 15-min call</a></span>';
+      '<a href="index.html#book" data-hot>Book a 15-min call</a></span>';
     cta.innerHTML = unit.repeat(8);   // two identical halves -> seamless -50% loop
   }
 

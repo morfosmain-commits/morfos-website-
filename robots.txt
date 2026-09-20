@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# the client portal and the scratch demo are noindex in their markup too
+Disallow: /client-roster.html
+Disallow: /frostbreak.html
+
+Sitemap: https://www.morfos.in/sitemap.xml
