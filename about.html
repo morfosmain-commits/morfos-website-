@@ -85,6 +85,13 @@
 
   .wrap{width:min(1240px,92vw);margin:0 auto}
 
+  /* Last lines were coming out as a single short word — measured on the
+     rule-one heading and on a paragraph in the principles column. Balancing
+     is left to the browser rather than hard-coded breaks, because where the
+     orphan falls depends entirely on the width. */
+  h1,h2,h3,h4{text-wrap:balance}
+  p,li,figcaption{text-wrap:pretty}
+
   /* small caps label, used for every piece of furniture on the page */
   .lab{
     font-family:var(--sans);
@@ -344,7 +351,10 @@
     font-family:var(--serif);font-size:15px;line-height:1.55;color:#9c9c9c;
     margin-top:10px;
   }
-  .banned s{color:#5c5c5c}
+  /* These are struck through, not hidden: the point is that you read them
+     and see them crossed out. At #5c5c5c they measured 3.05:1 against the
+     panel, under the 4.5 floor. Still clearly secondary to the body copy. */
+  .banned s{color:#7a7a7a}
 
   /* ---------- founders slot ---------- */
   .who-row{
@@ -373,6 +383,38 @@
     text-transform:uppercase;color:#fff;line-height:1.1;margin-bottom:5px;
   }
   .who-cell p{font-size:12.5px;line-height:1.65;color:#b6b6b6}
+  /* it was set across the full 679px of the wrap, 84 characters to the line,
+     and it carried the only inline style left on the page */
+  .who-note{max-width:62ch;padding-top:14px}
+
+  /* ---------- dither reveal ----------
+     The portrait slot the note underneath has always been promising. The
+     picture is drawn as a dithered monochrome field and the pointer carries a
+     soft circle of the real image with it. Ported from the Originkit
+     component Het sent, shader for shader; only the React wrapper is gone,
+     because this site has no build step. */
+  .dith{
+    position:relative;overflow:hidden;
+    margin-top:clamp(18px,3vh,30px);
+    /* The photograph is 736x1308 and the butterfly sits dead centre in it,
+       183-561 by 452-829, almost exactly square. Under cover, a 16/9 panel
+       left only 30px of margin above and below the wings and the wave alone
+       shifts the sample by up to 22px, so the tips were at risk of clipping.
+       3/2 leaves room for the wave, which alone moves the sample by up to 22px.
+       Measured across a full wave cycle, not at one instant. */
+    aspect-ratio:3/2;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    cursor:crosshair;
+  }
+  /* square on a phone: at 4/5 the subject swam in black, because cover can
+     never make it wider than the 51% of the frame it occupies */
+  @media (max-width:699px){.dith{aspect-ratio:1/1}}
+  .dith canvas,.dith img{
+    width:100%;height:100%;display:block;object-fit:cover;
+  }
+  /* no WebGL: the picture itself rather than an empty box */
+  .dith img{position:absolute;inset:0}
 
   /* ---------- marquee CTA ---------- */
   .cta{
@@ -394,6 +436,11 @@
     font-weight:600;letter-spacing:.14em;text-transform:uppercase;
     padding:.55em .9em;transition:background .2s,color .2s;
   }
+  /* The marquee's link measured 162x25 on a phone. It is a moving target
+     already; it does not also need to be a thin one. The box keeps its
+     height and only the hit area grows. */
+  .cta-in a{display:inline-grid;place-items:center;
+            min-height:44px;margin-block:-9px}
   .cta-in a:hover{background:var(--red);color:#fff}
   @keyframes slide{to{transform:translateX(-50%)}}
 
@@ -406,16 +453,25 @@
   }
   .foot-social{display:flex;align-items:center;gap:0;margin-left:-11px}
   /* 17px was the icon and the whole tap target; the target is now 40 */
-  .foot-social a{display:grid;place-items:center;width:40px;height:40px;
+  /* 44, not the 40 it was: 40 is under this project's own tap-target floor */
+  .foot-social a{display:grid;place-items:center;width:44px;height:44px;
                  color:#9a9a9a;transition:color .2s}
   .foot-social a:hover{color:#fff}
   .foot-social a:focus-visible{outline:2px solid var(--yellow);outline-offset:-6px;border-radius:3px}
   .foot-social svg{width:17px;height:17px;display:block;fill:currentColor}
   .foot-legal{
     display:flex;align-items:center;gap:clamp(14px,2vw,30px);flex-wrap:wrap;
-    font-size:11.5px;line-height:1.4;color:#6f6f6f;
+    font-size:11.5px;line-height:1.4;
+    /* #6f6f6f measured 4.18:1 against the footer black, under the floor */
+    color:#767676;
   }
   .foot-legal a{color:#9a9a9a;text-decoration:none;transition:color .2s}
+  /* measured 25x15 on a phone — under the 44px floor this project holds to */
+  .foot-legal a{display:inline-grid;place-items:center;position:relative;
+                min-height:44px;margin-block:-14px}
+  /* short words like "Work" are only 25px wide. The hit area is widened with
+     a pseudo-element so the spacing of the row is not disturbed. */
+  .foot-legal a::after{content:"";position:absolute;inset:0 -10px}
   .foot-legal a:hover{color:#fff}
   .foot-mark{margin-top:clamp(26px,5vh,54px);line-height:0}
   .foot-mark svg{width:100%;height:auto;display:block}
@@ -448,6 +504,13 @@
   .up.in{opacity:1;transform:none}
 
   /* ---------- cursor ---------- */
+  /* the ribbon the head drags behind it, as on the homepage */
+  .cur-trail{
+    position:fixed;inset:0;width:100%;height:100%;
+    z-index:89;pointer-events:none;display:none;
+  }
+  body.has-cursor .cur-trail{display:block}
+
   .cur,.cur-dot{
     position:fixed;left:0;top:0;z-index:90;pointer-events:none;
     border-radius:50%;mix-blend-mode:difference;display:none;
@@ -460,6 +523,8 @@
   body.has-cursor .cur.hot{width:52px;height:52px;background:rgba(255,255,255,.18)}
 
   @media (prefers-reduced-motion:reduce){
+    /* the ribbon is pure motion; the ring and dot are the pointer and stay */
+    .cur-trail,body.has-cursor .cur-trail{display:none}
     html{scroll-behavior:auto}
     .up{opacity:1;transform:none;transition:none}
     .wd .wi{transform:none;transition:none}
@@ -718,7 +783,13 @@
       </div>
     </div>
 
-    <p class="lab" style="padding:14px 0 0">Names and photographs go here once you send them &mdash; nothing invented in the meantime.</p>
+    <!-- The picture slot. Point data-src at a photograph and it drops
+         straight in; nothing else needs to change. -->
+    <div class="dith" id="dith" data-src="butterfly-photo.jpg" data-cursor="Reveal">
+      <canvas id="dithCv" aria-hidden="true"></canvas>
+    </div>
+
+    <p class="lab who-note">Names go here once you send them &mdash; nothing invented in the meantime. Move a pointer across the panel above.</p>
   </div>
 </section>
 
@@ -764,6 +835,7 @@
   </div>
 </footer>
 
+<canvas class="cur-trail" id="curTrail" aria-hidden="true"></canvas>
 <div class="cur" id="cur" aria-hidden="true"></div>
 <div class="cur-dot" id="curDot" aria-hidden="true"></div>
 
@@ -1052,24 +1124,123 @@ window.MORFOS_MARK = (() => {
   (() => {
     const ring = document.getElementById("cur"), dot = document.getElementById("curDot");
     if (!ring || !dot) return;
-    const HOT = "a,button,input,textarea,[data-hot],.card,.stat,.col,.who-cell";
-    let x = -99, y = -99, rx = -99, ry = -99, on = false, raf = 0;
+    const HOT = "a,button,input,textarea,[data-hot],.card,.stat,.col,.who-cell,.dith";
+    const cv = document.getElementById("curTrail");
+    const g = cv && cv.getContext("2d");
+    const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
+    let on = false;
+
+    let x = innerWidth / 2, y = innerHeight / 2;
+    let sx = x, sy = y, vx = 0, vy = 0;
+
+    /* The homepage's numbers, unchanged: w0 = sqrt(1050) = 32.4 rad/s and
+       zeta = 52 / (2*32.4) = 0.80, integrated in fixed 1/240s substeps so the
+       lag is the same at 60Hz and at 144Hz rather than tied to the frame. */
+    const STIFF = 1050, DAMP = 52, SUB = 1 / 240;
+    const REST = 0.05;
+    const TRAIL_MS = 260, HEAD_W = 2.75, TAPER = 0.85, MIN_STEP = 0.5;
+    const pts = [];
+
+    // the ring is 34px here, so it centres on 17; the dot is 4
+    const place = () => {
+      ring.style.transform = "translate(" + (sx - 17) + "px," + (sy - 17) + "px)";
+      dot.style.transform = "translate(" + (sx - 2) + "px," + (sy - 2) + "px)";
+    };
+
+    let dpr = 1;
+    const size = () => {
+      if (!cv) return;
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      const r = cv.getBoundingClientRect();
+      const W = Math.max(1, Math.round(r.width * dpr));
+      const H = Math.max(1, Math.round(r.height * dpr));
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    };
+    const wipe = () => { if (g) { g.setTransform(1, 0, 0, 1, 0, 0);
+      g.clearRect(0, 0, cv.width, cv.height); } };
+
+    const integrate = dt => {
+      let left = dt;
+      while (left > 1e-6) {
+        const h = left > SUB ? SUB : left;
+        left -= h;
+        vx += (STIFF * (x - sx) - DAMP * vx) * h;
+        vy += (STIFF * (y - sy) - DAMP * vy) * h;
+        sx += vx * h; sy += vy * h;
+      }
+    };
+    const record = now => {
+      const l = pts[pts.length - 1];
+      if (!l || Math.hypot(sx - l.x, sy - l.y) > MIN_STEP) pts.push({ x: sx, y: sy, t: now });
+      const cut = now - TRAIL_MS;
+      while (pts.length && pts[0].t < cut) pts.shift();
+    };
+    /* one filled path, not a stroke per segment: overlapping strokes double
+       their alpha at the joints and the ribbon comes out beaded */
+    const paint = () => {
+      wipe();
+      if (!g || reduced || pts.length < 2) return;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = pts.length, L = [], R = [];
+      for (let i = 0; i < n; i++) {
+        const p = pts[i];
+        const a = pts[i > 0 ? i - 1 : 0], b = pts[i < n - 1 ? i + 1 : n - 1];
+        let tx = b.x - a.x, ty = b.y - a.y;
+        const len = Math.hypot(tx, ty) || 1;
+        tx /= len; ty /= len;
+        const w = HEAD_W * Math.pow(i / (n - 1), TAPER);
+        L.push(p.x - ty * w, p.y + tx * w);
+        R.push(p.x + ty * w, p.y - tx * w);
+      }
+      g.beginPath();
+      g.moveTo(L[0], L[1]);
+      for (let i = 1; i < n; i++) g.lineTo(L[i * 2], L[i * 2 + 1]);
+      for (let i = n - 1; i >= 0; i--) g.lineTo(R[i * 2], R[i * 2 + 1]);
+      g.closePath();
+      const hd = pts[n - 1], t0 = pts[0];
+      if (Math.hypot(hd.x - t0.x, hd.y - t0.y) > 1) {
+        const grad = g.createLinearGradient(t0.x, t0.y, hd.x, hd.y);
+        grad.addColorStop(0, "rgba(253,39,2,0)");
+        grad.addColorStop(1, "rgba(253,39,2,.85)");
+        g.fillStyle = grad;
+      } else g.fillStyle = "rgba(253,39,2,.85)";
+      g.fill();
+    };
+
+    const tick = (now, dt) => { integrate(dt); place(); record(now); paint(); };
+    const alive = () => Math.abs(x - sx) > REST || Math.abs(y - sy) > REST ||
+                        Math.abs(vx) > REST || Math.abs(vy) > REST || pts.length > 1;
+
+    let raf = 0, last = 0;
+    const frame = now => {
+      raf = 0;
+      if (!last) last = now;
+      let dt = (now - last) / 1000;
+      last = now;
+      if (dt > 0.1) dt = 0.1;
+      tick(now, dt);
+      if (alive()) raf = requestAnimationFrame(frame);
+      else { last = 0; pts.length = 0; wipe(); }
+    };
+    const kick = () => { if (!raf && on) { last = 0; raf = requestAnimationFrame(frame); } };
+    const snap = () => { sx = x; sy = y; vx = vy = 0; pts.length = 0; place(); wipe(); };
+    let simClock = 0;   // only the step() hook uses this
 
     const enable = () => {
       if (on) return;
       on = true;
       document.body.classList.add("has-cursor");
-      loop();
+      size();
+      snap();
     };
-    const loop = () => {
-      rx += (x - rx) * 0.19; ry += (y - ry) * 0.19;
-      ring.style.transform = "translate(" + (rx - 17) + "px," + (ry - 17) + "px)";
-      dot.style.transform = "translate(" + (x - 2) + "px," + (y - 2) + "px)";
-      raf = requestAnimationFrame(loop);
-    };
+
+    addEventListener("resize", () => { size(); paint(); }, { passive: true });
+    if (cv && window.ResizeObserver) new ResizeObserver(() => { size(); paint(); }).observe(cv);
+
     addEventListener("pointermove", e => {
       x = e.clientX; y = e.clientY;
       if (e.pointerType === "mouse") enable();
+      if (on) kick();
       const n = e.target;
       ring.classList.toggle("hot", !!(n && n.nodeType === 1 && n.closest(HOT)));
     }, { passive: true });
@@ -1077,7 +1248,338 @@ window.MORFOS_MARK = (() => {
     window.__cursor = {
       get on() { return on; },
       get hot() { return ring.classList.contains("hot"); },
-      enable, get pos() { return [Math.round(x), Math.round(y)]; }
+      enable: enable,
+      get pos() { return [Math.round(x), Math.round(y)]; },
+      get head() { return [sx, sy]; },
+      get running() { return !!raf; },
+      get trail() { return pts.map(p => [+p.x.toFixed(2), +p.y.toFixed(2)]); },
+      spring: { STIFF: STIFF, DAMP: DAMP, SUB: SUB, REST: REST },
+      trailCfg: { TRAIL_MS: TRAIL_MS, HEAD_W: HEAD_W, TAPER: TAPER },
+      get canvasBox() { const r = cv.getBoundingClientRect();
+        return { css: [Math.round(r.width), Math.round(r.height)],
+                 store: [cv.width, cv.height], dpr: dpr }; },
+      at(px, py) { x = px; y = py; enable(); snap(); return [sx, sy]; },
+      target(px, py) { x = px; y = py; enable(); kick(); return [x, y]; },
+      /* drives the same tick() the frame drives — the preview pane freezes rAF */
+      step(ms, frames) {
+        enable();
+        const f = frames || Math.max(1, Math.round(ms / 16.667));
+        const dt = (ms / f) / 1000;
+        if (simClock < performance.now()) simClock = performance.now();
+        for (let i = 0; i < f; i++) { simClock += ms / f; tick(simClock, dt); }
+        return { head: [+sx.toFixed(2), +sy.toFixed(2)], pts: pts.length };
+      }
+    };
+  })();
+
+  /* ---------- dither reveal ----------
+     A port of the Originkit component, kept shader for shader. What changed
+     is only what had to: no React, no hooks, no build step — this site is a
+     single file and stays that way. The defaults are the ones the component
+     shipped with: bayer8, dot 5, reveal 100 at 50% softness, wave on at 82
+     with density 25, cover, focus 50.
+
+     The source it came with cannot be used. Its own default is a dead
+     blob: URL and its fallback is somebody's Unsplash photograph, so the
+     picture here is MORFOS's own mark until Het sends one. */
+  (() => {
+    const host = document.getElementById("dith");
+    const canvas = document.getElementById("dithCv");
+    if (!host || !canvas) return;
+
+    const SRC = host.dataset.src || "butterfly.png";
+    /* cover is the component default and the right one for a photograph.
+       The holding mark is a 200x233 cut-out, so cover in a 16:9 panel shows
+       a crop of its middle and reads as abstract strokes; contain shows the
+       whole mark. Drop the attribute when the photograph arrives. */
+    const FIT = host.dataset.fit === "contain" ? 1 : 0;
+
+    const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
+    if (!gl) {
+      // no WebGL: show the picture rather than an empty panel
+      const im = new Image();
+      im.alt = ""; im.src = SRC; im.decoding = "async";
+      host.replaceChildren(im);
+      return;
+    }
+
+    const VERT = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main() {
+    vUv = aPos * 0.5 + 0.5;
+    gl_Position = vec4(aPos, 0.0, 1.0);
+}
+`;
+
+    const FRAG = `
+precision highp float;
+
+uniform sampler2D uTexture;
+uniform float uTime;
+uniform vec2 uMouse;
+uniform float uMouseActive;
+uniform float uRevealRadius;
+uniform float uRevealSoftness;
+uniform float uPixelSize;
+uniform float uDitherStyle;
+
+uniform float uWaveSpeed;
+uniform float uWaveFrequency;
+uniform float uWaveAmplitude;
+uniform float uWaveMargin;
+
+uniform float uCanvasAspect;
+uniform float uImageAspect;
+uniform vec2 uResolution;
+uniform float uFit;
+uniform float uFocusY;
+
+varying vec2 vUv;
+
+float Bayer2(vec2 a) {
+    a = floor(a);
+    return fract(a.x * 0.5 + a.y * a.y * 0.75);
+}
+float Bayer4(vec2 a) { return Bayer2(a * 0.5) * 0.25 + Bayer2(a); }
+float Bayer8(vec2 a) { return Bayer4(a * 0.5) * 0.25 + Bayer2(a); }
+
+float ign(vec2 p) {
+    return fract(52.9829189 * fract(0.06711056 * p.x + 0.00583715 * p.y));
+}
+
+float ordered3(float gray, float thr) {
+    float adj = gray + (thr - 0.5) * 0.5;
+    return adj < 0.33 ? 0.0 : (adj < 0.66 ? 0.5 : 1.0);
+}
+
+float ditherTone(float gray, float ps) {
+    vec2 fc = gl_FragCoord.xy / ps;
+    if (uDitherStyle < 0.5) {
+        return ordered3(gray, Bayer8(fc));
+    } else if (uDitherStyle < 1.5) {
+        float period = ps * 4.0;
+        float v = fract((gl_FragCoord.x + gl_FragCoord.y) / period);
+        return 1.0 - step(v, 1.0 - gray);
+    }
+    return step(ign(fc), gray);
+}
+
+vec2 fitUv(vec2 uv) {
+    vec2 cover = uCanvasAspect < uImageAspect
+        ? vec2(uCanvasAspect / uImageAspect, 1.0)
+        : vec2(1.0, uImageAspect / uCanvasAspect);
+    // CORRECTION to the component as supplied. Its contain branch reads
+    // "1.0 / cover", which inverts each axis but does not swap them, so a
+    // portrait picture in a landscape panel comes out stretched across the
+    // full width instead of letterboxed. Contain is cover with the axes
+    // swapped AND inverted: for A > I, cover is (1, I/A) and contain is
+    // (A/I, 1). The cover branch is untouched and is the default.
+    vec2 s = uFit > 0.5 ? 1.0 / cover.yx : cover / (1.0 + 2.0 * uWaveMargin);
+    vec2 out_ = (uv - 0.5) * s + 0.5;
+    out_.y += (1.0 - s.y) * (0.5 - uFocusY) * step(s.y, 1.0);
+    return out_;
+}
+
+void main() {
+    vec2 uv = vUv;
+    float time = uTime;
+    float waveStrength = uWaveAmplitude * 0.1;
+    float revealNorm = uRevealRadius / max(min(uResolution.x, uResolution.y), 1.0);
+
+    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
+    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
+
+    vec2 distortedUv = uv;
+    distortedUv.x += wave1;
+    distortedUv.y += wave2;
+
+    if (uMouseActive > 0.01) {
+        float dist = distance(uv, uMouse);
+        float mouseInfluence = smoothstep(revealNorm, 0.0, dist);
+        float ripple = sin(dist * uWaveFrequency * 5.0 - time * uWaveSpeed)
+            * uWaveAmplitude * 0.05 * mouseInfluence * uMouseActive;
+        distortedUv.x += ripple;
+        distortedUv.y += ripple;
+    }
+
+    vec2 sampleUv = fitUv(distortedUv);
+    vec4 color = texture2D(uTexture, sampleUv);
+    vec2 inside = step(vec2(0.0), sampleUv) * step(sampleUv, vec2(1.0));
+    color *= inside.x * inside.y;
+
+    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    float ps = max(uPixelSize, 0.25);
+    float tone = ditherTone(gray, ps);
+    vec3 ditherColor = vec3(tone);
+
+    float revealDist = distance(uv * uResolution, uMouse * uResolution);
+    float innerRadius = max(0.0, uRevealRadius * (1.0 - uRevealSoftness));
+    float outerRadius = uRevealRadius * (1.0 + uRevealSoftness) + 0.001;
+    float revealAmount = (1.0 - smoothstep(innerRadius, outerRadius, revealDist)) * uMouseActive;
+
+    gl_FragColor = vec4(mix(ditherColor, color.rgb, revealAmount), color.a);
+}
+`;
+
+    function compile(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS))
+        console.warn("DitherReveal shader:", gl.getShaderInfoLog(sh));
+      return sh;
+    }
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    const program = gl.createProgram();
+    gl.attachShader(program, vs); gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.warn("DitherReveal link:", gl.getProgramInfoLog(program));
+      return;
+    }
+    gl.useProgram(program);
+    gl.deleteShader(vs); gl.deleteShader(fs);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(program, "aPos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const u = n => gl.getUniformLocation(program, n);
+    const U = {
+      time: u("uTime"), mouse: u("uMouse"), active: u("uMouseActive"),
+      radius: u("uRevealRadius"), soft: u("uRevealSoftness"),
+      pixel: u("uPixelSize"), style: u("uDitherStyle"),
+      wSpeed: u("uWaveSpeed"), wFreq: u("uWaveFrequency"),
+      wAmp: u("uWaveAmplitude"), wMargin: u("uWaveMargin"),
+      cAspect: u("uCanvasAspect"), iAspect: u("uImageAspect"),
+      res: u("uResolution"), fit: u("uFit"), focusY: u("uFocusY")
+    };
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+      new Uint8Array([20, 20, 20, 255]));
+    /* clamp + linear, never mipmaps: the picture is not a power of two and
+       WebGL1 will refuse to sample it any other way */
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    let imgAspect = 1.5, loaded = false;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      if (img.naturalHeight > 0) imgAspect = img.naturalWidth / img.naturalHeight;
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); loaded = true; }
+      catch (e) { console.warn("DitherReveal texture:", e); }
+    };
+    img.onerror = () => console.warn("DitherReveal: image failed to load:", SRC);
+    img.src = SRC;
+
+    /* the component's own defaults, carried across unchanged */
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const waveSpeed = reduced ? 0 : 82 / 100;
+    const L = {
+      fit: FIT,
+      focusY: 50 / 100,
+      style: 0,                     // bayer8
+      pixel: 5 / 2,                 // dotSize 5
+      radius: 100,
+      soft: 50 / 100,
+      wSpeed: waveSpeed,
+      wFreq: 25 / 10,               // waveDensity 25
+      wAmp: waveSpeed * 0.4,
+      wMargin: waveSpeed * 0.4 * 0.15
+    };
+
+    const mouse = { x: 0.5, y: 0.5, active: 0, target: 0, entered: false };
+    const onMove = e => {
+      const r = host.getBoundingClientRect();
+      mouse.x = (e.clientX - r.left) / r.width;
+      mouse.y = 1 - (e.clientY - r.top) / r.height;
+      mouse.entered = true; mouse.target = 1;
+    };
+    host.addEventListener("pointermove", onMove, { passive: true });
+    host.addEventListener("pointerenter", () => { mouse.target = 1; }, { passive: true });
+    host.addEventListener("pointerleave", () => { mouse.target = 0; }, { passive: true });
+
+    let cw = 0, ch = 0;
+    function size() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      cw = Math.max(1, Math.floor(host.clientWidth * dpr));
+      ch = Math.max(1, Math.floor(host.clientHeight * dpr));
+      canvas.width = cw; canvas.height = ch;
+      gl.viewport(0, 0, cw, ch);
+    }
+    size();
+    new ResizeObserver(size).observe(host);
+
+    let inView = true;
+    new IntersectionObserver(es => { inView = es[0].isIntersecting; },
+      { threshold: 0.01 }).observe(host);
+
+    let t = 0, raf = 0;
+    function paint() {
+      mouse.active += (mouse.target - mouse.active) * 0.08;
+      gl.uniform1f(U.time, t);
+      gl.uniform2f(U.mouse, mouse.x, mouse.y);
+      gl.uniform1f(U.active, mouse.entered ? mouse.active : 0);
+      gl.uniform1f(U.radius, L.radius);
+      gl.uniform1f(U.soft, L.soft);
+      gl.uniform1f(U.pixel, L.pixel);
+      gl.uniform1f(U.style, L.style);
+      gl.uniform1f(U.wSpeed, L.wSpeed);
+      gl.uniform1f(U.wFreq, L.wFreq);
+      gl.uniform1f(U.wAmp, L.wAmp);
+      gl.uniform1f(U.wMargin, L.wMargin);
+      gl.uniform1f(U.cAspect, cw / Math.max(1, ch));
+      gl.uniform1f(U.iAspect, imgAspect);
+      gl.uniform2f(U.res, host.clientWidth || 1, host.clientHeight || 1);
+      gl.uniform1f(U.fit, L.fit);
+      gl.uniform1f(U.focusY, L.focusY);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    /* the clock is advanced here and nowhere else, so a hand-driven frame
+       moves time by the frame it was asked for and not by how long the call
+       itself took */
+    function tick(dt) { t += dt; paint(); }
+
+    let last = 0;
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      if (!inView) { last = now; return; }
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
+      last = now;
+      tick(dt);
+    }
+    raf = requestAnimationFrame(frame);
+
+    window.__dither = {
+      get loaded() { return loaded; },
+      get t() { return +t.toFixed(3); },
+      get size() { return { css: [host.clientWidth, host.clientHeight], store: [cw, ch] }; },
+      get mouse() { return { x: +mouse.x.toFixed(3), y: +mouse.y.toFixed(3),
+                             active: +mouse.active.toFixed(3) }; },
+      get settings() { return Object.assign({}, L); },
+      get imageAspect() { return +imgAspect.toFixed(3); },
+      at(px, py) {
+        const r = host.getBoundingClientRect();
+        mouse.x = px / r.width; mouse.y = 1 - py / r.height;
+        mouse.entered = true; mouse.target = 1; mouse.active = 1;
+        paint(); return this.mouse;
+      },
+      away() { mouse.target = 0; mouse.active = 0; paint(); },
+      /* drives the same tick() the real frame drives */
+      tick(n, ms) { for (let i = 0; i < (n || 1); i++) tick((ms || 16.7) / 1000); return +t.toFixed(3); },
+      paint
     };
   })();
 })();

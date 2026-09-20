@@ -533,6 +533,15 @@
      move rather than a media query, and it blends with difference so it
      stays visible on black, on the red coupons and on white buttons
      alike. screen blending made it vanish on anything light.          */
+  /* the ribbon the head drags behind it. Plain source-over rather than the
+     difference blend the ring uses: #fd2702 reads on black and on white
+     alike, and inverting it would hand back a cyan that is not the brand. */
+  .cur-trail{
+    position:fixed;inset:0;width:100%;height:100%;
+    z-index:89;pointer-events:none;display:none;
+  }
+  body.has-cursor .cur-trail{display:block}
+
   .cur,.cur-dot{
     position:fixed;
     top:0;left:0;
@@ -612,6 +621,8 @@
            drop-shadow(0 0 14px rgba(253,39,2,.45));
   }
   .flit svg{width:100%;height:100%;display:block;overflow:visible}
+  /* the drawn mark, rendered by the hero's own butterfly routine */
+  .flit canvas{width:100%;height:100%;display:block}
   .flit.on{opacity:1}
   /* while it is flying it IS the butterfly in the corner logo, so the
      static one is stood down rather than duplicated */
@@ -1675,8 +1686,8 @@
   /* ---------- footer ----------
      A closing screen rather than a utility strip: meta in small caps across
      the top, two large headings sharing a row, a bracketed call to action,
-     and the wordmark bled to the full width underneath — with the cocoon
-     turning slowly behind all of it.                                   */
+     and the social and legal row underneath — with the cocoon turning
+     slowly behind all of it.                                           */
   .foot{
     position:relative;
     background:var(--black);
@@ -1691,7 +1702,12 @@
     position:absolute;inset:0;width:100%;height:100%;
     z-index:0;pointer-events:none;display:block;
   }
-  .foot .wrap{position:relative;z-index:1}
+  /* fills the footer and spreads its own children, so the meta sits on the
+     top edge and the legal row on the bottom one */
+  .foot .wrap{
+    position:relative;z-index:1;
+    flex:1;display:flex;flex-direction:column;justify-content:space-between;
+  }
 
   /* ---- meta row ---- */
   .foot-meta{
@@ -1710,10 +1726,12 @@
     font-family:var(--sans);font-weight:500;
     font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;
   }
+  /* #d4d4d4 rather than --muted: these lines sit over the turning cocoon, and
+     --muted measured 1.96:1 against its brightest pixel. This holds 5.9:1. */
   .fg span,.fg a{
     font-family:var(--sans);font-weight:400;
     font-size:11px;letter-spacing:.11em;text-transform:uppercase;
-    color:var(--muted);text-decoration:none;line-height:1.75;
+    color:#d4d4d4;text-decoration:none;line-height:1.75;
     transition:color .3s cubic-bezier(0,0,.2,1);
   }
   .fg a:hover{color:var(--red)}
@@ -1745,13 +1763,18 @@
   }
   @media (min-width:900px){.foot-cta{grid-template-columns:repeat(5,1fr)}
                            .foot-cta > *{grid-column:4/6}}
+  /* #d4d4d4, not --muted: when the grid stacks this line sits over the
+     cocoon, where --muted measured 3.92:1. */
   .foot-cta p{
     font-family:var(--sans);font-size:11px;letter-spacing:.11em;
-    text-transform:uppercase;line-height:1.7;color:var(--muted);max-width:34ch;
+    text-transform:uppercase;line-height:1.7;color:#d4d4d4;max-width:34ch;
   }
   /* the brackets are the frame; they part a little when the field is live */
+  /* four children — bracket, field, submit, bracket — so four columns. With
+     three the last bracket wrapped to its own row and stopped reading as a
+     closing bracket at all. */
   .fieldw{
-    display:inline-grid;grid-template-columns:auto 1fr auto;
+    display:inline-grid;grid-template-columns:auto 1fr auto auto;
     align-items:center;gap:10px;width:min(360px,100%);
   }
   .fieldw .bk{
@@ -1764,28 +1787,35 @@
     width:100%;min-width:0;background:transparent;border:0;
     border-bottom:1px solid var(--rule);
     font-family:var(--sans);font-size:11.5px;letter-spacing:.11em;
-    text-transform:uppercase;color:#fff;padding:9px 0;cursor:none;
+    text-transform:uppercase;color:#fff;cursor:none;
+    /* 15px of padding takes the row to the 44px minimum; it was 34 */
+    padding:15px 0;
     transition:border-color .3s ease;
   }
   .fieldw input::placeholder{color:#5c5c5c;text-transform:uppercase}
   .fieldw input:focus{outline:none;border-bottom-color:var(--red)}
+  /* the arrow stays 15px; only the hit area around it grows to 44 */
   .fieldw button{
     background:transparent;border:0;color:var(--red);cursor:none;
-    font-family:var(--sans);font-size:15px;line-height:1;padding:4px 2px;
+    font-family:var(--sans);font-size:15px;line-height:1;padding:0;
+    min-width:44px;min-height:44px;
+    display:grid;place-items:center;
     transition:transform .3s cubic-bezier(0,0,.2,1);
   }
   .fieldw button:hover{transform:translateX(3px)}
   .fieldw button:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
   .foot-note{
     font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:#5c5c5c;min-height:1.2em;
+    text-transform:uppercase;color:#c9c9c9;min-height:1.2em;
   }
 
   .foot-row{
     border-top:1px solid var(--rule);
     border-bottom:1px solid var(--rule);
     padding:18px 0;
-    margin-top:clamp(26px,5vh,54px);
+    /* the distributed gap does most of the work now; this is only the floor
+       for the short-viewport case where there is nothing left to distribute */
+    margin-top:clamp(26px,4vh,40px);
     display:flex;align-items:center;justify-content:space-between;
     gap:20px;flex-wrap:wrap;
   }
@@ -1810,12 +1840,6 @@
   .foot-legal a{color:#9a9a9a;text-decoration:none;transition:color .2s}
   .foot-legal a:hover{color:#fff}
 
-  /* the closing wordmark: the svg carries its own aspect ratio, so the
-     block is exactly as tall as the mark is at this width */
-  .foot-mark{margin-top:clamp(18px,3vh,34px);line-height:0}
-  .foot-mark svg{width:100%;height:auto;display:block}
-  .foot-mark .glyph{fill:#fff}
-
   @media (max-width:760px){
     /* a closing screen still, but it stops being forced to a full viewport
        when the content alone is already taller than one */
@@ -1831,6 +1855,12 @@
 
   @media (prefers-reduced-motion:reduce){
     .fieldw .bk,.fieldw button{transition:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    /* the ribbon is pure motion, so it goes; the ring and dot are the
+       pointer itself and stay. The spring is flattened in JS to match. */
+    .cur-trail,body.has-cursor .cur-trail{display:none}
   }
 
   /* ---------- 70% scroll nudge ---------- */
@@ -1920,8 +1950,9 @@
     /* body.has-cursor .cur wins on specificity and a media query adds
        none of its own, so this has to match it or a touch laptop — or a
        phone with a mouse plugged in — keeps the ring at phone width */
-    .cur,.cur-dot,
-    body.has-cursor .cur,body.has-cursor .cur-dot{display:none}
+    .cur,.cur-dot,.cur-trail,
+    body.has-cursor .cur,body.has-cursor .cur-dot,
+    body.has-cursor .cur-trail{display:none}
     .stage-ui{padding-bottom:clamp(74px,12vh,110px)}
   }
 
@@ -3169,8 +3200,6 @@
         </div>
       </div>
 
-      <!-- the lockup is measured and built in JS so it fills the width exactly -->
-      <div class="foot-mark" id="footMark" aria-label="Morfos" role="img"></div>
     </div>
   </footer>
 </div>
@@ -3185,6 +3214,7 @@
   </div>
 </aside>
 
+<canvas class="cur-trail" id="curTrail" aria-hidden="true"></canvas>
 <div class="cur" id="cur" aria-hidden="true"><span class="cur-lab" id="curLab"></span></div>
 <div class="cur-dot" id="curDot" aria-hidden="true"></div>
 
@@ -3421,21 +3451,27 @@
     g.restore();
   }
 
+  /* The hero's butterfly, drawable at any size into any context. The hero's
+     own art layer goes through this and so does the butterfly that travels
+     the page, so the two are one drawing rather than two that have to be kept
+     in step by hand. */
+  function drawArt(g, bx, by, box) {
+    if (artImage) {
+      // fit the supplied artwork into the same box the drawing occupies
+      const s = Math.min(box / artImage.width, box / artImage.height);
+      const dw = artImage.width * s, dh = artImage.height * s;
+      g.drawImage(artImage, bx - dw / 2, by - dh / 2, dw, dh);
+    } else {
+      drawButterfly(g, bx, by, box);
+    }
+  }
+
   function buildArt() {
     art.width  = Math.round(W * DPR);
     art.height = Math.round(H * DPR);
     actx.setTransform(DPR, 0, 0, DPR, 0, 0);
     actx.clearRect(0, 0, W, H);
-
-    if (artImage) {
-      // fit the supplied artwork into the same box the drawing occupies
-      const box = R * 2.35;
-      const s = Math.min(box / artImage.width, box / artImage.height);
-      const dw = artImage.width * s, dh = artImage.height * s;
-      actx.drawImage(artImage, cx - dw / 2, cy - dh / 2, dw, dh);
-    } else {
-      drawButterfly(actx, cx, cy, R * 2.45);
-    }
+    drawArt(actx, cx, cy, R * (artImage ? 2.35 : 2.45));
   }
 
   /* =================================================================
@@ -3603,11 +3639,39 @@
   // #10 has the visitor ever actually broken it?
   let everBroke = false;
 
+  /* #11 the exit flight — the hero butterfly and the one that travels the
+     page are now the same creature. Leaving the hero used to scatter this one
+     into embers while a second, separate butterfly appeared at the corner
+     logo. Instead the fragments knit back together, the body banks, shrinks
+     and flies to wherever the travelling butterfly is due to be, and the two
+     are swapped there. Nothing about the swap is visible: the hero one is
+     still being drawn at the instant the other is placed on the same point at
+     the same size.
+
+     Where there is nothing to hand over to — reduced motion, a narrow window,
+     or the travelling butterfly failing to build — handoffLive stays false and
+     the original scroll dissolution is exactly what still happens. */
+  let handoffLive = false, knitK = 0, exitK = 0;
+  let exitX = 0, exitY = 0, exitS = 1, exitRot = 0;
+  let handedOver = false, heldSent = null;
+  let exitVX = 0, exitVY = 0, arrivedLast = false;
+  const wideFlit = matchMedia("(min-width: 861px)");
+
+
   // dev hook: freeze the cycle / inspect the offscreen layers
   let frozen = null;
   window.__morfos = {
+    /* Read by the travelling butterfly, which is built further down the page,
+       so it knows to wait at the start rather than appearing on its own. It is
+       a plain property, not a getter: it has to answer before the hero has
+       drawn its first frame. */
+    willHandOff: !reduced,
     freeze(v) { frozen = v; },
     get art() { return art; },
+    get maskLayer() { return mask; },
+    /* the drawing itself, so the travelling butterfly is the same creature
+       rather than a flat stand-in for it */
+    drawArt,
     get back() { return back; },
     get shards() { return shards; },
     get frameMs() { return frameMs; },
@@ -3630,6 +3694,13 @@
     get dragRot() { return +dragRot.toFixed(4); },
     get beat() { return +beatAmt.toFixed(3); },
     get hintDone() { return everBroke; },
+    /* #11 — the exit flight, for measuring the seam from outside */
+    get exit() { return { live: handoffLive, p: +exitP.toFixed(3),
+      ms: EXIT_MS, knit: +knitK.toFixed(3),
+      k: +exitK.toFixed(3), x: +exitX.toFixed(2), y: +exitY.toFixed(2),
+      s: +exitS.toFixed(4), rot: +exitRot.toFixed(4), handedOver,
+      land: { x: Math.round(exitVX), y: Math.round(exitVY), w: EXIT_W },
+      marks: { KNIT_TO, FLY_FROM, FLY_TO } }; },
     get breath() { updateBody(); return { x: +breathX.toFixed(4), y: +breathY.toFixed(4) }; },
     get lift() { updateBody(); return +liftY.toFixed(2); },
     get bodyTilt() { updateBody(); return +bodyTilt.toFixed(4); },
@@ -3887,11 +3958,145 @@
       a += burst * BURST_FLOOR;
     }
 
-    // --- scrolling away (#3): every piece, evenly, so it reads as one
-    //     object letting go rather than a patch opening ---
-    if (scrollK > 0.001) a += scrollK * scrollK * SCROLL_MOST;
+    /* --- leaving the hero (#3 / #11) ---
+       This used to ADD break to every piece, evenly, so the object read as
+       letting go. It now does the opposite where there is a flight to hand
+       over to: the same scroll multiplies the break DOWN, so whatever the
+       pointer had opened closes again and the butterfly is whole before it
+       goes. The old dissolution is kept for the cases that cannot hand over. */
+    if (handoffLive) a *= 1 - knitK;
+    else if (scrollK > 0.001) a += scrollK * scrollK * SCROLL_MOST;
 
     return a > 0.98 ? 0.98 : a;
+  }
+
+  /* #11 — the exit flight.
+
+     Scroll TRIGGERS it; it does not scrub it. That was the first version and
+     measuring it killed it: the whole flight fitted inside 195px of scroll, so
+     one notch of a wheel (about 100px) skipped half of it, and the last frame
+     the hero drew could be 270px and 230px of width away from where the other
+     butterfly was then placed. A visible jump on the commonest input there is.
+     On its own clock it always plays whole, at the same speed, whatever the
+     pointer, wheel or trackpad does.
+
+     One scalar, exitP, runs 0 to 1 over EXIT_MS. Both halves of the gesture
+     hang off it, overlapping on purpose so it reads as one movement:
+       KNIT_TO   whole again by here, whatever the pointer had opened
+       FLY_FROM  it is already moving before it finishes knitting
+       FLY_TO    arrived, and the swap has happened
+
+     The first version flew to the travelling butterfly's live target and
+     handed over there. Measured, that turned out to be somewhere this one
+     cannot go: by the time it arrived the hero's centre was 91px ABOVE the
+     viewport, and the target — the bottom right corner — sat at canvas y 1180
+     in a canvas 793 tall, so the flight finished clipped and off screen.
+     A canvas cannot draw outside itself.
+
+     So the flight ends at a point that is always inside both: high and to the
+     right of the viewport, which is also where the travelling butterfly's own
+     arc passes. The whole gesture is over inside the first screen, and the
+     other one picks the flight up from there with its own chase. */
+  const EXIT_MS = 1400, RETURN_MS = 950;
+  /* hysteresis, so a page resting on the boundary cannot flicker it */
+  const TRIG_ON = 0.14, TRIG_OFF = 0.07;
+  const KNIT_TO = 0.30, FLY_FROM = 0.18, FLY_TO = 1;
+  let exitP = 0;
+  const EXIT_AT_X = 0.86, EXIT_AT_Y = 0.17;   // of the viewport
+  /* handed over small: the two butterflies are not the same drawing — this one
+     is shattered artwork under a glass refraction, that one is flat line work —
+     and at 64px across the difference between them is not readable. */
+  const EXIT_W = 64;
+  const smooth01 = t => t * t * (3 - 2 * t);
+
+  function updateExit(dt) {
+    const f = window.__flit;
+    const live = !reduced && !!f && typeof f.hold === "function" &&
+                 wideFlit.matches && !!artBox && artBox.w > 4;
+
+    if (!live) {
+      if (handoffLive && f && typeof f.hold === "function" && heldSent !== false) {
+        f.hold(false); heldSent = false;
+      }
+      handoffLive = false; handedOver = false; exitP = 0;
+      knitK = 0; exitK = 0; exitX = 0; exitY = 0; exitS = 1; exitRot = 0;
+      return;
+    }
+    handoffLive = true;
+
+    /* Once it is over and the page is well past the trigger there is nothing
+       left to work out until the visitor comes back up, and this loop runs for
+       the whole length of the page. */
+    if (handedOver && exitP >= 1 && scrollK > TRIG_ON) { knitK = 1; exitK = 1; return; }
+
+    /* between the two thresholds it keeps going the way it was already going */
+    const aim = scrollK > TRIG_ON ? 1 : (scrollK < TRIG_OFF ? 0 : (exitP > 0.5 ? 1 : 0));
+    const stepP = (dt || 0.016) * 1000 / (aim > exitP ? EXIT_MS : RETURN_MS);
+    if (aim > exitP)      exitP = Math.min(aim, exitP + stepP);
+    else if (aim < exitP) exitP = Math.max(aim, exitP - stepP);
+    /* scrolled clean past the hero before the flight finished — there is
+       nothing left on screen to watch it on, so it is already over */
+    if (scrollK > 0.95) exitP = 1;
+
+    knitK = smooth01(clamp01(exitP / KNIT_TO));
+    exitK = smooth01(clamp01((exitP - FLY_FROM) / (FLY_TO - FLY_FROM)));
+
+    /* Measured, not assumed: the canvas is in the page and the landing point
+       is in the viewport, and the two only agree through this rectangle. */
+    const box = canvas.getBoundingClientRect();
+    const hostW = f.hostW || 58;
+    const vx = innerWidth * EXIT_AT_X, vy = innerHeight * EXIT_AT_Y;
+    /* The flight is clamped into the canvas, because a canvas cannot draw
+       outside itself. The LANDING POINT is not: it belongs to the other
+       butterfly, which is fixed to the viewport and can go anywhere.
+
+       Clamping both together was wrong and measured wrong — arriving deep in
+       the page put the landing point at viewport y -3238, and the travelling
+       butterfly was placed 3273px above the screen. The two only diverge once
+       the hero canvas has scrolled far enough up that the clamp bites, which
+       is past scrollK 0.96, and scrollK > 0.95 has already forced the flight
+       to finish — so where it matters they are the same point. */
+    const pad = EXIT_W * 0.8;
+    const tx = Math.min(Math.max(vx - box.left, pad), Math.max(pad, box.width - pad));
+    const ty = Math.min(Math.max(vy - box.top,  pad), Math.max(pad, box.height - pad));
+    exitVX = vx; exitVY = vy;
+
+    const want = EXIT_W / artBox.w;
+    /* The artwork is not centred on the body origin — measured, it sits about
+       65px to its left. Aiming the ORIGIN at the landing point therefore left
+       the DRAWN butterfly 5.9px short of where the other one was placed, and
+       that showed as a flick at the swap. What has to arrive on the point is
+       the artwork's own centre, so its offset is carried at the size the
+       flight will have shrunk it to. Written as an end state multiplied by
+       exitK, which keeps it exactly 0 at the start. */
+    const ax = (artBox.x + artBox.w / 2) - cx;
+    const ay = (artBox.y + artBox.h / 2) - cy;
+    exitX = (tx - cx - want * ax) * exitK;
+    exitY = (ty - cy - want * ay) * exitK;
+    exitS = 1 + (want - 1) * exitK;
+    /* Banks into the turn and levels out again on arrival. A sine is used
+       rather than a ramp precisely because it is zero at BOTH ends: the
+       travelling butterfly is placed level, so the hero one has to arrive
+       level or the swap shows. */
+    exitRot = (tx >= cx ? 1 : -1) * 0.34 * Math.sin(Math.PI * exitK);
+
+    /* One frame of grace. Handing over the instant exitK reaches 1 meant the
+       last frame the hero actually DREW was still a fraction short — 60 to 62px
+       against the 64 the other one is placed at, which is a 5% flick at the
+       swap. Waiting one frame guarantees the hero has drawn once at exactly
+       the landing point and the landing size first. */
+    const arrived = exitK >= 1;
+    const over = arrived && arrivedLast;
+    arrivedLast = arrived;
+    handedOver = over;
+    const wantHeld = !over;
+    if (heldSent !== wantHeld) {
+      heldSent = wantHeld;
+      f.hold(wantHeld, wantHeld ? null
+        : { x: vx, y: vy, s: EXIT_W / (hostW * (f.markW || 1)) });
+    } else if (wantHeld) {
+      f.hold(true);            // keeps the other side's watchdog fed
+    }
   }
 
   /* #7 — the idle wing beat, and #5 — the drag swing. Both are whole-object
@@ -3971,10 +4176,13 @@
     bx *= Math.cos(dragRot);
     if (Math.abs(bx) < 0.08) bx = bx < 0 ? -0.08 : 0.08;
     breathX = bx;
-    // #3 — it also drifts upward on its way out
-    liftY = scrollK * scrollK * R * 0.55;
+    /* #3 — it drifted upward on its way out. With the flight (#11) in place
+       the drift is what the flight replaces, so it only applies where the
+       old dissolution still runs. */
+    liftY = handoffLive ? 0 : scrollK * scrollK * R * 0.55;
     // #5 — the swing carries a little Z tilt with it, about the BODY centre
-    bodyTilt = dragRot * 0.10;
+    // #11 — and the exit bank rides on the same axis
+    bodyTilt = dragRot * 0.10 + exitRot;
   }
 
   /* =================================================================
@@ -4005,9 +4213,15 @@
        wide. Composing it this way keeps the k = 0 tiling invariant by
        construction: with nothing broken, every fragment gets the same body
        transform and the pieces meet exactly. */
-    g.translate(cx + par.x * depthMix, cy + par.y * depthMix - liftY);
+    /* #11 — the exit offset and scale are whole-body, so they go here with
+       the rest of them. The pointer parallax is faded out across the flight:
+       it is measured from the hero's centre, and leaving it in would stop the
+       butterfly landing exactly on the point the other one is placed at. */
+    const par2 = 1 - exitK;
+    g.translate(cx + exitX + par.x * depthMix * par2,
+                cy + exitY + par.y * depthMix * par2 - liftY);
     g.rotate(bodyTilt);
-    g.scale(breathX, breathY);
+    g.scale(breathX * exitS, breathY * exitS);
 
     // --- this fragment, in body space ---
     g.translate(x, y);
@@ -4148,6 +4362,9 @@
 
     advanceHover();
 
+    /* #11 — before anything reads knitK, exitK or exitRot */
+    updateExit(dt);
+
     /* #1 — the strike decays on its own clock */
     if (burst > 0.0005) { burst *= BURST_DECAY; if (burst < 0.0005) burst = 0; }
 
@@ -4226,8 +4443,8 @@
 
     /* --- core glow while whole --- */
     // how whole the butterfly still is overall, for the glow behind it
-    const solid = 1 - hoverK * MOST * 0.5;
-    if (solid > 0.02) {
+    const solid = (1 - hoverK * MOST * 0.5) * (1 - exitK);
+    if (solid > 0.02 && !handedOver) {
       const gr = ctx.createRadialGradient(cx + par.x, cy + par.y, 0, cx + par.x, cy + par.y, R * 2.2);
       gr.addColorStop(0,   `rgba(253,45,14,${(0.10 * solid).toFixed(3)})`);
       gr.addColorStop(0.5, `rgba(160,24,2,${(0.05 * solid).toFixed(3)})`);
@@ -4252,7 +4469,10 @@
     updateBody();
 
     const wantGlass = scrollK < 0.55;
-    if (!pastHero) {
+    /* #11 — once the swap has happened the other butterfly is carrying it,
+       and drawing this one too would show two of them */
+    const showHero = !pastHero && !handedOver;
+    if (showHero) {
       shards.sort((a, b) => a.depth - b.depth);
       const kOf = s => breakAmount(s);
 
@@ -4267,10 +4487,10 @@
        whole read of the hero. Dropped from .85/.92 to let a little more
        of the word come through the wings. */
     ctx.globalAlpha = 0.62;
-    if (!pastHero && wantGlass) ctx.drawImage(glass, 0, 0);
+    if (showHero && wantGlass) ctx.drawImage(glass, 0, 0);
     ctx.globalAlpha = 1;
     ctx.globalAlpha = 0.68;
-    if (!pastHero) ctx.drawImage(mask, 0, 0);
+    if (showHero) ctx.drawImage(mask, 0, 0);
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = "source-over";
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -5868,12 +6088,23 @@ window.MORFOS_WING = {
     const SLICES = 26;        // depth slices through the solid
     const SEP    = 2.6;       // how far apart, in shape units
     let W = 0, H = 0, DPR = 1, theta = 0.6, last = 0, live = false, raf = 0;
+    /* The bottom row is set in quiet greys that cannot carry a backdrop, so it
+       is the floor the object has to stay above. Measured rather than guessed:
+       its position as a fraction of the footer moves with the viewport, and a
+       hard fraction cut the object short on shorter screens. */
+    const btmRow = foot.querySelector(".foot-row");
+    let guard = 0;
 
     function size() {
       DPR = Math.min(window.devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight;
       if (W < 2 || H < 2) return false;
       cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      guard = H * 0.86;
+      if (btmRow) {
+        const t = btmRow.getBoundingClientRect().top - cv.getBoundingClientRect().top;
+        if (t > 80 && t <= H) guard = t;
+      }
       return true;
     }
 
@@ -5882,10 +6113,14 @@ window.MORFOS_WING = {
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       ctx.clearRect(0, 0, W, H);
 
-      // sits in the gap the meta grid leaves, and never wider than it should be
-      const S = Math.min(H * 0.78 / SH, W * 0.42 / SW);
-      const cx = W * (W > 900 ? 0.37 : 0.5);
-      const cy = H * 0.52;
+      /* Sits in the gap the meta grid leaves, never wider than it should be,
+         and fitted whole into the band above the legal row — the object used
+         to be scaled to 0.78H and centred at 0.52H, which put its bottom half
+         inside the erase gradient and left it looking cut off. */
+      const band = Math.max(140, guard - 18);
+      const S = Math.min(band * 0.96 / SH, W * 0.42 / SW);
+      const cx = W * (W > 900 ? 0.40 : 0.5);
+      const cy = band / 2;
       const ct = Math.cos(theta), st = Math.sin(theta);
 
       for (let i = 0; i < SLICES; i++) {
@@ -5896,10 +6131,12 @@ window.MORFOS_WING = {
         ctx.scale(ct * S, S);
         ctx.translate(-SW / 2, -SH / 2);
         // back slices nearly black, front slices carry a little of the red
+        /* the front slice caps at rgb(96,13,7). It used to reach 116, which
+           with the rim on top put text contrast under the AA floor. */
         const lit = 0.22 + 0.78 * k;
-        const r = Math.round(20 + 96 * lit * lit);
-        const g = Math.round(3 + 12 * lit * lit);
-        const b = Math.round(2 + 6 * lit * lit);
+        const r = Math.round(20 + 76 * lit * lit);
+        const g = Math.round(3 + 10 * lit * lit);
+        const b = Math.round(2 + 5 * lit * lit);
         ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
         ctx.fill(path, "evenodd");
         ctx.restore();
@@ -5910,9 +6147,23 @@ window.MORFOS_WING = {
       ctx.scale(ct * S, S);
       ctx.translate(-SW / 2, -SH / 2);
       ctx.lineWidth = 2.2 / Math.max(Math.abs(ct) * S, 0.0001);
-      ctx.strokeStyle = "rgba(253,39,2,.5)";
+      // the rim is what actually broke the contrast; it still defines the
+      // leading face, just without washing the text out
+      ctx.strokeStyle = "rgba(253,39,2,.34)";
       ctx.stroke(path);
       ctx.restore();
+
+      /* The legal row is the one thing here set in quiet greys, so the object
+         is erased into it rather than drawn over it. The gradient starts below
+         the form's own bottom edge, so it is insurance, not a crop. */
+      const cut = Math.max(0, guard - 26);
+      const fade = ctx.createLinearGradient(0, cut, 0, guard + 6);
+      fade.addColorStop(0, "rgba(0,0,0,0)");
+      fade.addColorStop(1, "rgba(0,0,0,1)");
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, cut, W, H - cut);
+      ctx.globalCompositeOperation = "source-over";
     }
 
     function frame(now) {
@@ -5946,6 +6197,7 @@ window.MORFOS_WING = {
       get theta() { return +theta.toFixed(3); },
       get slices() { return SLICES; },
       get size() { return { w: W, h: H, dpr: DPR }; },
+      get guard() { return Math.round(guard); },
       set theta(v) { theta = v; draw(); },
       step(n, dt) { for (let i = 0; i < (n || 1); i++) theta += (dt || 0.05); draw(); return +theta.toFixed(3); },
       draw
@@ -5980,112 +6232,6 @@ window.MORFOS_WING = {
       get note() { return note.textContent; },
       valid(v) { return OK.test(v); },
       set(v) { input.value = v; input.dispatchEvent(new Event("input")); return input.value; }
-    };
-  })();
-
-  /* ---------- footer wordmark ----------
-     The same lockup as the loader, drawn once at rest and sized to the
-     page width. The glyph advances are measured rather than hard-coded,
-     so the chrysalis keeps its slot whichever serif actually loads. */
-  (() => {
-    const host = document.getElementById("footMark");
-    if (!host) return;
-    const NS = "http://www.w3.org/2000/svg";
-
-    // the same traced geometry the loader settles on
-    const MARK = window.MORFOS_MARK;
-    const FONT_SIZE = 196, BASELINE = 68, GLYPHS = ["M", "R", "F", "O", "S"];
-    const el = (n, a) => { const e = document.createElementNS(NS, n);
-      for (const k in a) e.setAttribute(k, a[k]); return e; };
-
-    const build = () => {
-      const svg = el("svg", { xmlns: NS, "aria-hidden": "true" });
-
-      const lock = el("g", {});
-      svg.appendChild(lock);
-      lock.appendChild(el("path", { d: MARK.podD, fill: "#fff" }));
-
-      const cutsG = el("g", { fill: "#000" });
-      MARK.cuts.forEach(d => cutsG.appendChild(el("path", { d })));
-      lock.appendChild(cutsG);
-
-      const rect = o => el("rect", { x: o.x, y: o.y, width: o.w, height: o.h, fill: "#fff" });
-      lock.appendChild(rect(MARK.stem));
-      lock.appendChild(rect(MARK.bar));
-
-      const letters = el("g", {});
-      lock.appendChild(letters);
-
-      // the svg has to be in the document before text can be measured
-      host.replaceChildren(svg);
-
-      const mk = ch => { const t = el("text", { class: "glyph", "font-size": FONT_SIZE,
-        "text-anchor": "middle", y: BASELINE }); t.textContent = ch;
-        letters.appendChild(t); return t; };
-
-      const probe = mk("O");
-      const oAdv = probe.getComputedTextLength();
-      probe.remove();
-      if (!oAdv) return false;                 // font not ready yet
-
-      const items = GLYPHS.map(ch => { const e = mk(ch);
-        return { ch, el: e, w: e.getComputedTextLength() }; });
-      const order = [items[0], { slot: true, w: oAdv }, items[1], items[2], items[3], items[4]];
-      const track = FONT_SIZE * 0.045;
-
-      let cur = 0, slotCentre = 0, minX = Infinity, maxX = -Infinity;
-      const placed = [];
-      for (const it of order) {
-        const centre = cur + it.w / 2;
-        if (it.slot) slotCentre = centre; else { it.centre = centre; placed.push(it); }
-        minX = Math.min(minX, cur); maxX = Math.max(maxX, cur + it.w);
-        cur += it.w + track;
-      }
-      placed.forEach(it => { it.centre -= slotCentre;
-        it.el.setAttribute("x", it.centre.toFixed(2)); });
-      minX -= slotCentre; maxX -= slotCentre;
-
-      // A text element's getBBox() reports the font's em box, not the ink,
-      // so it would leave a band of empty space under the wordmark. Canvas
-      // reports the real ink extents, which is what the crop should follow.
-      let inkTop = -FONT_SIZE * 0.72, inkBottom = FONT_SIZE * 0.02;
-      try {
-        const cx = document.createElement("canvas").getContext("2d");
-        const fam = getComputedStyle(document.documentElement)
-          .getPropertyValue("--logo-serif").trim() || "Georgia, serif";
-        cx.font = "500 " + FONT_SIZE + "px " + fam;
-        const m = cx.measureText(GLYPHS.join(""));
-        if (m.actualBoundingBoxAscent) {
-          inkTop = BASELINE - m.actualBoundingBoxAscent;
-          inkBottom = BASELINE + m.actualBoundingBoxDescent;
-        }
-      } catch (e) {}
-
-      // the bar the chrysalis hangs from is the highest thing in the mark,
-      // and the pod's tip is the lowest
-      const BAR_TOP = MARK.bar.y;
-      const top = Math.min(inkTop, BAR_TOP);
-      const bottom = Math.max(inkBottom, 105);
-
-      const padX = FONT_SIZE * 0.015;
-      svg.setAttribute("viewBox",
-        [(minX - padX).toFixed(2), top.toFixed(2),
-         (maxX - minX + padX * 2).toFixed(2), (bottom - top).toFixed(2)].join(" "));
-      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-      return true;
-    };
-
-    if (!build()) setTimeout(build, 400);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build).catch(() => {});
-    [600, 1600].forEach(d => setTimeout(build, d));
-    addEventListener("resize", () => {}, { passive: true });   // svg scales itself
-
-    window.__footMark = {
-      build,
-      get box() { const r = host.getBoundingClientRect();
-        return { w: Math.round(r.width), h: Math.round(r.height) }; },
-      get viewBox() { const v = host.querySelector("svg"); return v && v.getAttribute("viewBox"); },
-      get glyphs() { return [...host.querySelectorAll(".glyph")].map(t => t.textContent).join(""); }
     };
   })();
 
@@ -6768,33 +6914,165 @@ window.MORFOS_WING = {
 
     const HOT = "a,button,input,textarea,[data-hot],[data-magnet],.kg-item,.of-col,.flow-step,.prop";
     const lab = document.getElementById("curLab");
+    const cv = document.getElementById("curTrail");
+    const g = cv && cv.getContext("2d");
+    const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
     let on = false;
-    let x = innerWidth / 2, y = innerHeight / 2;
 
-    /* The reference does not ease its position — sampled against
-       pointermove it arrived in one frame — so there is no lerp and no
-       animation loop here either. The transform is written straight
-       from the pointer event, which is both truer to it and cheaper
-       than a rAF that runs whether or not the mouse moved. */
+    /* x,y is where the pointer is. sx,sy is where the head has got to —
+       the two are not the same thing any more, and the gap between them
+       is what the ribbon is drawn in. */
+    let x = innerWidth / 2, y = innerHeight / 2;
+    let sx = x, sy = y, vx = 0, vy = 0;
+
+    /* A real spring-damper, not a lerp: a lerp's speed is tied to the frame
+       rate, so the same cursor lags differently at 60Hz and at 144Hz.
+       w0 = sqrt(1050) = 32.4 rad/s and zeta = 52 / (2*32.4) = 0.80, which is
+       just inside critical — about 1.5% overshoot, settled in 154ms.
+
+       The pair is chosen for the lag it leaves rather than for the numbers:
+       a spring tracking a pointer moving at v sits DAMP*v/STIFF behind it,
+       here 59px at a brisk 1200px/s. The ribbon's length does not come from
+       that gap — it is TRAIL_MS of travel — so a short lag still leaves a
+       long trail, and the ring stays near what the pointer is actually over.
+
+       Integrated in fixed 1/240s substeps so the result does not depend on
+       how long the frame happened to be. */
+    const STIFF = 1050, DAMP = 52, SUB = 1 / 240;
+    const REST = 0.05;          // px and px/s below which it has arrived
+
+    /* the ribbon. Points expire by age rather than by count, so its length
+       on screen is the same at any frame rate. */
+    const TRAIL_MS = 260;       // how long a point survives behind the head
+    const HEAD_W = 2.75;        // half-width where it leaves the dot
+    const TAPER = 0.85;         // <1 holds the width further back
+    const MIN_STEP = 0.5;       // a still cursor lays down no new points
+    const pts = [];
+
     const place = () => {
-      const t = "translate3d(" + x + "px," + y + "px,0)";
+      const t = "translate3d(" + sx + "px," + sy + "px,0)";
       cur.style.transform = t;
       dot.style.transform = t;
     };
+
+    /* the canvas is measured, not assumed: an element can change size
+       without the window doing so, and a mismatched backing store
+       stretches everything drawn into it. */
+    let dpr = 1;
+    const size = () => {
+      if (!cv) return;
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      const r = cv.getBoundingClientRect();
+      const W = Math.max(1, Math.round(r.width * dpr));
+      const H = Math.max(1, Math.round(r.height * dpr));
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    };
+
+    const wipe = () => {
+      if (!g) return;
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.clearRect(0, 0, cv.width, cv.height);
+    };
+
+    const integrate = dt => {
+      let left = dt;
+      while (left > 1e-6) {
+        const h = left > SUB ? SUB : left;
+        left -= h;
+        vx += (STIFF * (x - sx) - DAMP * vx) * h;
+        vy += (STIFF * (y - sy) - DAMP * vy) * h;
+        sx += vx * h; sy += vy * h;
+      }
+    };
+
+    const record = now => {
+      const last = pts[pts.length - 1];
+      if (!last || Math.hypot(sx - last.x, sy - last.y) > MIN_STEP)
+        pts.push({ x: sx, y: sy, t: now });
+      const cutoff = now - TRAIL_MS;
+      while (pts.length && pts[0].t < cutoff) pts.shift();
+    };
+
+    /* One filled path rather than a stroke per segment: overlapping strokes
+       double their alpha at every joint and the ribbon comes out beaded.
+       The width tapers to nothing at the tail and the gradient carries the
+       fade along it. */
+    const paint = () => {
+      wipe();
+      if (!g || reduced || pts.length < 2) return;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = pts.length;
+      const L = [], R = [];
+      for (let i = 0; i < n; i++) {
+        const p = pts[i];
+        const a = pts[i > 0 ? i - 1 : 0];
+        const b = pts[i < n - 1 ? i + 1 : n - 1];
+        let tx = b.x - a.x, ty = b.y - a.y;
+        const len = Math.hypot(tx, ty) || 1;
+        tx /= len; ty /= len;
+        const w = HEAD_W * Math.pow(i / (n - 1), TAPER);
+        L.push(p.x - ty * w, p.y + tx * w);
+        R.push(p.x + ty * w, p.y - tx * w);
+      }
+      g.beginPath();
+      g.moveTo(L[0], L[1]);
+      for (let i = 1; i < n; i++) g.lineTo(L[i * 2], L[i * 2 + 1]);
+      for (let i = n - 1; i >= 0; i--) g.lineTo(R[i * 2], R[i * 2 + 1]);
+      g.closePath();
+      const h = pts[n - 1], t0 = pts[0];
+      const span = Math.hypot(h.x - t0.x, h.y - t0.y);
+      if (span > 1) {
+        const grad = g.createLinearGradient(t0.x, t0.y, h.x, h.y);
+        grad.addColorStop(0, "rgba(253,39,2,0)");
+        grad.addColorStop(1, "rgba(253,39,2,.85)");
+        g.fillStyle = grad;
+      } else {
+        g.fillStyle = "rgba(253,39,2,.85)";   // a degenerate gradient paints nothing
+      }
+      g.fill();
+    };
+
+    // the one path every frame takes, so anything that drives it by hand
+    // is driving the same code the page runs
+    const tick = (now, dt) => { integrate(dt); place(); record(now); paint(); };
+
+    const alive = () =>
+      Math.abs(x - sx) > REST || Math.abs(y - sy) > REST ||
+      Math.abs(vx) > REST || Math.abs(vy) > REST || pts.length > 1;
+
+    let raf = 0, last = 0;
+    const frame = now => {
+      raf = 0;
+      if (!last) last = now;
+      let dt = (now - last) / 1000;
+      last = now;
+      if (dt > 0.1) dt = 0.1;     // a tab that was in the background must not fling it
+      tick(now, dt);
+      if (alive()) raf = requestAnimationFrame(frame);
+      else { last = 0; pts.length = 0; wipe(); }   // idle costs nothing
+    };
+    const kick = () => { if (!raf && on) { last = 0; raf = requestAnimationFrame(frame); } };
+
+    const snap = () => { sx = x; sy = y; vx = vy = 0; pts.length = 0; place(); wipe(); };
+    let simClock = 0;   // only the step() hook uses this
 
     const enable = () => {
       if (on) return;
       on = true;
       document.body.classList.remove("no-cursor-fx");
       document.body.classList.add("has-cursor");
-      place();
+      size();
+      snap();
     };
+
+    addEventListener("resize", () => { size(); paint(); }, { passive: true });
+    if (cv && window.ResizeObserver) new ResizeObserver(() => { size(); paint(); }).observe(cv);
 
     addEventListener("pointermove", e => {
       x = e.clientX; y = e.clientY;
       // a real mouse is the only thing that turns this on
       if (e.pointerType === "mouse") enable();
-      if (on) place();
+      if (on) kick();
     }, { passive: true });
 
     addEventListener("touchstart", () => {
@@ -6833,8 +7111,14 @@ window.MORFOS_WING = {
     addEventListener("pointermove", sync, { passive: true });
 
     // don't leave a stranded ring when the pointer leaves the window
-    document.addEventListener("pointerleave", () => { cur.style.opacity = "0"; dot.style.opacity = "0"; });
-    document.addEventListener("pointerenter", () => { cur.style.opacity = ""; dot.style.opacity = ""; });
+    document.addEventListener("pointerleave", () => {
+      cur.style.opacity = "0"; dot.style.opacity = "0";
+      if (cv) cv.style.opacity = "0";
+    });
+    document.addEventListener("pointerenter", () => {
+      cur.style.opacity = ""; dot.style.opacity = "";
+      if (cv) cv.style.opacity = "";
+    });
 
     window.__cursor = {
       enable, place,
@@ -6850,7 +7134,34 @@ window.MORFOS_WING = {
         return [Math.round(r.x + r.width / 2), Math.round(r.y + r.height / 2)]; },
       get dotCentre() { const r = dot.getBoundingClientRect();
         return [Math.round(r.x + r.width / 2), Math.round(r.y + r.height / 2)]; },
-      at(px, py) { x = px; y = py; enable(); place(); return this.ringCentre; },
+      /* at() teleports: a programmatic placement should land where it is put
+         rather than spring towards it. target() is the one that exercises
+         the spring. */
+      at(px, py) { x = px; y = py; enable(); snap(); return this.ringCentre; },
+      target(px, py) { x = px; y = py; enable(); kick(); return [x, y]; },
+      spring: { STIFF, DAMP, SUB, REST },
+      trailCfg: { TRAIL_MS, HEAD_W, TAPER },
+      get head() { return [sx, sy]; },
+      get vel() { return [vx, vy]; },
+      get running() { return !!raf; },
+      get trail() { return pts.map(p => [+p.x.toFixed(2), +p.y.toFixed(2)]); },
+      get canvasBox() { const r = cv.getBoundingClientRect();
+        return { css: [Math.round(r.width), Math.round(r.height)],
+                 store: [cv.width, cv.height], dpr: dpr }; },
+      /* The preview pane reports the document hidden and freezes rAF, so the
+         loop cannot be observed there. This runs the identical tick() the
+         frame runs — not a copy of it — over a synthetic clock. */
+      step(ms, frames) {
+        enable();
+        const f = frames || Math.max(1, Math.round(ms / 16.667));
+        const dt = (ms / f) / 1000;
+        // carried across calls, and never behind the real clock, so a run of
+        // step() calls ages the trail the way elapsed time would
+        if (simClock < performance.now()) simClock = performance.now();
+        for (let i = 0; i < f; i++) { simClock += ms / f; tick(simClock, dt); }
+        return { head: [+sx.toFixed(2), +sy.toFixed(2)], pts: pts.length };
+      },
+      paint: paint, size: size, snap: snap,
       over(el) { sync({ target: el }); return { wide: this.wide, label: this.label, hot: this.hot }; }
     };
   })();
@@ -6883,45 +7194,154 @@ window.MORFOS_WING = {
 
   const NS = "http://www.w3.org/2000/svg";
 
-  /* ---------- the mark ---------- */
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  for (const p of WING.RING) {
-    if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0];
-    if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1];
+  /* ---------- the mark ----------
+     This used to be flat SVG line work while the hero's was a drawn object —
+     seven wings in a near and a far pair, the far one foreshortened, a lit
+     body with banding and a thorax bead, antennae. Same creature, so it is
+     now the same drawing: the hero exposes the routine and this renders it
+     into a sprite at its own size.
+
+     Drawn LARGE and scaled down by the context, never called with a small
+     size. The routine sets absolute line widths — 0.9px for the abdomen
+     banding, 1.15 to 1.35px for the antennae — and those are in the context's
+     units, not fractions of the butterfly. Asking it for a 58px butterfly
+     would keep them at full weight against a tenth of the geometry and the
+     miniature would come out drawn with a marker pen. Drawing at 420 and
+     scaling the whole context down keeps every proportion the hero's has. */
+  const drawArt = window.__morfos && window.__morfos.drawArt;
+  const S_DRAW = 420;
+  let MARK_FRAC, flap;
+
+  if (drawArt) {
+    /* Measured once, at the size it is drawn at, so the sprite is fitted to
+       the drawing rather than to a guess about it. Alpha > 8 is the same
+       threshold the hero measures its own art box with. */
+    const probe = document.createElement("canvas");
+    probe.width = probe.height = Math.ceil(S_DRAW * 1.7);
+    const pg = probe.getContext("2d");
+    const PO = probe.width / 2;
+    drawArt(pg, PO, PO, S_DRAW);
+    const pd = pg.getImageData(0, 0, probe.width, probe.height).data;
+    let bx0 = 1e9, by0 = 1e9, bx1 = -1, by1 = -1;
+    for (let y = 0; y < probe.height; y++) {
+      for (let x = 0; x < probe.width; x++) {
+        if (pd[(y * probe.width + x) * 4 + 3] > 8) {
+          if (x < bx0) bx0 = x; if (x > bx1) bx1 = x;
+          if (y < by0) by0 = y; if (y > by1) by1 = y;
+        }
+      }
+    }
+    const bw = Math.max(1, bx1 - bx0), bh = Math.max(1, by1 - by0);
+    const offX = (bx0 + bx1) / 2 - PO, offY = (by0 + by1) / 2 - PO;
+
+    const cvs = document.createElement("canvas");
+    host.replaceChildren(cvs);
+    const g = cvs.getContext("2d");
+    MARK_FRAC = 0.92;
+
+    /* The drawn width, which is what it has always been on screen. The BOX is
+       larger than that because the dark halo needs somewhere to live, and the
+       box is re-shaped to the drawing: the flat mark was taller than wide, the
+       drawing is the other way round, measured 144 by 114. Not cosmetic — this
+       box is what the text avoidance tests against, and a box two thirds empty
+       makes the butterfly refuse perfectly good places to sit. */
+    const MARK_CSS = 54, HALO = 0.16;
+    const tmp = document.createElement("canvas");
+    const tg = tmp.getContext("2d");
+    const canBlur = typeof g.filter === "string";
+
+    function sprite() {
+      const boxW = Math.round(MARK_CSS * (1 + 2 * HALO));
+      const boxH = Math.max(2, Math.round(boxW * bh / bw));
+      host.style.width = boxW + "px";
+      host.style.height = boxH + "px";
+      /* rendered above device resolution: at 54px across, the antennae and
+         the abdomen banding are sub-pixel, and supersampling is what keeps
+         them from disappearing into aliasing */
+      const dpr = Math.min((window.devicePixelRatio || 1) * 2, 4);
+      cvs.width = Math.round(boxW * dpr); cvs.height = Math.round(boxH * dpr);
+      const k = Math.min(cvs.width / (bw * (1 + 2 * HALO)),
+                         cvs.height / (bh * (1 + 2 * HALO)));
+      const ox = cvs.width / (2 * k) - offX, oy = cvs.height / (2 * k) - offY;
+
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.clearRect(0, 0, cvs.width, cvs.height);
+
+      /* A dark halo under the drawing — the same job the flat mark's
+         page-coloured stroke used to do, and it is needed: measured against
+         the brand red of a .btn the drawing on its own came out at 1.02:1 and
+         disappeared. It is drawn in the page colour, so on the page it cannot
+         be seen; the element's own drop shadow sits too far out and too soft
+         to do this, because the shadow of a soft glow is a soft shadow. */
+      if (canBlur) {
+        tmp.width = cvs.width; tmp.height = cvs.height;
+        tg.setTransform(k, 0, 0, k, 0, 0);
+        drawArt(tg, ox, oy, S_DRAW);
+        tg.setTransform(1, 0, 0, 1, 0, 0);
+        tg.globalCompositeOperation = "source-in";
+        tg.fillStyle = "#050205";
+        tg.fillRect(0, 0, cvs.width, cvs.height);
+        tg.globalCompositeOperation = "source-over";
+        g.filter = "blur(" + Math.max(1, cvs.width * 0.045).toFixed(1) + "px)";
+        /* stamped repeatedly rather than once: one pass of a blurred soft
+           alpha is far too faint to separate anything */
+        for (let i = 0; i < 5; i++) g.drawImage(tmp, 0, 0);
+        g.filter = "none";
+      }
+
+      // and the drawing itself, which adds its own light over the halo
+      g.setTransform(k, 0, 0, k, 0, 0);
+      drawArt(g, ox, oy, S_DRAW);
+      MARK_FRAC = (bw * k) / cvs.width;
+    }
+    sprite();
+    addEventListener("resize", sprite, { passive: true });
+    /* the beat is a horizontal squeeze about the mark's own centre, exactly
+       as it was on the group it replaces */
+    flap = b => { cvs.style.transform = "scaleX(" + b.toFixed(3) + ")"; };
+
+  } else {
+    /* Fallback: the hero did not build, so there is no drawing to share.
+       The flat mark is better than no mark. */
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const p of WING.RING) {
+      if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0];
+      if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1];
+    }
+    const pad = 7;
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox",
+      [x0 - pad, y0 - pad, (x1 - x0) + pad * 2, (y1 - y0) + pad * 2].join(" "));
+    const flutter = document.createElementNS(NS, "g");
+    const body = document.createElementNS(NS, "g");
+    const halo = document.createElementNS(NS, "path");
+    halo.setAttribute("d", WING.ringD);
+    halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "var(--page)");
+    halo.setAttribute("stroke-width", "14");
+    halo.setAttribute("stroke-linejoin", "round");
+    halo.setAttribute("opacity", ".9");
+    body.appendChild(halo);
+    const shape = document.createElementNS(NS, "path");
+    shape.setAttribute("d", WING.ringD);
+    shape.setAttribute("fill", "var(--red)");
+    body.appendChild(shape);
+    WING.cuts.forEach(d => {
+      const c = document.createElementNS(NS, "path");
+      c.setAttribute("d", d);
+      c.setAttribute("fill", "var(--page)");
+      body.appendChild(c);
+    });
+    flutter.appendChild(body);
+    svg.appendChild(flutter);
+    host.replaceChildren(svg);
+    const cx0 = (x0 + x1) / 2, cy0 = (y0 + y1) / 2;
+    MARK_FRAC = (x1 - x0) / ((x1 - x0) + pad * 2);
+    flap = b => flutter.setAttribute("transform",
+      "translate(" + cx0.toFixed(2) + " " + cy0.toFixed(2) + ") " +
+      "scale(" + b.toFixed(3) + " 1) " +
+      "translate(" + (-cx0).toFixed(2) + " " + (-cy0).toFixed(2) + ")");
   }
-  const pad = 7;
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox",
-    [x0 - pad, y0 - pad, (x1 - x0) + pad * 2, (y1 - y0) + pad * 2].join(" "));
-
-  const flutter = document.createElementNS(NS, "g");
-  const body = document.createElementNS(NS, "g");
-
-  /* A halo in the page colour under the mark. The drop shadows on the
-     element handle depth; this is what stops the red line work from
-     dissolving into the red cards in the work strip. */
-  const halo = document.createElementNS(NS, "path");
-  halo.setAttribute("d", WING.ringD);
-  halo.setAttribute("fill", "none");
-  halo.setAttribute("stroke", "var(--page)");
-  halo.setAttribute("stroke-width", "14");
-  halo.setAttribute("stroke-linejoin", "round");
-  halo.setAttribute("opacity", ".9");
-  body.appendChild(halo);
-
-  const shape = document.createElementNS(NS, "path");
-  shape.setAttribute("d", WING.ringD);
-  shape.setAttribute("fill", "var(--red)");
-  body.appendChild(shape);
-  WING.cuts.forEach(d => {
-    const c = document.createElementNS(NS, "path");
-    c.setAttribute("d", d);
-    c.setAttribute("fill", "var(--page)");
-    body.appendChild(c);
-  });
-  flutter.appendChild(body);
-  svg.appendChild(flutter);
-  host.replaceChildren(svg);
 
   /* Below the breakpoint it is not rendered, and the corner logo keeps
      its own butterfly instead. Watched rather than read once, so resizing
@@ -6932,7 +7352,6 @@ window.MORFOS_WING = {
   wide.addEventListener ? wide.addEventListener("change", syncWide)
                         : wide.addListener(syncWide);
 
-  const CX = (x0 + x1) / 2, CY = (y0 + y1) / 2;
 
   /* ---------- where it goes ----------
      It belongs in the corner and it stays there. Anything else puts it
@@ -7080,6 +7499,22 @@ window.MORFOS_WING = {
   let px = 0, py = 0, ps = 1, rot = 0;
   let started = false, travel = 0;
 
+  /* ---------- waiting to be handed over ----------
+     This butterfly used to appear on the corner logo the moment the page
+     loaded, while a second one sat in the hero. They are one creature now:
+     this one waits, hidden, until the hero's flies out and places it.
+
+     The wait is watchdogged. If the hero never calls — it failed to build, or
+     its canvas has no size — this would otherwise never appear at all, so an
+     unfed hold lapses and it takes over on its own. */
+  let held = !!(window.__morfos && window.__morfos.willHandOff);
+  let heldAt = performance.now();
+  /* Generous on purpose: the hero feeds this from its animation frame, and
+     a heavily throttled or backgrounded tab can stretch a frame to most of a
+     second. A tight window would drop the hold and let this one appear while
+     the hero butterfly was still on screen. */
+  const HOLD_TTL = 3000;
+
   const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
   const smooth = t => t * t * (3 - 2 * t);
 
@@ -7111,7 +7546,14 @@ window.MORFOS_WING = {
 
   function step(now) {
     requestAnimationFrame(step);
+    tick(now);
+  }
+
+  function tick(now) {
     if (!wide.matches) { started = false; return; }
+
+    if (held && now - heldAt > HOLD_TTL) setHeld(false, null);
+    if (held) { host.classList.remove("on"); started = false; return; }
 
     const t = target();
     if (!started) {
@@ -7150,15 +7592,50 @@ window.MORFOS_WING = {
       "translate3d(" + (px + driftX - host.offsetWidth / 2).toFixed(1) + "px," +
       (py + driftY - host.offsetHeight / 2).toFixed(1) + "px,0)" +
       " rotate(" + rot.toFixed(2) + "deg) scale(" + ps.toFixed(3) + ")";
-    flutter.setAttribute("transform",
-      "translate(" + CX.toFixed(2) + " " + CY.toFixed(2) + ") " +
-      "scale(" + beat.toFixed(3) + " 1) " +
-      "translate(" + (-CX).toFixed(2) + " " + (-CY).toFixed(2) + ")");
+    flap(beat);
+  }
+
+  /* Called by the hero. `snap` places this one exactly where the hero's
+     butterfly finished, so the swap is a continuation rather than a cut. */
+  function setHeld(on, snap) {
+    heldAt = performance.now();
+    /* hidden on the spot, not on this engine's next frame. The hero drives the
+       handover from ITS frame, and leaving the class to be cleared later left
+       both butterflies on screen for a frame — longer on a throttled tab. */
+    if (on) { held = true; started = false; host.classList.remove("on"); return; }
+    held = false;
+    if (snap) {
+      px = snap.x; py = snap.y; ps = snap.s; rot = 0;
+      travel = 0; started = true;
+      host.classList.add("on");
+      host.style.transform =
+        "translate3d(" + (px - host.offsetWidth / 2).toFixed(1) + "px," +
+        (py - host.offsetHeight / 2).toFixed(1) + "px,0)" +
+        " rotate(0deg) scale(" + ps.toFixed(3) + ")";
+    }
   }
 
   requestAnimationFrame(step);
 
+  /* A synthetic clock, carried between calls. Re-reading performance.now()
+     each time would advance time by the microseconds the loop itself takes,
+     not by the frame that was asked for, and the hold would never lapse. */
+  let simNow = 0;
+
   window.__flit = {
+    hold(on, snap) { setHeld(!!on, snap); },
+    get held() { return held; },
+    get markW() { return +MARK_FRAC.toFixed(4); },
+    get drawn() { return !!drawArt; },
+    /* the UNSCALED host width. box is the live rect and already carries the
+       current scale, so sizing a snap from it compounds. */
+    get hostW() { return host.offsetWidth; },
+    /* drives the same tick() the real frame drives */
+    tick(n, ms) {
+      if (simNow < performance.now()) simNow = performance.now();
+      for (let i = 0; i < (n || 1); i++) { simNow += (ms || 16.7); tick(simNow); }
+      return { held, on: host.classList.contains("on"), at: this.at };
+    },
     get at() { return { x: Math.round(px), y: Math.round(py),
                         s: +ps.toFixed(3), rot: +rot.toFixed(1) }; },
     get target() { const t = target();
