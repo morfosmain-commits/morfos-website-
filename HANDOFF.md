@@ -4,7 +4,7 @@
 It covers what the project is, how to work on it, what exists on disk, what is
 finished, and what to do next — in priority order.
 
-Last updated: 2026-09-20 (end of the dither-reveal + About text-audit session).
+Last updated: 2026-09-21 (case studies: `case.html`, the first client in the work carousel).
 
 ---
 
@@ -101,7 +101,9 @@ constantly; assume they apply even when unstated.
 | File | Size | What it is |
 |---|---|---|
 | `index.html` | 415 KB | **The main site.** Most work happens here. Was `morfos.html` — renamed. |
-| `about.html` | 78 KB | About page. Broadsheet layout. Same site header, same cursor engine. Carries the dither-reveal panel. |
+| `case.html` | 109 KB | **Generated — do not hand-edit.** One file serves every case study; `?c=<id>` picks one. Built from `about.html` by `build-case.js`. |
+| `work/` | 570 KB | Screenshots of client sites. `prabhu-mill-{card,hero,full}.jpg`. |
+| `about.html` | 99 KB | About page. Broadsheet layout. Same site header, cursor engine **and footer** as the home page. Carries the dither-reveal panel. |
 | `client-roster.html` | 164 KB | Client portal, PIN-gated. `noindex,nofollow`. |
 | `frostbreak.html` | 18 KB | Unrelated scratch demo. Live but `noindex,nofollow`. |
 | `morfos-booking.gs` | 5 KB | Google Apps Script for the booking endpoint. **Not part of the site** — it gets pasted into script.google.com. |
@@ -312,30 +314,89 @@ for the object, two large headings sharing one row, a bracketed
 footer and spaces its own children, so meta sits on the top edge and the legal
 row on the bottom one.
 
-Behind it, the **traced MORFOS cocoon extruded into 26 depth slices**, rotating
-about its vertical axis in `#fd2702` tones. The horizontal scale *is* `cos θ`
-and each slice steps along `sin θ` — a real rotation, not a sprite. It fades
-out with a `destination-out` gradient just above the bottom legal row, which
-is the only thing in the footer set in greys too quiet to carry a backdrop.
+Under the first of those headings — the word MORFOS — the **traced cocoon
+extruded into 64 depth slices**, turning about its vertical axis in `#fd2702`
+tones. It fades out with a `destination-out` gradient just above the bottom
+legal row, which is the only thing in the footer set in greys too quiet to
+carry a backdrop.
 
-- **The object is fitted whole into the band above that row.** It used to be
-  scaled to `0.78H` and centred at `0.52H`, with the erase gradient running
-  `0.42H → 0.54H` — which meant roughly **half the form was erased** and it
-  read as cut off (measured: drawn bottom 385px against a geometric bottom of
-  655px, 52% of the shape). It now measures the top of `.foot-row` in `size()`,
-  exposes it as `__footBg.guard`, and scales to `0.96` of the band above it.
-  Verified across 18 angles at three viewports: the drawn height is 1.002–1.016
-  of the geometry (the excess is the 2.2px rim stroke) and never crosses the
-  guard. At exactly 90° nothing draws, because the form is edge-on — that is
-  the maths, not a bug.
-- **Contrast was re-measured, not assumed.** Every text node in the footer was
-  sampled against the real canvas pixels over 16 angles, before and after. The
-  numbers are identical: worst case is still the `© 2026 Morfos` line at
-  **4.18:1**, which is the pre-existing pure-black value in §7.8. Everything
-  else is 5.47:1 or better.
+**It was rebuilt when Het said it was "very big and also looking 2d".** Three
+things were wrong and all three are fixed:
+
+- **The depth was 65 shape units against a 610-wide shape** — about a tenth of
+  its own width, so the 26 slices sat nearly on top of one another and the
+  thing read as a flat silhouette that squashed rather than a solid that
+  turned. Depth is **300** now, a little over half the width, as the object
+  itself is, and the slice count went to **64** so the side reads solid instead
+  of striped.
+- **The projection was a horizontal scale, which is not a rotation.** It is a
+  real Y-rotation composed with a `PITCH` of 0.3 rad, so the object is seen
+  slightly from above: `sx = x·cosθ + z·sinθ`, `sy = y·cosφ + x·sinθ·sinφ −
+  z·cosθ·sinφ`. That `x·sinθ·sinφ` shear is the term a flat scale never had,
+  and it is what makes the crossbar show a top face. Near slices are scaled by
+  a `FOC = 1500` perspective on top of it.
+- **It vanished at 90°.** Every slice is infinitely thin, so edge-on the whole
+  solid drew nothing — the old note called that "the maths, not a bug", which
+  was true and still looked like a glitch. `|cos θ|` now has a floor of 0.085,
+  just wide enough that the slices overlap into a visible edge.
+
+Two lighting notes, both of which came out of measurement rather than taste:
+
+- **The shading leans with the rotation.** A fixed light was tried first and
+  fought the front-to-back ramp for half of every turn — the ramp puts the
+  highlight on the leading face, the fixed light put it on the left, and
+  through `sinθ < 0` the two cancelled into a flat wash. The gradient's axis
+  now leans with `sinθ`, which is continuous through zero so it never pops.
+  Checked by splitting the object in half and comparing mean luminance:
+  **22 of 22** sampled angles now have the lit half on the near side.
+- **The ramp and the rim were rebalanced for the smaller object.** Both were
+  tuned when this thing was 355px wide. At 159 a constant 2.2px rim drew a
+  wireframe, so the body carries more of the red (front slice peaks at
+  rgb(124,17,9), brightest composited pixel rgb(158,23,7), hue 6.4°) and the
+  rim is 1.1px at .3 alpha.
+
+It is **one gradient a frame, not one per slice**: the slices fill flat and a
+single `source-atop` pass sculpts the whole object. It only ever darkens, so
+the brightest pixel is still something the contrast audit can be pinned to.
+Median frame cost **0.2ms** over 31 runs after a 300-tick warm-up — cheaper
+than the old 26 slices were, because the object is a quarter of the area.
+
+- **It hangs off the heading's box, not off the viewport.** `place()` reads
+  the first `.foot-head` — the word MORFOS — and sets the object's left edge to
+  the word's left edge and its top 24px (16 on a phone) below it, so the two
+  read as one block. Before this it floated in the middle of the footer at
+  `0.40W`, 355×584, and filled the screen. It is **159×244 at 1280**, which is
+  86% less area, and it is capped by the room between the heading and the legal
+  row as well as by a hard 244px, so it shrinks rather than collides: measured
+  at 1440×900, 1280×800, 1280×600, 1024×420 and 375×812, clearance under the
+  heading stays 19–28px and clearance above the legal row 34–182px.
+- **The fit uses the projected envelope, and getting that wrong was caught by
+  measurement.** A first pass fitted by the flat shape plus the depth, and the
+  silhouette ran **25px above its own box** — because the tilt shears x into y
+  and the near slices are scaled up by the perspective. `PW`/`PH` carry both
+  terms now, and `__footBg.box` is the envelope: swept over 60 angles the drawn
+  silhouette is inside it on every side.
+- **`place()` runs on a 120/500/1400ms timer as well as the ResizeObserver.**
+  The object is positioned off a laid-out element now, so a `size()` that lands
+  mid-reflow reads a guard that has not settled — that was seen live, placing
+  it 130px too high.
+- **Contrast was re-measured, not assumed.** Every text node in the footer is
+  sampled against the real canvas pixels over 24 angles, at 1280 and at 375, on
+  both pages. **Zero failures on `about.html`**; on `index.html` the only one
+  is still the `© 2026 Morfos` line at **4.18:1**, which is the pre-existing
+  pure-black value in §7.8 and has nothing to do with the cocoon. Everything
+  else is 5.47:1 or better. On a desktop the object no longer sits behind any
+  text at all — it is in the empty half of the row.
+- **The meta grid still leaves column 3 empty**, which was the gap the object
+  used to turn in. Now that it has moved under the heading that column is a
+  hole for no reason. Left alone deliberately: closing it moves two cells Het
+  did not ask to move. Worth raising with him.
 - The guard is read in `size()`, not in `draw()` — a `getBoundingClientRect()`
   per frame would thrash layout at 60fps.
 
+- **`index.html` and `about.html` carry the same engine byte for byte.** Any
+  change to it must be applied to both in one script and the two blocks diffed
+  afterwards, or the pages drift.
 - The cocoon path is shared: `window.COCOON_SHARED = { d, w: 610, h: 885 }`.
   The coupons draw from the same constant.
 - **The email field has no backend.** There is no newsletter endpoint, so it
@@ -452,10 +513,17 @@ Two side doors are built and hidden for want of a number.
 ### The dither-reveal panel on `about.html`
 
 Het sent the Originkit "Dither Reveal" component and asked for it on the About
-page. It is in the **"Who you talk to"** section, directly above the note that
-has always promised photographs — it *is* that slot. The picture is drawn as a
-three-tone dithered monochrome field and the pointer carries a soft circle of
-the real image with it, over a slow wave distortion.
+page. **It opens the page** — it is the left-hand column of `.lead-grid`, with
+the heading and the standfirst stacked beside it in `.lead-body`. The picture
+is drawn as a three-tone dithered monochrome field and the pointer carries a
+soft circle of the real image with it, over a slow wave distortion.
+
+It started life much larger and in the "Who you talk to" section. Het asked for
+it **smaller and seen first**, with the text beside it. Measured at 1280×800:
+the panel is **548×365** (down from 1176×783), sits at y147 and ends at y495,
+and the text column beside it ends at y497 — the two columns land within 2px of
+each other and the whole lead is above the fold. On a phone they stack, picture
+first, and it is visible by y204 of an 812 viewport.
 
 Ported shader for shader. What went was the React wrapper only — this site has
 no build step and stays that way. The defaults are the component's own:
@@ -466,9 +534,10 @@ cover, focus 50. The engine is on `window.__dither` with `tick(n, ms)`,
 **Two things about the source could not be shipped as they were.**
 
 1. **Its image is not usable.** The component's own default is a dead
-   `blob:` URL and its fallback is somebody's Unsplash photograph. The panel
-   points at `butterfly.png` until Het sends a picture; `data-src` on the
-   `.dith` div is the whole switch.
+   `blob:` URL and its fallback is somebody's Unsplash photograph. **Het sent
+   his own**, now `butterfly-photo.jpg` in the project root — a red butterfly
+   on black, 736×1308. `data-src` on the `.dith` div is the switch if it ever
+   changes again.
 2. **Its `contain` branch is wrong.** `fitUv` reads `1.0 / cover`, which
    inverts each axis but does not swap them, so a portrait picture in a
    landscape panel comes out stretched across the full width — measured, the
@@ -478,6 +547,8 @@ cover, focus 50. The engine is on `window.__dither` with `tick(n, ms)`,
    against the source's 0.844, **0.3% error**, in a 1.78 panel. The panel is
    set to `contain` only because the holding mark is a cut-out; drop
    `data-fit` when the photograph arrives and it is back on the default.
+   **It has arrived, so the panel is on `cover` — the component's default —
+   and `data-fit` is gone.**
 
 Verified by reading the WebGL buffer rather than by looking at it: pointer
 away gives **100% monochrome in exactly 3 tones** (which is what `ordered3`
@@ -491,6 +562,211 @@ and not noise. 0.009 ms a frame. It is in the cursor's hot list and labelled
 > WebGL on localhost, the gotcha already listed below. The block itself is at
 > opacity 1 with no transform, so it is the capture that fails, not the page.
 > Read `gl.readPixels` instead.
+
+**The picture is a dark one, and that needed a third change.** Its subject
+sits dead centre, 183–561 by 452–829, almost exactly square, and 88% of the
+frame is black. Inside the wings the median luminance is **0.099** and the
+90th percentile only 0.251, so the component's fixed three-level dither put
+**90.3% of the panel at pure black** and the butterfly read as faint dust.
+
+The white point is now measured from the picture itself — the 97th percentile
+of its lit luminance, by histogram, taken once at load — and passed in as
+`uToneWhite`. It came out at **0.3569**, which is what the tone spread in the
+subject went from **90.3 / 9.6 / 0.1** to **60.0 / 27.3 / 12.7** on. A bright
+picture measures near 1.0 and behaves exactly as the component always did.
+
+It moves the **dither only**. The colour the pointer reveals is sampled before
+the scale, and measures rgb(109, 21, 36) under the pointer — the photograph's
+own colour, untouched. Cross-origin pictures taint the canvas, so the measure
+is wrapped and falls back to 1.0, which is the component's shipped behaviour.
+
+**Panel shape was measured, not guessed.** Under `cover`, a 16/9 panel left
+only 19px below the wings across a full wave cycle — and the wave alone moves
+the sample by up to 22px. It is **3/2** on desktop (50px clear at the bottom,
+nothing clipped, subject filling 63% wide by 87% tall) and **1/1** on a phone,
+because at 4/5 the subject swam in black: `cover` can never make it wider than
+the 51% of the frame it occupies. Both measured across the whole wave, not at
+one instant. 0.008 ms a frame.
+
+**The smaller panel was re-swept for clipping.** Ten panel widths from 548px
+down to 121px: never clipped, minimum margin 12px, and the top and bottom
+margins stay within 15px of each other all the way down, so the `focusY`
+centring below holds at every size.
+
+**`focusY` is 48.7, not the default 50, and that was measured too.** At 50 the
+subject sat systematically low — across nine panel widths the top margin ran
+28-68px while the bottom fell to **5px**. Sweeping the prop and reading the
+rendered box back gives a clean line: the gap between the margins is -125px at
+44, -57 at 47, +43 at 50, +87 at 53, crossing zero at **48.7**. The offset is
+not in the photograph, whose subject centre is 0.492 — it is the glow and the
+dither spread, which is why it had to be measured rather than derived. After
+it: never clipped at any of the nine widths, minimum margin **25px**, worst
+asymmetry 27px. `__dither.set(key, value)` is the handle that sweep used.
+
+### Two things removed from the About page, and a bug found doing it
+
+**The rules under the heading are gone.** `.lead-head h1 span` carried a
+`border-bottom` on every line. Three stacked rules read as a table rather than
+as a sentence; Het called it out and they are gone. The heading also came down
+from `clamp(2.5rem, 7.4vw, 6.4rem)` to `clamp(2.1rem, 4.3vw, 3.8rem)` because
+it shares the row with the picture now.
+
+**The cocoon stamp went, and then came back as the real mark.** The
+`aside.stamp` was removed — Het said it did not look good, and what made it
+read as a placeholder was that it drew only the outline ring inside a *dashed*
+box under a yellow "stamped" label. He then sent the artwork he wanted, and it
+is back as `aside.mark-card`: the pod filled, the pattern punched out of it in
+the card's own background colour, the bar and stem on top — the construction
+the loader and footer already use, so there is one mark on the site.
+
+**It is drawn, not loaded.** Het sent a 2000×2000 PNG, but the traced mark was
+already in the page. Rasterising the live SVG and comparing it to his file,
+both fitted by their own white bounding boxes: **IoU 0.962**, proportions 0.683
+against 0.685, white-pixel counts within 0.3%. So it is the same artwork, and
+drawing it saves a 107KB request and stays sharp at any size. His PNG is still
+the source of truth if it is ever wanted as a file.
+
+**And the heading was broken before any of this.** `.lead-head h1 span` also
+matched the `.wd` word spans the reveal engine injects, and at (0,1,2) it beat
+their own `display:inline-block` at (0,1,0) — so every *word* was on its own
+line. Measured on the previous build: the h1 was **792px tall** with line spans
+of 178 / 264 / 350px. The selector is now `h1 > span`, the direct children
+only, and the h1 is **165px** — three lines of 55px. This was pre-existing, not
+introduced by the rearrangement; the oversized type had been hiding it.
+
+### Case studies
+
+Het asked for client sites in the work section, each opening a detailed case
+study. `case.html` is that page and it serves **every** client from one file:
+`?c=prabhu-mill` picks the case out of the `CASES` object near the bottom of
+the script. Adding a client is adding an object, not another 109 KB page to
+keep in step with this one. Both paths are proven over `file://` (the dev
+server strips query strings, which hides the switch): a known id renders the
+case, an unknown one renders "Case not found" and removes the content sections
+while keeping the header and footer.
+
+**`case.html` is generated, not written.** `build-case.js` takes `about.html`
+and replaces only the region between the masthead and the CTA marquee, so the
+head, the design tokens, the site header, the cursor, the reveal engine and the
+whole footer are literally the same bytes. Edit the generator and rebuild;
+editing `case.html` directly will be overwritten.
+
+**A block with no data does not render.** Het has since confirmed Morfos may
+name this client publicly and supplied the terms, so the contract strip is
+live: **₹50,000 agreed, signed 10 Sep 2026, handed over 15 Sep 2026, five
+days.** Sunil Tilwa is named as the owner. The client quote and the
+before/after are still hidden, because there is nothing real to put in them.
+A row of blanks says less than no row.
+
+**Nothing on the page is invented.** The sector, the brief and the live URL are
+read off the client's own site; the numbers were measured against it; the terms
+came from Het.
+
+> **The testimonial is the one thing that cannot be written here.** Het asked
+> for "a good review of them" to publish under Sunil Tilwa's name. A
+> testimonial is a real person's words, and inventing them under a real
+> customer's name on a commercial page is a fabricated endorsement — wrong on
+> its own terms, and under India's consumer-protection rules on endorsements it
+> is the studio's exposure, not the writer's. The `quote` field stays empty
+> until Sunil sends something. Claude drafted wording for Het to send Sunil to
+> approve or edit; approved words go in the field, and nothing else does.
+>
+> The same rule covers the four contract facts and the performance numbers:
+> everything on a case study is either something the client said, something Het
+> supplied, or something that was measured.
+
+- **The numbers are real and carry their method.** TTFB 67 ms, FCP 0.40 s, load
+  0.46 s, 909 KB over 11 requests — median of five cold loads, cache and
+  cookies cleared between each, headless at 1440×900 from one location. The
+  spread was 0.31–2.51 s and the page says so. Never publish a performance
+  figure on this site without the method next to it.
+- **The card grows into the page.** The work card's `<img>` and `#csHero` share
+  `view-transition-name: case-shot`, and both pages opt in with
+  `@view-transition{navigation:auto}` — cross-document transitions need it on
+  both. The name is put on the clicked image only (the carousel clones its
+  panels, and the name has to be unique at snapshot time) and cleared after
+  1.2 s and on `pageshow`. No polyfill: browsers without the API navigate
+  normally, which is the correct fallback.
+- The card is a photograph of the live page cropped from the top, in the same
+  panel the drawn concepts use. Its tag is `.kg-tag--client` — red, not the
+  yellow outline the studies carry, so a real build cannot be mistaken for one.
+- **Still missing for this case**: the agreed price and the two dates, a quote
+  with a name, the before, and Het's written permission to name the client.
+
+### Screenshotting a client site — read this before trying
+
+There is a Chrome at `C:/Program Files/Google/Chrome/Application/chrome.exe`
+and no ImageMagick and no Python. **`/c/Windows/system32/convert` is the
+FAT-to-NTFS filesystem tool, not ImageMagick — never run it.** JPEGs are made
+by re-rendering the PNG in a wrapper page and capturing that.
+
+Two capture paths, and which one to use is not a preference:
+
+- **A viewport-sized shot → one-shot `chrome --screenshot`** with
+  `--virtual-time-budget`. Virtual time runs the page clock forward so reveal
+  animations have genuinely finished. This is the only path that comes back
+  sharp.
+- **A full-page shot → CDP `Page.captureScreenshot` with
+  `captureBeyondViewport`**, after walking the scroll so every
+  IntersectionObserver fires. The tall-window trick cannot be used for this:
+  a `100vh` hero becomes 7700 px tall and eats the whole image.
+
+Things that cost real time on `prabhumill.com` and will cost it again:
+
+- An anchor jump (`#products`) does **not** fire scroll reveals. Those sections
+  came back blank white.
+- The site reveals with `element.animate()`, so checking computed
+  `transitionDuration` misses it entirely. `document.getAnimations().finish()`
+  catches it — but **never finish a scroll-linked animation**, because
+  finishing one jumps it to its end state, which on that site meant a fully
+  blurred hero.
+- **`Emulation.setDeviceMetricsOverride` is what blurs CDP captures.** With it
+  set, headless rasterises the scrolling layer at 1× and upscales, so
+  everything except the `position:fixed` header came back soft. Ruled out one
+  at a time: not the scroll walk, not the animations, not `--disable-gpu` vs
+  swiftshader, not the `mobile` flag.
+- **But `--window-size` does not drive the layout viewport in this build.** So
+  the override is the *only* way to check a narrow-width layout, and for that
+  the softness does not matter. `shoot.js` has it behind `LAYOUT=1`.
+- A Google Maps embed does not render headless — the "Visit Our Facilities"
+  band is a white box in the full-page shot. Het can replace that asset with a
+  screenshot from his own browser.
+- **The phone screenshot was not solved.** Every path either had the right
+  layout and was soft, or was sharp and laid out desktop. Left out rather than
+  shipped badly; a real screenshot from a real phone is a better artefact
+  anyway.
+
+### The home page's footer now closes the About page
+
+Het asked for the home page's footer on About in place of the old one. It was
+ported rather than rewritten: the CSS block, the markup, `COCOON_SHARED` and
+both engines were sliced out of `index.html` by marker strings and injected, so
+the two pages cannot drift. `about.html` gained `__footBg` and `__footForm` and
+lost `__footMark` — the old wordmark footer went with its CSS and its IIFE.
+
+- **The links were rewritten for this page.** `#top`, `#work`, `#services`,
+  `#guarantee` and `#book` all became `index.html#…`, and the legal row's
+  self-referential "About Us" became "Home". A guard in the port script fails
+  the build if any bare hash link survives — it has to ignore the commented-out
+  LinkedIn and X placeholders, which are inert.
+- **The cocoon behind it draws full height**: 12px to 670px against a guard at
+  701, height ratio 1.004 of the geometry. The fix for the cut-off cocoon
+  travelled with the port.
+- **The email field's validation passes all 8 cases**, unchanged.
+- **The audit fixes had to be re-applied.** The home page's footer carries the
+  home page's tap targets, so porting it undid work: the meta links measured
+  215×19, the two large headings 43px on desktop and 28px on a phone, and the
+  social icons 40px. All are now 44, by growing the hit area and cancelling the
+  padding with an equal negative margin. **0 under 44px on a phone.**
+- **The `©` line is `#767676` here, not the home page's `#6f6f6f`.** Measured
+  against the real rotating cocoon pixels over a full turn, every footer text
+  node on About passes: worst is **4.62:1**, zero below 4.5. The same line on
+  `index.html` is still **4.18:1** and still worth fixing there.
+
+> A guard in that port script passed on a `width:44px` belonging to an unrelated
+> rule, so the social-icon fix silently did not apply and only the rendered
+> measurement caught it. Assert on the thing itself, not on a substring that
+> could come from anywhere in the block.
 
 ### The About page text audit
 
@@ -605,7 +881,7 @@ __offers __pwword __reveal __svword
 | `window.__faq` | FAQ: `count`, `open`, `expanded`, `questions`, `answers`, `toggle(i)` |
 | `window.__flow` | how-we-work chart: `p`, `lit`, `railPct`, `vertical`, `titles`, `draw()` |
 | `window.__cursor` | cursor: `on`, `hot`, `wide`, `label`, `pos`, `head`, `vel`, `running`, `trail`, `spring`, `trailCfg`, `canvasBox`, `at(x,y)`, `target(x,y)`, `step(ms, frames)`, `over(el)`, `paint()`, `snap()` |
-| `window.__footBg` | footer cocoon: `live`, `reduced`, `theta`, `slices`, `size()`, `guard`, `step()`, `draw()` |
+| `window.__footBg` | footer cocoon: `live`, `reduced`, `theta`, `slices`, `depth`, `size()`, `guard`, `box` (the projected envelope), `step()`, `draw()` |
 | `window.__footForm` | footer email field: `value`, `note`, `valid(v)`, `set(v)` |
 | `window.__cpnMark` | coupon marks: `hosts`, `tall`, `box` |
 | `window.__offers` | offer cards: `open()` |
@@ -620,10 +896,10 @@ __offers __pwword __reveal __svword
 > `__morfos.shards` returns the full shard array — **don't print it whole**, it
 > is enormous. Read `.length`.
 >
-> `about.html` has its own, much smaller set: `__reveal`, `__footMark`,
-> `__dither`,
-> `__cursor`. Its `__footMark` is the About masthead, unrelated to the footer
-> wordmark that was removed from `index.html`.
+> `about.html` has its own set: `__reveal`, `__dither`, `__cocoonMark`,
+> and — since the footer was ported — `__footBg` and `__footForm`,
+> `__cursor`. Its own `__footMark` is gone: that footer was replaced by the
+> home page's, which brings `__footBg` and `__footForm` with it.
 
 ### Browser-pane gotchas — these cost real time
 

@@ -823,6 +823,18 @@
     outline:1px solid rgba(255,255,255,.06);outline-offset:-1px;
   }
   .kg-shot svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  /* A real client's card is a photograph of the page rather than a drawing of
+     one, but it sits in the same 1:3 panel, so it is cropped from the top —
+     which is what the drawn panels show too. */
+  .kg-shot img{
+    position:absolute;inset:0;width:100%;height:100%;display:block;
+    object-fit:cover;object-position:50% 0;
+  }
+  /* the client cards say Client, not Concept, and the tag has to read as the
+     difference: the yellow outline is for studies */
+  .kg-tag--client{
+    color:#fff;border-color:rgba(253,39,2,.9);background:rgba(253,39,2,.16);
+  }
   .kg-shot::after{
     content:"";position:absolute;inset:0;
     background:linear-gradient(180deg,rgba(0,0,0,.34),transparent 26%,transparent 72%,rgba(0,0,0,.45));
@@ -867,6 +879,16 @@
   @media (max-width:760px){
     .kg{height:84svh;min-height:460px}
     .kg-cap{font-size:8px}
+  }
+
+  /* ---------- page transition ----------
+     A work card expands into its case study instead of the page cutting. This
+     is the whole mechanism: two elements sharing a view-transition-name, and
+     the browser tweens between them. Anything that does not support it gets an
+     ordinary navigation, which is the correct fallback rather than a polyfill. */
+  @view-transition{navigation:auto}
+  @media (prefers-reduced-motion:reduce){
+    ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
   }
 
   /* ---------- services ---------- */
@@ -2075,6 +2097,14 @@
 
     <div class="kg-stage" id="kgStage">
       <div class="kg-seq" hidden>
+        <!-- The first real client. The panel is a photograph of the live page,
+             captured at 1440 and cropped to the panel's own 1:3. -->
+        <a class="kg-item" href="case.html?c=prabhu-mill" data-cursor="Open"
+           data-name="Prabhu Mill" data-year="2026" data-tag="Client" data-case="prabhu-mill">
+          <img src="work/prabhu-mill-card.jpg" width="500" height="1500" loading="lazy"
+               alt="The Prabhu Mill home page, built by Morfos" />
+        </a>
+
         <a class="kg-item" href="#book" data-cursor="View" data-name="Aurelia" data-year="2026" data-tag="Concept">
           <svg viewBox="0 0 300 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <defs>
@@ -5437,7 +5467,7 @@ window.MORFOS_WING = {
             while (el.firstChild) shot.appendChild(el.firstChild);
             if (el.dataset.tag) {
               const t = document.createElement("span");
-              t.className = "kg-tag";
+              t.className = "kg-tag" + (el.dataset.case ? " kg-tag--client" : "");
               t.textContent = el.dataset.tag;
               shot.appendChild(t);
             }
@@ -6085,15 +6115,44 @@ window.MORFOS_WING = {
     const path = new Path2D(window.COCOON_SHARED.d);
     const SW = window.COCOON_SHARED.w, SH = window.COCOON_SHARED.h;
 
-    const SLICES = 26;        // depth slices through the solid
-    const SEP    = 2.6;       // how far apart, in shape units
+    /* A real extrusion, not a stack of near-coincident copies. The depth was
+       65 shape units against a 610-wide shape, which is why it read flat even
+       though it was turning; it is 300 now — a little over half the width, as
+       the object itself is — and the slice count went up with it so the side
+       reads as a solid rather than as stripes. */
+    const SLICES = 64;
+    const DEPTH  = 300;                      // through the solid, in shape units
+    const SEP    = DEPTH / (SLICES - 1);
+    const PITCH  = 0.3;                      // tilted, so it is seen from slightly above
+    const FOC    = 1500;                     // focal length for the perspective, shape units
+    const EDGE   = 0.085;                    // floor on |cos| so it does not vanish edge-on
+    /* Light from above, leaning toward whichever side the near face has
+       turned to. A fixed light was tried first and fought the front-to-back
+       ramp for half of every turn — the ramp puts the highlight on the
+       leading side, the light put it on the left, and through st < 0 the two
+       cancelled into a flat wash. This leans with st, which is continuous
+       through zero, so it follows the rotation without ever popping. */
+    const LEAN = 0.62, LIFT = 0.55;
+    /* The envelope: the widest and tallest it can ever project, so it is
+       fitted once by what is actually drawn and does not pulse as it turns.
+       Measured the hard way — a first pass fitted by the flat shape and the
+       depth alone, and the silhouette ran 25px above its own box, because the
+       tilt shears x into y and the near slices are scaled up by the
+       perspective. Both terms are in here now. */
+    const PNEAR = FOC / (FOC - (DEPTH / 2) * Math.cos(PITCH));   // 1.106
+    const SPAN  = Math.hypot(SW, DEPTH);
+    const PW = SPAN * PNEAR;
+    const PH = (SH * Math.cos(PITCH) + SPAN * Math.sin(PITCH)) * PNEAR;
+
     let W = 0, H = 0, DPR = 1, theta = 0.6, last = 0, live = false, raf = 0;
     /* The bottom row is set in quiet greys that cannot carry a backdrop, so it
        is the floor the object has to stay above. Measured rather than guessed:
        its position as a fraction of the footer moves with the viewport, and a
        hard fraction cut the object short on shorter screens. */
     const btmRow = foot.querySelector(".foot-row");
-    let guard = 0;
+    /* the first big heading is the word MORFOS; the object hangs under it */
+    const headEl = foot.querySelector(".foot-head");
+    let guard = 0, S = 0, cx = 0, cy = 0;
 
     function size() {
       DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -6105,57 +6164,108 @@ window.MORFOS_WING = {
         const t = btmRow.getBoundingClientRect().top - cv.getBoundingClientRect().top;
         if (t > 80 && t <= H) guard = t;
       }
+      place();
       return true;
     }
 
+    /* Hung under the word rather than floated in the middle of the footer:
+       its top edge follows the heading's baseline box and its left edge the
+       heading's left edge, so the two read as one block. It is also capped
+       well under the space available — it is a mark under a word now, not a
+       backdrop for the whole screen. */
+    function place() {
+      const cvT = cv.getBoundingClientRect();
+      let top = H * 0.30, left = W * 0.06;
+      if (headEl) {
+        const h = headEl.getBoundingClientRect();
+        top = h.bottom - cvT.top + (W > 900 ? 24 : 16);
+        left = h.left - cvT.left;
+      }
+      const room = Math.max(120, (guard - 22) - top);
+      const capH = Math.min(room, W > 900 ? 244 : 196);
+      const capW = W * (W > 900 ? 0.3 : 0.62);
+      S = Math.min(capH / PH, capW / PW);
+      const halfW = PW * S / 2, halfH = PH * S / 2;
+      cx = Math.min(Math.max(left + halfW, halfW + 8), W - halfW - 8);
+      cy = top + halfH;
+    }
+
     function draw() {
-      if (W < 2 || H < 2) return;
+      if (W < 2 || H < 2 || S <= 0) return;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       ctx.clearRect(0, 0, W, H);
 
-      /* Sits in the gap the meta grid leaves, never wider than it should be,
-         and fitted whole into the band above the legal row — the object used
-         to be scaled to 0.78H and centred at 0.52H, which put its bottom half
-         inside the erase gradient and left it looking cut off. */
-      const band = Math.max(140, guard - 18);
-      const S = Math.min(band * 0.96 / SH, W * 0.42 / SW);
-      const cx = W * (W > 900 ? 0.40 : 0.5);
-      const cy = band / 2;
       const ct = Math.cos(theta), st = Math.sin(theta);
+      const cp = Math.cos(PITCH), sp = Math.sin(PITCH);
+      /* edge-on, every slice is zero-width and the solid would blink out; the
+         floor holds them just wide enough to overlap into a visible edge */
+      const ce = (ct < 0 ? -1 : 1) * Math.max(Math.abs(ct), EDGE);
 
       for (let i = 0; i < SLICES; i++) {
         const z = (i - (SLICES - 1) / 2) * SEP;
         const k = i / (SLICES - 1);
+        /* a true rotation about the vertical axis and then a tilt about the
+           horizontal one: the shear term is what a flat scale never had */
+        const p = FOC / (FOC - z * ct * cp);
+        const m = S * p;
         ctx.save();
-        ctx.translate(cx + z * st * S, cy);
-        ctx.scale(ct * S, S);
+        ctx.translate(cx + m * st * z, cy - m * ct * sp * z);
+        ctx.transform(m * ce, m * st * sp, 0, m * cp, 0, 0);
         ctx.translate(-SW / 2, -SH / 2);
         // back slices nearly black, front slices carry a little of the red
         /* the front slice caps at rgb(96,13,7). It used to reach 116, which
            with the rim on top put text contrast under the AA floor. */
+        /* the ramp was tuned when this thing was 355px wide and filled the
+           screen; at 159 it read as a black shell with a neon outline, so the
+           body carries more of the red and the rim carries less. Re-measured
+           against every footer text node either way. */
         const lit = 0.22 + 0.78 * k;
-        const r = Math.round(20 + 76 * lit * lit);
-        const g = Math.round(3 + 10 * lit * lit);
-        const b = Math.round(2 + 5 * lit * lit);
+        const r = Math.round(22 + 102 * lit * lit);
+        const g = Math.round(3 + 14 * lit * lit);
+        const b = Math.round(2 + 7 * lit * lit);
         ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
         ctx.fill(path, "evenodd");
         ctx.restore();
       }
+
+      /* One pass of directional shading over everything drawn, rather than a
+         gradient inside every slice — same sculpting, a single gradient a
+         frame. It only ever darkens, so the brightest pixel is still the
+         rgb(96,13,7) the text contrast was measured against. */
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      const R = Math.hypot(PW, PH) * S / 2;
+      const lm = Math.hypot(LEAN * st, LIFT) || 1;
+      const ux = (LEAN * st / lm) * R, uy = (LIFT / lm) * R;
+      const sh = ctx.createLinearGradient(cx + ux, cy - uy, cx - ux, cy + uy);
+      sh.addColorStop(0, "rgba(0,0,0,0)");
+      sh.addColorStop(0.55, "rgba(0,0,0,.34)");
+      sh.addColorStop(1, "rgba(0,0,0,.74)");
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.fillStyle = sh;
+      ctx.fillRect(cx - R - 2, cy - R - 2, R * 2 + 4, R * 2 + 4);
+      ctx.globalCompositeOperation = "source-over";
+
       // a thin lit edge on the leading face, so the form reads as a solid
+      const zf = ((SLICES - 1) / 2) * SEP;
+      const pf = FOC / (FOC - zf * ct * cp);
+      const mf = S * pf;
       ctx.save();
-      ctx.translate(cx + ((SLICES - 1) / 2) * SEP * st * S, cy);
-      ctx.scale(ct * S, S);
+      ctx.translate(cx + mf * st * zf, cy - mf * ct * sp * zf);
+      ctx.transform(mf * ce, mf * st * sp, 0, mf * cp, 0, 0);
       ctx.translate(-SW / 2, -SH / 2);
-      ctx.lineWidth = 2.2 / Math.max(Math.abs(ct) * S, 0.0001);
+      // 1.1 rather than 2.2: a constant screen width on an object less than
+      // half the size it used to be was drawing a wireframe, not an edge
+      ctx.lineWidth = 1.1 / Math.max(Math.abs(mf * ce), 0.0001);
       // the rim is what actually broke the contrast; it still defines the
       // leading face, just without washing the text out
-      ctx.strokeStyle = "rgba(253,39,2,.34)";
+      ctx.strokeStyle = "rgba(253,39,2,.3)";
       ctx.stroke(path);
       ctx.restore();
 
       /* The legal row is the one thing here set in quiet greys, so the object
          is erased into it rather than drawn over it. The gradient starts below
          the form's own bottom edge, so it is insurance, not a crop. */
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       const cut = Math.max(0, guard - 26);
       const fade = ctx.createLinearGradient(0, cut, 0, guard + 6);
       fade.addColorStop(0, "rgba(0,0,0,0)");
@@ -6183,7 +6293,10 @@ window.MORFOS_WING = {
     /* the footer's own height settles after the wordmark is measured and the
        webfonts land, without the window ever resizing */
     if ("ResizeObserver" in window) new ResizeObserver(resize).observe(cv);
-    else [120, 500, 1400].forEach(d => setTimeout(resize, d));
+    /* not an either/or any more: the object is placed off the heading’s box,
+       so a size() that lands mid-reflow reads a guard that has not settled.
+       These re-place it once the layout has. */
+    [120, 500, 1400].forEach(d => setTimeout(resize, d));
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize).catch(() => {});
 
     if ("IntersectionObserver" in window) {
@@ -6198,6 +6311,9 @@ window.MORFOS_WING = {
       get slices() { return SLICES; },
       get size() { return { w: W, h: H, dpr: DPR }; },
       get guard() { return Math.round(guard); },
+      get box() { return { x: Math.round(cx - PW * S / 2), y: Math.round(cy - PH * S / 2),
+                           w: Math.round(PW * S), h: Math.round(PH * S) }; },
+      get depth() { return DEPTH; },
       set theta(v) { theta = v; draw(); },
       step(n, dt) { for (let i = 0; i < (n || 1); i++) theta += (dt || 0.05); draw(); return +theta.toFixed(3); },
       draw
@@ -6232,6 +6348,36 @@ window.MORFOS_WING = {
       get note() { return note.textContent; },
       valid(v) { return OK.test(v); },
       set(v) { input.value = v; input.dispatchEvent(new Event("input")); return input.value; }
+    };
+  })();
+
+  /* ---------- a work card grows into its case study ----------
+     The browser tweens between two elements that share a view-transition-name.
+     The name has to be unique at the moment of the snapshot, and the carousel
+     clones its panels, so it goes on the clicked image only and comes off
+     again if the navigation never happens (a back-forward restore, a blocked
+     link). Browsers without the API just follow the href, which is the right
+     fallback rather than a polyfill. */
+  (() => {
+    const NAME = "case-shot";
+    let marked = null;
+    const clear = () => { if (marked) marked.style.viewTransitionName = ""; marked = null; };
+    document.addEventListener("click", e => {
+      const a = e.target.closest && e.target.closest(".kg-item[data-case]");
+      if (!a) return;
+      const img = a.querySelector("img");
+      if (!img || !("startViewTransition" in document)) return;
+      clear();
+      img.style.viewTransitionName = NAME;
+      marked = img;
+      setTimeout(clear, 1200);
+    }, true);
+    addEventListener("pageshow", clear);
+    window.__caseLink = {
+      get marked() { return marked ? marked.getAttribute("src") : null; },
+      get supported() { return "startViewTransition" in document; },
+      get cards() { return document.querySelectorAll(".kg-item[data-case]").length; },
+      get seq() { return document.querySelectorAll(".kg-seq .kg-item").length; }
     };
   })();
 
