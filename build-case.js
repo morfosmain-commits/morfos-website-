@@ -22,13 +22,13 @@ const rep = (a, b, label) => {
 };
 
 /* ---------------- head ---------------- */
-rep("<title>About Morfos — the Shopify studio that puts it in writing</title>",
+rep("<title>About Morfos — the Shopify and 3D web studio that puts it in writing</title>",
     "<title>Case study — Morfos</title>", "title");
 rep('<link rel="canonical" href="https://www.morfos.in/about.html" />',
     '<link rel="canonical" href="https://www.morfos.in/case.html" />', "canonical");
 /* the description, og: and twitter: copy are rewritten per case by the
    renderer, because one file serves every case study */
-rep('<meta name="description" content="Morfos builds Shopify stores for Indian D2C and e-commerce founders from Mumbai. Fixed price, live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules." />',
+rep('<meta name="description" content="Morfos builds Shopify stores and 3D websites for founders and brands in India, from Mumbai. Live in 7 days, 14-day refund and a rebuild until it is right. Meet the founders and read the house rules." />',
     '<meta name="description" id="metaDesc" content="A Morfos build, in detail: what the site had to do, what was shipped, and what it measures." />',
     "description");
 

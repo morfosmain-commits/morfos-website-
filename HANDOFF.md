@@ -4,30 +4,80 @@
 It covers what the project is, how to work on it, what exists on disk, what is
 finished, and what to do next — in priority order.
 
-Last updated: 2026-09-21 (case studies: `case.html`, the first client in the work carousel).
+> **Start here, in this order.**
+> 1. Read §2. Those are standing instructions from Het and they apply to every
+>    task, not just the first one. The short version: **measure, do not assert**,
+>    keep the scope exactly as asked, and never invent an image or a quote.
+> 2. Skim §5 for whatever area the new task touches. Most of the expensive
+>    mistakes on this project have already been made once and written down.
+> 3. Take a backup of the file before editing it (§4), and run the integrity
+>    check in §8 afterwards.
+>
+> **If Het has not said what he wants yet, the answer is §7.1: deploy.** The
+> work has been finished and verified for several sessions and is still not
+> live — and it now includes a working booking system, which makes shipping
+> worth more than it was.
+
+Last updated: 2026-09-21 (second session of the day).
+Last commit: `7691d37 "Update website"` — a **good** state, everything in it
+is verified. Working tree clean apart from this file.
 
 ---
 
 ## 0. The two things to know first
 
 1. **Nothing is deployed.** `www.morfos.in` is still serving an older build.
-   Until the current files ship, none of the SEO work, none of the copy
-   changes and none of the bug fixes are live.
-2. **Commit `546d4ca "Update website"` captured the footer mid-rebuild** — it
-   contains a broken bracket layout, a 19×23px tap target and a failing
-   contrast ratio. All the fixes for those, plus everything since, are sitting
-   **uncommitted** in `index.html` and `about.html`. Do not treat the last
-   commit as a good state to fall back to.
+   Until the current files ship, none of the SEO work, none of the copy, none
+   of the bug fixes and none of the case-study work is live. **This is the
+   single highest-value thing left to do** and it is step 1 of §7.
+2. **The site takes bookings and silently drops them.** `BOOK_CFG.endpoint` is
+   empty, so the form validates, says thank you, and posts nowhere. The Apps
+   Script that receives them is written and sitting in `morfos-booking.gs`,
+   unpasted. See §6. This is the highest business risk on the list.
 
-Deploying is step 1 of §7.
+Everything is committed and the last commit is a good state to fall back to,
+which was **not** true in earlier sessions — the note that used to be here
+about `546d4ca` being a bad intermediate no longer applies.
 
 ---
 
 ## 1. What this is
 
-MORFOS is a Shopify launch-partner studio based in **Mumbai, Maharashtra**. It
-sells fixed-price Shopify store builds delivered in 7 days, backed by a 14-day
+MORFOS is a launch-partner studio based in **Mumbai, Maharashtra**. It builds
+**Shopify stores and 3D websites**, delivered in 7 days, backed by a 14-day
 refund and a rebuild-until-right commitment.
+
+> **The "fixed price in writing" positioning is dead — do not bring it back.**
+> The site led on it for a long time. Het killed it: *"i dont like the fixed
+> price in writing part it sounds very negative ... this looks we have fixed
+> price and we wont negotiate ... and that is not even our offer."* The site
+> leads on **speed and the refund** now, and price appears only in the
+> calculator, as an estimate. The same message also corrected two other
+> things the copy had wrong: the studio is **not Shopify-only**, and its
+> customers are **founders and brands**, not "founders who have been burned
+> before". §5 *The copy correction* has the full list of what moved.
+
+**What the site is for.** It has one job: convince an e-commerce founder who
+has been burned before — quoted unfairly, ghosted mid-project, or handed a
+store that does not look credible — that this studio is safe to hire, and get
+them onto a call. Everything on it is downstream of that.
+
+**What that means in practice, and it shapes most design decisions:**
+
+- **Evidence beats adjectives.** The differentiator is that the promises are
+  structural — a price in writing, a date in the contract, a refund. So the
+  site shows receipts rather than claims: the case studies lead with the
+  agreed price and the two dates, the performance numbers carry the method
+  they were measured by, and nothing is published that cannot be pointed at.
+  This is also why fabricated testimonials are out, not merely as an ethical
+  line but because the whole proposition is "we do not bluff".
+- **The craft is the argument.** A studio selling website builds is judged on
+  its own website first. That is why there are thirteen hand-built engines in
+  here rather than a template, and why "it looks fine" is never the standard —
+  see §2.
+- **It has to be found.** Organic search is the acquisition channel; there is
+  no ad budget in play. Hence the SEO work in §7.6 and the copy problem in
+  §7.5.
 
 The site is **self-contained static HTML** — no build step, no framework, no
 package manager, no bundler. All CSS, JS, traced SVG geometry and canvas
@@ -36,7 +86,9 @@ explicitly told otherwise.
 
 - **Working directory:** `C:\Users\HET\New folder`
 - **Platform:** Windows 11. The Bash tool is Git Bash; PowerShell also works.
-- **Git:** yes. Last commit `546d4ca`, branch `main`. See §0 point 2.
+- **Git:** yes, branch `main`. Last commit `7691d37 "Update website"` — a
+  good, verified state. Het also commits from outside the Claude session, so
+  check `git log` at the start rather than assuming.
 - **Host:** Vercel, Mumbai edge (`bom1`). TTFB ~7ms, ~111KB gzipped.
 - **Contact:** `support.morfos@gmail.com`
 - **Instagram:** `https://www.instagram.com/morfos.social/` (the only social
@@ -100,15 +152,18 @@ constantly; assume they apply even when unstated.
 
 | File | Size | What it is |
 |---|---|---|
-| `index.html` | 415 KB | **The main site.** Most work happens here. Was `morfos.html` — renamed. |
-| `case.html` | 109 KB | **Generated — do not hand-edit.** One file serves every case study; `?c=<id>` picks one. Built from `about.html` by `build-case.js`. |
-| `work/` | 570 KB | Screenshots of client sites. `prabhu-mill-{card,hero,full}.jpg`. |
-| `about.html` | 99 KB | About page. Broadsheet layout. Same site header, cursor engine **and footer** as the home page. Carries the dither-reveal panel. |
+| `index.html` | 424 KB | **The main site.** Most work happens here. Was `morfos.html` — renamed. |
+| `about.html` | 104 KB | About page. Broadsheet layout. Same site header, cursor engine **and footer** as the home page. Carries the dither-reveal panel. |
+| `case.html` | 111 KB | **Generated — do not hand-edit.** One file serves every case study; `?c=<id>` picks one. Rebuild with `node build-case.js`. |
+| `build-case.js` | 21 KB | Generates `case.html` from `about.html`. **The `CASES` object in here is where all case-study copy lives.** Dev tool, not served. |
+| `capture-site.js` | 10 KB | Screenshots a client site for a case study. Driven over CDP; needs nothing installed. Read §5 *Screenshotting a client site* before touching it. Dev tool, not served. |
+| `work/` | 1.1 MB | Client-site screenshots. `prabhu-mill-card.jpg` (560×1680, the carousel panel), `-hero.jpg` (2160×1350), `-full.jpg` (1800×8914, the scroll-through). |
+| `butterfly-photo.jpg` | 24 KB | Het's photograph, 736×1308. Feeds the dither panel on `about.html`. |
 | `client-roster.html` | 164 KB | Client portal, PIN-gated. `noindex,nofollow`. |
 | `frostbreak.html` | 18 KB | Unrelated scratch demo. Live but `noindex,nofollow`. |
 | `morfos-booking.gs` | 5 KB | Google Apps Script for the booking endpoint. **Not part of the site** — it gets pasted into script.google.com. |
 | `robots.txt` | 0.2 KB | Allows all, disallows portal + demo, points at the sitemap. |
-| `sitemap.xml` | 0.4 KB | 2 URLs: `/` and `/about.html`. |
+| `sitemap.xml` | 0.6 KB | 3 URLs: `/`, `/about.html`, `/case.html?c=prabhu-mill`. |
 | `og-image.png` | 74 KB | 1200×630 social share card, drawn in the site's own faces. |
 | `favicon-64.png` | 2 KB | The favicon actually linked. |
 | `apple-touch-icon.png` | 6.7 KB | 180×180 home-screen icon. |
@@ -181,18 +236,341 @@ Thirteen scroll- and pointer-driven engines, all verified. Condensed:
 | Area | What's there |
 |---|---|
 | **Loader** | Traced-SVG wordmark timeline, skippable. |
-| **Hero** | Canvas butterfly that shatters into 22 shards on pointer proximity and reassembles. Click impulse, drag with throw, wing beat, magnetic pills. Leaving the hero knits it back together and flies it out — see below. |
+| **Hero** | Canvas butterfly that shatters into 22 shards on pointer proximity and reassembles. Click impulse, drag with throw, wing beat, magnetic pills. Leaving the hero knits it back together and flies it out — see below. The **MORFOS wordmark behind it** arrives on a curtain mask reveal. |
 | **Statement** (`#statement`) | Word-by-word mask reveal, retimed to finish mid-screen. |
-| **Work** (`#work`) | 3D perspective filmstrip, draggable, 12 cloned panels with drawn SVG artwork. |
+| **Work** (`#work`) | 3D perspective filmstrip, draggable, cloned panels. Six are drawn SVG concepts; **one is a real client** (Prabhu Mill) whose panel is a photograph and which opens a case study. A tap opens it — see *the click that never reached the card* below. |
 | **Services** (`#services`) | Three stepped panels + ASCII canvas + per-letter corner word. |
-| **How we work** (`#process`) | Flow chart: a rail that draws itself, four nodes lighting in order. Vertical on phones. |
+| **How we work** (`#process`) | Flow chart: a rail that draws itself, four nodes lighting in order, **stopping on each one for 950ms** and picking it out. Vertical on phones. |
 | **Offers** (`#referral`) | Two torn two-part coupon tickets, viewBox 300×186, notches cut with an SVG `<mask>`. Each carries the real traced cocoon mark at 28 units tall. |
-| **Calculator** (`#calculator`) | Working price calculator, geometric product slider, rolling digit figure. **Floor is ₹68,000**, default reads ₹1,00,000–₹1,22,000. |
-| **Guarantee** (`#guarantee`) | Curtain-reveal cards + animated capacity meter. |
+| **Calculator** (`#calculator`) | Working price calculator, geometric product slider, rolling digit figure. **Floor is ₹30,000, ceiling ₹1,50,000**, default reads ₹42,000–₹48,000. |
+| **Guarantee** (`#guarantee`) | Curtain-reveal cards + a capacity meter whose twelve bars **fill with the scroll** and are full when the box is centred. |
 | **FAQ** (`#faq`) | Six Q&A, accordion, first open by default. |
 | **Booking** (`#book`) | Full state machine. See §6. |
 | **Footer** | Full-viewport closing screen. See below. |
 | **Cursor** | Spring-damper follow + tapered trail ribbon. See below. |
+| **Case studies** | `case.html`, one file per every client via `?c=<id>`. See below. |
+
+### Section order — the booking card sits under How we work
+
+Het: *"a book a 15 min call section is very low place it below how we work
+section and shift other sections downwards."* `#book` was between the FAQ and
+the footer; it is now directly after `#process`, and the ticker, offers,
+calculator, guarantee and FAQ all moved down behind it. On a 1280x800 window
+it went from about y8800 to **y4783**, with How we work starting at y4317.
+
+The numbered eyebrows (01 work, 02 services, 03 process, 04 referral …) were
+**left alone deliberately**: `#book` has never carried one, so the numbered
+run is still contiguous with the unnumbered call to action sitting inside it.
+If Het wants it numbered, everything below it has to be renumbered too.
+
+Four headings moved with it, all of them still describing the studio as
+Shopify-only or reading badly: *How we build your **website** in 7 days*,
+***Website** cost calculator*, *Our build guarantee: refund, rebuild, 7 days*
+and *Frequently asked questions*.
+
+### The butterfly: the seat is a continuous function of scroll
+
+Het: *"the butterfly is just shifting its place i want a smooth movement
+throughout the website it is lagging a little."* Getting this right took three
+passes and the first two were wrong in ways only a continuous-scroll
+measurement showed.
+
+**The measurement that mattered.** Every earlier test sampled scroll positions
+and let the butterfly settle at each one, which flatters it enormously.
+Scrolling **continuously, 12px a frame down the whole page**, the version Het
+was complaining about was on a heading's line for **23.7% of frames** and had
+its seat clamped against the top or bottom edge of the window for **38%**.
+With nine headings across 9000px there is no heading in the perching band for
+most of the page, so "pick the best heading" cannot work — for most of the page
+the honest answer is that there isn't one.
+
+**What it does now.** The seat is not a choice, it is a continuous function of
+scroll position. A is the last heading at or above the aim line, B the first
+below it, and
+
+    u = (aim - A.cy) / (B.cy - A.cy)
+
+runs 0 → 1 between them. The instant B reaches the aim line, B becomes the new
+A and u resets from 1 to 0 **at the same point on screen**, so there is no seam.
+A dwell of 0.34 at each end keeps it sitting on a heading rather than
+permanently drifting, and each dwell fades out over 0.12vh as its own heading
+nears the edge of the band — which is what stops it pinning against an edge
+waiting for a heading that has already gone. Both blended points are clamped
+into the **band**, never into the window, so it cannot be parked against an
+edge at all.
+
+| measured over a full page scroll | before | after |
+|---|---|---|
+| frames sitting on a heading's line | 23.7% | **68%** (the rest is in transit) |
+| frames with the seat against a window edge | 38% | **0%** |
+| frames that are neither sitting nor flying | — | **0** |
+| worst single-frame jump | **625px** | 69.6px at 12px/frame |
+
+- **The 625px jump was the case the first blend missed.** It only covered
+  "no heading in the band". Where two are in it at once — the booking card and
+  the offers, the guarantee and the FAQ — one left the band while the next was
+  already inside it and the seat switched in a single frame: **531px and 625px,
+  twice on the way down**. Blending *every* consecutive pair is what fixed it.
+- **The remaining step scales with scroll speed, which is the right shape.**
+  Swept at 6, 12 and 30px a frame the worst frame is 37 / 70 / 115px — the
+  butterfly moves faster when the page does, and never jumps.
+- Symmetric coming back up: 652 frames, **0** off screen, **0** covering a
+  heading's words while sitting, never two butterflies and never none.
+
+**The chase underneath it was rewritten too.** It used to be `px += dx * k`,
+a fixed share per frame: frame-rate dependent, and slow enough to hide the
+seat's jumps, which is precisely what left it trailing the heading it was
+supposed to be sitting on. It is now **seat + offset**, where the offset is a
+spring-damper (w0 11 rad/s, z 0.9) integrated in fixed 1/240s substeps off real
+elapsed time. Riding a heading the offset is **0.0px**, so it is exactly on its
+seat with no lag. The spring is now only a safety net: it absorbs anything that
+moves the seat more than 120px in one frame, which a scroll cannot do but a
+resize or a late image can.
+
+**And the "lagging" was mostly not CPU — the instrument said so.** A first
+measurement had the engine at 1.55ms a frame while scrolling, which would have
+been a quarter of the frame budget. Timing the same loop with the tick removed
+showed **1.47ms of it was `scrollTo` itself**. Isolated properly, the engine
+costs **0.032ms a frame before and 0.0075ms after** — a real 4x saving from not
+re-choosing the heading every frame, but far too small to have been what Het
+could see. The visible fault was the chase algorithm, not the cost. *This is
+the third time on this project that a frame-time measurement has been wrong
+rather than the code — always difference two runs of the same harness before
+believing one.*
+
+### The copy correction, and where the curtain actually goes
+
+A second message the same day corrected four things. Two of them were
+corrections to work done an hour earlier, which is the useful part to read.
+
+**The curtain belongs to the MORFOS wordmark, not the tagline.** Asked which
+"MORFOS text" he meant, Het first answered "the hero section text" and the
+reveal went on the `h1.tagline`. He meant the **wordmark the hero canvas
+draws behind the butterfly** — `buildBackdrop()`, the layer the shards
+refract. The tagline is back on its original `fadeUp` and the curtain is on
+the canvas: same mechanic and the preset's own numbers (centre-horizontal,
+750ms, linear), as a `ctx.clip()` rather than a `clip-path`. It opens across
+the **word's own ink box**, measured where the text is laid down, not across
+the canvas. The glass sits behind the same clip, so a shard cannot refract a
+letter the curtain has not reached.
+
+- **Measured with probe columns, not by diffing frames.** A frame diff was
+  tried first and was useless: the embers and the wing beat move every tick,
+  so p=1 differed from p=1 by 10,842 pixels. Sampling the mean luminance of a
+  narrow vertical strip, averaged over five ticks, gives a clean staircase —
+  a probe at 0.30 of the half-width lights between p=0.2 and p=0.4, one at
+  0.55 between 0.4 and 0.6, one at 0.80 between 0.6 and 0.8, and one at 0.95
+  only at p=1. Each lights exactly as the curtain passes it.
+- The reveal starts on `body.revealed` — before the loader hands over the
+  word is behind the loading screen — and runs 0 → 1 in 750ms on the hero's
+  own frame clock. `__morfos.word` reads it; `__morfos.wordSeek(p)` holds it
+  at a point for measurement and `wordSeek(null)` hands it back.
+- **A seek hook has to actually override the loop.** The first version set
+  `wordP` and the next frame recomputed it from the elapsed clock, so every
+  reading came back wrong and rising. It sets a `wordFixed` the frame checks.
+
+**The butterfly sits on section headings only.** The first pass let it perch
+on sub-headings and on body text — the statement paragraph, the FAQ questions,
+the guarantee cards — and Het's answer was *"i want it to sit on just headings
+like work services etc"*. `HEAD_SEL` is now five selectors: the two corner
+words, `.sec-title`, the booking h2 and the footer wordmark. Nine seats down
+the page.
+
+- **The dead-stretch rule had to change with it.** With only nine headings
+  the gaps are large, and the old fallback — aim at whichever heading is
+  nearest the middle of the screen — made it **cling to the top edge
+  following a heading that had already gone**, measured at four separate
+  positions. It now aims at whichever heading is nearest to *entering* the
+  band, which is the incoming one whichever way the page is moving.
+- Re-swept 59 positions down and 59 back up: **58/59 each way** perched on a
+  heading's line, **0** off screen, **0** covering a heading's words, exactly
+  one butterfly everywhere. The single exception is mid-calculator, where the
+  gap between two headings is 921px in a 698px window.
+
+### The copy correction
+
+Three things Het rejected, and the three answers he chose:
+
+| He rejected | The site now says |
+|---|---|
+| "price fixed in writing" — reads as *we will not negotiate*, and is not the offer | **speed and the refund**: live in 7 days, 14-day refund, rebuilt until it is right. Price appears only in the calculator, as an estimate |
+| "we build Shopify stores" — limiting, they build 3D websites too | **"Shopify stores and 3D websites"** |
+| "for founders who have been burned before" | **"founders and brands"**, with no reference to bad experiences |
+
+It is a site-wide pass, not a line edit. On `index.html`: the title tag, the
+meta / OG / Twitter descriptions, the OG image alt, four JSON-LD blocks, the
+FAQ schema and its rendered twin, the hero h1, the statement, two `vh`
+headings, a services panel, a flow step, the guarantee chips, the calculator,
+the booking pitch, the marquee, the nudge panel, the footer terms and the mail
+the footer field composes. On `about.html`: the title, four descriptions, the
+h1, key message 02, a founder bio and the same footer. `build-case.js` had to
+move in the same pass — **it matches about.html's title and description
+strings in order to replace them**, so changing about.html alone breaks the
+generator. `case.html` was rebuilt.
+
+- **Services panel 002 was the price lock** — "Fixed price", "Fixed-Price
+  Lock", "Price held through launch". It is the **3D website build** now, so
+  one edit answered both the rejected framing and the Shopify-only problem.
+  **Its bullet list is a draft and Het has not approved it** — it is the only
+  place in this pass where capability was described rather than restated, and
+  he should correct anything that is not true.
+- The FAQ's "Is the price really fixed?" is "How does pricing work?", answered
+  without any lock language.
+- A grep for `fixed[- ]price|price fixed|fixed in writing|does not move|fixed
+  number|Fixed-Price|burned before` comes back **empty on all four files**.
+  Worth re-running after any copy edit.
+- One typo was caught this way and not by reading: the footer mail body became
+  "I would like a **a** scope", because the replacement carried its own
+  article and the original's was outside the matched string.
+
+### The calculator prices the real work
+
+Het: *"our pricing is 30k 50k and 1 lakh and i want you to range it from 30k
+to 1 lakh 50 thousand."* The old model had a **₹68,000 floor** and ran past
+₹3,00,000 at full scope, so every number on the page was wrong — including the
+`priceRange`, the `Offer` price and minPrice, and the FAQ answer.
+
+The shape is unchanged — a base for the build and its templates, a catalogue
+tier, four priced add-ons, then a band — only the numbers moved, chosen so the
+ends land exactly where Het put them:
+
+| | reads |
+|---|---|
+| 10 products, 3 templates, nothing added | **₹30,000** – ₹34,000 |
+| the page default (100 products, 5 templates) | ₹42,000 – ₹48,000 |
+| 200 products, 5 templates | ₹47,000 – ₹54,000 (brackets his 50k) |
+| 500 products, 8 templates, migration + copy | ₹87,000 – ₹99,000 (his 1 lakh) |
+| everything at once | ₹1,32,000 – **₹1,50,000** |
+
+The band multiplier is **1.14** and that is not arbitrary: everything at once
+totals 132,000, and 132,000 × 1.14 rounds to the 1,50,000 he set as the top.
+The static figure in the markup is the same number the default state computes,
+so the page does not flicker when script takes over — checked, both read
+₹42,000 – ₹48,000.
+
+### Eight fixes Het asked for in one go — all measured
+
+These were one message and they are all in `index.html`. Each is written up
+with the number the measurement gave, because several of them looked fine and
+were not.
+
+**1. The click never reached the work card.** The filmstrip called
+`kg.setPointerCapture()` on `pointerdown`, which retargets the whole gesture
+to the section — measured, both `pointerup` and `click` were dispatched on
+`#work` rather than on the card's own `<a>`, so the anchor's default action
+never ran and the case study never opened. Capture is now taken on
+`pointermove`, past the same 6px the click guard already used. Proved by A/B:
+the same click at the same point navigates on the new file and does not on a
+copy of the old one, and a drag still moves the strip without navigating.
+
+> The measurement nearly lied first. The Browser pane's screenshot coordinate
+> frame is scaled — a click at (504,319) landed on the page at (645,408), a
+> factor of 1.28 — so the first "it does not open" was a click into a gap
+> between two cards. **Log `e.clientX/Y` in the page before concluding
+> anything from a synthetic click.**
+
+**2. The panels read as black.** `FOG` is the opacity a panel has at the focal
+centre of the corridor, which is the middle of the screen — so the card you
+are actually looking at was the faintest thing in the run, at **0.40**. It is
+**0.80**. Measured on the Prabhu Mill photograph: mean luminance 158.3 in the
+file, **63.3 on screen before, 126.6 after**. The depth cue survives; the
+outermost panel is still 1.0.
+
+**3. The butterfly goes from heading to heading.** It used to fly to the bottom
+right corner and stay there, stepping sideways to keep off words. Now the only
+places it comes to rest are the page's own headings: it perches just past the
+end of a heading's **last line**, rides it while the page scrolls, and when
+that heading leaves the perching band (6% to 86% of the window, aiming at 40%)
+it flies onto the next. Hysteresis — it keeps the heading it is on until that
+one leaves the band — is what makes it read as a journey rather than a twitch.
+
+- Swept 59 scroll positions at 1024x768 and 62 at 1440x900: **0 faults** —
+  always on screen, never sitting on a heading's words, and it visits
+  **16 distinct headings** on the way down.
+- `corner()`, the `SPOTS` ladder, `textRects()`, `blocked()` and
+  `clearSpot()` went with it. All of that existed only to keep a parked
+  butterfly off text in a corner it no longer sits in.
+- **A heading's line box is not its block box.** A two-line title's block
+  reaches the full measure, so seating off it puts the butterfly in the middle
+  of nowhere. It reads the last line with a Range.
+- **And a Range rect is not inside the element.** Most of these headings are
+  split into word spans the reveal engine slides in, and mid-reveal one of the
+  statement's words reported a right edge of **1057 in a 1024 window** — the
+  seat was clamped off the end of the screen. The line is intersected with the
+  element's own box now.
+- The corner words are a span per letter inside a full-width box, so the box is
+  not where the word is: `#kgWord` and `#svWord` are measured by their last
+  letter.
+- **Still one butterfly, always.** Re-swept 154 positions in both directions
+  after the change: never two, never none.
+- **One known gap.** The calculator is 932px tall with a single heading at its
+  top, so for roughly 400px of scroll there is no heading in the band and the
+  butterfly rides the top edge following the one that just left. Its labels
+  are slider values, which are a bad thing to perch on, so this was left.
+
+**4. The hero text arrives on a curtain.** Het sent Originkit's *Mask Text
+Reveal* (base preset). Ported as CSS — this site has no build step — with the
+preset's own numbers: `clip-path: inset(0% 50% 0% 50%)` opening to
+`inset(0)`, **0.75s, linear**. Read back off `getAnimations()` with the
+clock driven by hand: 50% -> 42% -> 25% -> 0% at 180/300/555/930ms, opacity 1
+throughout. The flex column is `align-items:center`, so the h1's box is
+already shrink-to-fit — **327px against a 1008px parent** — and the curtain
+opens across the words rather than across the hero. The page's own 180/260ms
+stagger is kept so the line still waits for the loader.
+
+**5 and 6. Both corner words land before their section is centred.** They ran
+to `finish = min(0, vh - height)` — the section's bottom edge reaching the
+bottom of the screen. For Work that is the same instant the section fills the
+screen, so the W, which departs last, only arrived on the final frame. For How
+we work the section is 449px in a 768px window, so that point is far past the
+middle and the word was still assembling as the section left: measured **0.78
+of the way through at the centred position**. Both finish where the section is
+centred now, with a `LEAD` of 0.86 bringing the last letter home before even
+that. Measured at 1024x768 and 1440x900: every letter is at 1.00 while the
+section's centre is still **93px** short of the window's, and stays there.
+Shortening the run is also what makes it quicker, which is the other half of
+what Het asked for.
+
+**7. The flow chart stops at every node.** Doing this on scroll distance was
+tried first and measured: the whole run is **237px of scroll**, so a segment
+is 79px and a 42% hold came out at **33px** — a third of one notch of a wheel,
+which nobody sees as a pause. The hold is on the clock instead. Scroll says how
+far the line is allowed to go; the line walks there itself and stands on each
+node for `DWELL` **950ms** before it is let past. Driven by hand at 16.7ms a
+frame: parked 0 -> 0.333 -> 0.667 -> 1 with **~1.1s** on each stop. The step it
+is standing on takes a brighter node and body copy at **scale(1.06)** — a
+transform, so the column's layout box never moves.
+
+- The enlarged copy was checked against the real gaps, not eyeballed: minimum
+  clearance between two bodies **23.8px at 1024** and **30.9px at 1440**, and
+  nothing leaves the section's measure, because the outer two scale inwards.
+- **`:first-child` matches nothing here** — the rail `<div>` is the list's
+  actual first child, so the outer-step rules are `:first-of-type`. The
+  pre-existing `.flow-step:first-child{padding-left:0}` has the same bug and
+  was left alone as out of scope.
+- **On a phone the body is not scaled at all.** At 375 the column is 310px in a
+  360px measure, so 6% is **18.6px of overhang** — inside the window but
+  outside the text block, exactly the "untidy" Het warned about. Only the step
+  title grows there, and the full selectors are repeated inside the media query
+  because a media query carries no specificity of its own.
+
+**8. The capacity meter fills with the scroll.** Twelve bars driven straight
+off how far `#capBox` has come towards the middle of the window, spread so
+they fill one after another, with the numeral counting the same number off the
+same number so the two cannot drift. Written as inline style rather than as a
+class: a transition to a fixed end state cannot be scrubbed backwards, and this
+has to empty again on the way up. Measured 3 -> 5 -> 6 -> 8 -> 10 -> 12 across
+the approach and **12/12, all bars at full height, at exactly the centred
+position** — at 1024, at 1440 and at 375. A 0.97 lead is in there because at
+375 the centred scroll position is fractional and `p` came back 0.999, one
+bar short.
+
+**What did not move.** `about.html` is untouched. Every removed line in the
+diff against the pre-session backup belongs to one of these eight. 22 hooks, 0
+console errors on a clean load, no horizontal overflow at 375 / 1024 / 1440.
+The `AbortError: Transition was skipped` that shows up after navigating to a
+case study and back is pre-existing view-transition behaviour and comes from
+code none of this touched.
 
 ### The butterfly handoff — the hero one and the travelling one are now ONE
 
@@ -440,76 +818,6 @@ they exist only in meta and schema. Closing that needs the copy rewrite in §7.
 
 ---
 
-## 6. The booking system — BUILT, one step from working
-
-`#book` is a two-column block: pitch on the left, interactive booking card on
-the right. A state machine `pick → details → done`, with WhatsApp and
-call-me-back as side branches.
-
-- Slot picker (not a calendar) — three real times, Sundays and past times
-  skipped, no duplicates. Verified over **3,200 samples**.
-- Name + email required, phone optional. Confirmation screen with an animated
-  tick and two add-to-calendar links (Google, plus a generated `.ics`).
-- Side doors hide themselves when unconfigured rather than shipping dead links.
-
-### THE ONE STEP LEFT
-
-`BOOK_CFG.endpoint` is `""`, so **nothing is stored and no email is sent.**
-Everything else works end to end. To finish:
-
-1. Open `morfos-booking.gs`, follow the comment at the top — new Google Sheet
-   → Extensions → Apps Script → paste → Deploy as web app, "Anyone" access.
-   About 4 minutes.
-2. Paste the web-app URL into `BOOK_CFG.endpoint`, at **line ~7300 of
-   `index.html`** (search for `const BOOK_CFG`; the line number drifts with
-   every edit, so search rather than trusting it).
-
-| Key | What it is |
-|---|---|
-| `endpoint` | Apps Script web-app URL. Empty = nothing stored. |
-| `whatsapp` | Digits only, e.g. `919876543210`. Empty hides the door. |
-| `phone` | Same, for the callback door. Empty hides it. |
-| `availability` | The pill text. **Must be true.** |
-| `callHours` | `[10, 19]` — when the callback door is offered. |
-
-> No WhatsApp or phone number is on file, so **both doors are hidden**. Fill
-> them in and they appear.
-
-The POST is `text/plain` **on purpose** — it keeps the request "simple" so the
-browser skips the CORS preflight, which Apps Script web apps do not answer.
-Don't "fix" it to `application/json`.
-
----
-
-## 7. What to do next — in priority order
-
-### 1. Commit, then deploy. Nothing else matters until this happens.
-There are two modified files (`index.html`, `about.html`) and the last commit
-is a **bad intermediate state** (§0). Commit the working tree first.
-
-New files that must go up: `robots.txt`, `sitemap.xml`, `og-image.png`,
-`favicon-64.png`, `apple-touch-icon.png`, `butterfly.png`.
-Then in Google Search Console: submit `https://www.morfos.in/sitemap.xml` and
-request indexing on `/`. That is what starts the clock.
-
-After deploying, sanity-check live: `/robots.txt`, `/sitemap.xml` and
-`/og-image.png` should all return 200, and the share card should render when
-the URL is pasted into WhatsApp.
-
-**Then look at the footer and the cursor in a real browser.** Both were
-verified by measurement, but the preview pane freezes `requestAnimationFrame`,
-so the cocoon's live rotation, the cursor's live spring and the footer's
-in-view gating have never actually been *watched* running. The maths was
-validated independently (at 87° the extrusion predicted 76px of width and
-measured exactly 76), but a ten-second look is still worth having.
-
-### 2. Connect the booking endpoint (§6).
-Right now the site takes bookings and silently drops them. This is the highest
-business risk on the list.
-
-### 3. Give Claude the WhatsApp and phone numbers.
-Two side doors are built and hidden for want of a number.
-
 ### The dither-reveal panel on `about.html`
 
 Het sent the Originkit "Dither Reveal" component and asked for it on the About
@@ -724,17 +1032,38 @@ Things that cost real time on `prabhumill.com` and will cost it again:
   set, headless rasterises the scrolling layer at 1× and upscales, so
   everything except the `position:fixed` header came back soft. Ruled out one
   at a time: not the scroll walk, not the animations, not `--disable-gpu` vs
-  swiftshader, not the `mobile` flag.
+  swiftshader, not the `mobile` flag. **Drop the override and a full-page CDP
+  capture is sharp**, which is how the shipped assets are made: window size
+  comes from `--window-size` and `--force-device-scale-factor` at launch.
+- **Downscaling softens as much as the override did.** The first scroll-through
+  was captured at 1440 and encoded at 1000, then displayed at 1120 — 1.07
+  device pixels per CSS pixel, under-sampled before a retina screen even gets
+  involved. Check the ratio, do not eyeball it: `naturalWidth / clientWidth`
+  against `devicePixelRatio`. The assets now measure **1.91× for the hero and
+  1.61× for the scroll-through**.
+- **A near-white band in the scroll image means a section did not render.**
+  Worth testing for rather than scrolling to look: draw the image into a small
+  canvas and find the longest run of rows that are ≥98.5% white. The site's own
+  padding gives runs of ~25 rows in 1189; the dead map band gave ~68.
 - **But `--window-size` does not drive the layout viewport in this build.** So
   the override is the *only* way to check a narrow-width layout, and for that
-  the softness does not matter. `shoot.js` has it behind `LAYOUT=1`.
-- A Google Maps embed does not render headless — the "Visit Our Facilities"
-  band is a white box in the full-page shot. Het can replace that asset with a
-  screenshot from his own browser.
+  the softness does not matter. `capture-site.js` has it behind `LAYOUT=1`.
+- **A Google Maps embed will not render headless, full stop.** Not with
+  software GL, not with a real user agent in place of the headless one, not
+  with nine seconds parked on it with the iframe scrolled to centre. It
+  photographs as a white box 482px tall. `capture-site.js` takes `HIDE=<selector>`
+  and the assets are built with `HIDE=".map-wrap"`, so the section closes up
+  and the scroll-through reads continuously. That removes something that could
+  not be photographed; it never adds anything that was not on the page. If the
+  map matters, Het can send a screenshot of that band from his own browser and
+  it can be composited back in.
 - **The phone screenshot was not solved.** Every path either had the right
   layout and was soft, or was sharp and laid out desktop. Left out rather than
   shipped badly; a real screenshot from a real phone is a better artefact
-  anyway.
+  anyway. (Worth retrying now that the override is understood to be the cause
+  of the softness — the difficulty is that `--window-size` does not drive the
+  layout viewport in this build, so there is no override-free way to get a
+  narrow layout.)
 
 ### The home page's footer now closes the About page
 
@@ -800,6 +1129,249 @@ Still small at desktop: seven header-nav links at 18px tall. They are
 mouse-only and the existing phone media query already grows them to 44 —
 measured 0 failures at 375px. Left alone.
 
+---
+
+## 6. The booking system — Cal.com, LIVE
+
+**Cal.com is the booking back end**, chosen by Het over a Google-Calendar +
+Apps Script build and over keeping the hand-built card. Cal.com owns the
+availability, the booking form, the confirmation emails, the reminders and
+the rescheduling, and **the management interface Het asked for is the Cal.com
+dashboard** — there is nothing to build for that.
+
+`#book` keeps its pitch, availability pill and chips — those are the page and
+they stay. On a desktop the section goes to **one column** when Cal is on and
+the scheduler takes the full measure beneath them; on a phone the card keeps
+its normal shape and opens Cal as a modal. See *Cal decides its layout* below,
+because that is not a style choice.
+
+### It is connected
+
+`CAL_CFG.link` is **`morfos-toylos/15min`** — Het's own event type, from
+`https://cal.com/morfos-toylos/15min`. Checked against the live page: it
+resolves, it is a 15-minute Google Meet event, and it had **14 bookable days
+with 31 slots** on the first of them. The site no longer drops bookings.
+
+**Still to do inside cal.com, by Het, not in this repo:**
+
+1. **Phone number → required.** Event type → *Advanced → Booking questions*.
+   With the embed in charge this is a Cal.com setting, not a line of code
+   here, and it has not been confirmed as switched on.
+2. **Connect Google Calendar** in Cal.com, if it is not already. That is what
+   reads real free/busy, stops double-bookings, and makes blocking out a
+   morning a matter of putting an event in the calendar.
+
+**The value is `user/event`, never a full URL.** A URL is rejected with a
+console warning and the page falls back to the old card, rather than
+rendering Cal's 404 inside the booking card.
+
+`morfos-booking.gs` and `BOOK_CFG.endpoint` are **no longer needed** — Cal.com
+stores the booking and emails both sides. The file is kept in case a Google
+Sheet copy is ever wanted.
+
+| `CAL_CFG` key | What it is |
+|---|---|
+| `link` | `user/event-type`. Empty = Cal.com off, old card runs. |
+| `mode` | **`popup`** (shipped) or `inline`. A phone gets the popup either way. |
+| `layout` | Only reaches the inline path. Cal overrides it from the mount's width anyway. |
+| `hideDetails` | **true.** Hides Cal's event header — and with it the last cal.com link in the widget. |
+| `brand` | Cal's accent, set to `#fd2702`. |
+
+### The card is small, and Cal opens over the page
+
+Het asked for the card back at the size it used to be — *"i want the form to
+be smaller like the one we had"* — which cannot be done inline, because a
+narrow mount is exactly what makes Cal choose its tall stacked layout. So
+**`mode` is `popup`** at every width: the card keeps its own shape (the
+face, a heading, one button, the email line) and the button opens Cal's modal
+over the page.
+
+Measured at 1280: the card is back to **392px wide by 336px tall** in a
+`721.6px 392px` grid — its original geometry — and the whole `#book`
+section is **550px** instead of 1133px. On a phone it is 345 by 336 with a
+304x44 tap target. Driving the button opens `cal-modal-box`, whose backdrop
+fills the viewport exactly (1280x820 and 375x812 measured) and which loads
+`cal.com/morfos-toylos/15min`.
+
+The **inline path is kept behind `CAL_CFG.mode`** because it is written and
+measured, not because anything uses it. If it is ever turned back on, read
+the next section first.
+
+### Hiding cal.com — what is and is not possible
+
+Het asked whether the cal.com domain could be kept out of sight. Checked
+inside the live embed rather than assumed:
+
+- **Cal's own "Powered by Cal.com" badge is already hidden in embed mode.**
+  Its container carries `hidden` and computes to `display:none`. Nothing
+  to do.
+- **No visible text in the widget contains "cal.com"** or "powered by".
+- **The URL bar never shows cal.com**, because the popup is a modal over
+  morfos.in, not a navigation.
+- The one thing that still linked to cal.com was the **profile avatar** in
+  Cal's event header — 24x19px, pointing at `cal.com/morfos-toylos`.
+  `hideEventTypeDetails: true` removes that header. Nothing is lost by it:
+  the duration and "15 minutes, no pitch deck" are already on the card.
+
+**Proving the header is really gone took an indirect measurement, and the
+first two attempts were invalid.** The iframe is cross-origin so its DOM
+cannot be read; loading the embed URL with `?hideEventTypeDetails=true`
+does nothing, because Cal takes that config by postMessage and not from the
+query string; and comparing card height at 1280 showed 572 against 573,
+because in the desktop layout the header sits BESIDE the calendar and hiding
+it changes width, not height. The valid probe is a width where Cal stacks:
+at a 734px mount, header shown is **2384px** and header hidden is **572px**.
+A 4x collapse is not a rounding difference — the config reaches the embed.
+
+> A **custom domain** (book.morfos.in) is a paid Cal.com Organizations
+> feature. It is not available on the free plan and it is not something that
+> can be done from this page.
+
+A useful side effect: with the header hidden Cal stays compact down to at
+least 734px instead of stacking, so inline would now be viable in a wider
+card. The popup is still the default, because Het asked for the small card.
+
+### Cal decides its layout from the mount's width, once
+
+This is the thing that will bite whoever touches this next. **Cal picks
+between its desktop and mobile layouts from the width of the element it
+mounts into, at the moment it initialises, and never reconsiders.** Resizing
+the container afterwards does nothing.
+
+The card column was `minmax(330px, 392px)`, which is under Cal's breakpoint,
+so it always chose the mobile layout — the month grid with the entire list of
+times stacked underneath — and the card measured **2373px at 731px wide and
+2089px at 1440**. Widening the mount *before* init drops it to **572px**.
+
+So the inline path makes **`#book` a single column**: `.bk-grid.is-cal`,
+set from script before anything mounts. **The shipped popup path does not do
+this** — the section keeps its two columns and its original card.
+
+| | card height |
+|---|---|
+| 1440 wide, inline | **572px** |
+| 1280 wide, inline | **572px** |
+| 1024 wide, inline | **540px** |
+| 375 phone, inline (rejected) | 2092px |
+| 375 phone, popup (shipped) | **336px** |
+| 1280, popup (shipped) | **336px**, card 392px wide |
+
+**This is why the popup won everywhere.** At 375 the mount is
+344px however the page is laid out, so Cal's stacked layout is unavoidable and
+the card came out 2092px — two and a half screens. Below the site's own 760px
+breakpoint the card keeps its normal shape (the face, a heading, one button)
+and the button opens Cal's modal over the page: measured **336px**, with a
+304x44 tap target, which clears this project's 44px floor. Tapping it was
+driven and checked: `cal-modal-box` is created, its backdrop fills the
+viewport at 375x812 and it loads `cal.com/morfos-toylos/15min`.
+
+The choice is made once at init, like Cal's own, so rotating a phone does not
+re-run it.
+
+### What was measured
+
+- **Off is genuinely off.** With `link` empty, `embed.js` is **never
+  requested** — checked against `document.scripts` — and the hand-built card
+  runs exactly as before.
+- **On works end to end**, on the real event type: the script loads from
+  `app.cal.com`, one iframe mounts inside `#bkCalMount` pointing at
+  `app.cal.com/morfos-toylos/15min/embed`, the holding message removes
+  itself, and there is no horizontal page overflow at 375, 1024, 1280 or 1440.
+- **`__book` disappears when Cal is on**, because the hand-built engine does
+  not start — two things writing into the same element would fight. So the
+  hook count is **22 with Cal on** and 23 with it off, and a test that asserts
+  a fixed number will fail for the wrong reason.
+- **It is lazy.** Nothing is fetched until `#book` is within a screen of the
+  viewport, so a visitor who never scrolls that far never pays for a
+  third-party script on an otherwise self-contained page.
+- **The IntersectionObserver alone was not enough.** It never fires in the
+  preview pane, which left the card on "Opening the calendar…" forever — and
+  a card stuck on a holding message is worse than no card. There is a plain
+  scroll check beside it and either one wins.
+- **The theme is sent but could not be verified here.** Cal passes `ui` config
+  by postMessage, not in the iframe URL, and the iframe is cross-origin, so
+  its rendered colours cannot be read and screenshots of this pane come back
+  black. Dark mode, the brand red and the card's own paper/rule colours are
+  passed; **Het should eyeball it once his link is in** and it can be adjusted.
+
+### The hand-built card, which is now the fallback
+
+A state machine `pick → details → done`, with WhatsApp and call-me-back as
+side branches. Slot picker (not a calendar) — three real times, Sundays and
+past times skipped, no duplicates, verified over **3,200 samples**.
+Confirmation screen with an animated tick and two add-to-calendar links.
+Side doors hide themselves when unconfigured rather than shipping dead links.
+
+**Phone is now required on it**, on every branch, not just call-me-back. It
+counts digits rather than matching a pattern, because a regex tight enough to
+be worth having rejects real numbers: 7 to 15 digits passes, which covers
+Indian mobiles, `+country` prefixes and any spacing. Checked over eight
+cases — empty, `x` and `12345` rejected; `98765 43210` and
+`+91 98765-43210` accepted; sixteen digits rejected — and name and email
+still fail first and mark their own field.
+
+**Its slots are invented in the browser** and it has no idea what is already
+booked, which is the whole reason Cal.com is taking over. Do not invest in it.
+
+| Key | What it is |
+|---|---|
+| `endpoint` | Apps Script web-app URL. Empty = nothing stored. |
+| `whatsapp` | Digits only, e.g. `919876543210`. Empty hides the door. |
+| `phone` | Same, for the callback door. Empty hides it. |
+| `availability` | The pill text. **Must be true.** |
+| `callHours` | `[10, 19]` — when the callback door is offered. |
+
+> No WhatsApp or phone number is on file, so **both doors are hidden**. Fill
+> them in and they appear.
+
+The POST is `text/plain` **on purpose** — it keeps the request "simple" so the
+browser skips the CORS preflight, which Apps Script web apps do not answer.
+Don't "fix" it to `application/json`.
+
+---
+
+## 7. What to do next — in priority order
+
+### 1. Deploy. Nothing else matters until this happens.
+Everything is committed at `7691d37` and verified. It is just not *live* —
+`www.morfos.in` still serves an older build, and has through several sessions
+of work now.
+
+Everything in the repo goes up, including the newer files that have never
+shipped: `case.html`, `build-case.js`, `work/`, `robots.txt`, `sitemap.xml`,
+`og-image.png`, `favicon-64.png`, `apple-touch-icon.png`, `butterfly.png`,
+`butterfly-photo.jpg`.
+
+Then in Google Search Console: submit `https://www.morfos.in/sitemap.xml` and
+request indexing on `/`. That is what starts the clock.
+
+After deploying, sanity-check live: `/robots.txt`, `/sitemap.xml` and
+`/og-image.png` should all return 200, and the share card should render when
+the URL is pasted into WhatsApp.
+
+**Check `?c=` survives on the real host.** The local dev server (`npx serve`)
+strips query strings, which hides the case-study switch entirely — every URL
+renders the first case. It was verified over `file://` instead. If the
+production host rewrites the same way, `case.html?c=prabhu-mill` will need to
+become a path (`/work/prabhu-mill`) or read the id from the hash.
+
+**Then look at the footer and the cursor in a real browser.** Both were
+verified by measurement, but the preview pane freezes `requestAnimationFrame`,
+so the cocoon's live rotation, the cursor's live spring and the footer's
+in-view gating have never actually been *watched* running. The maths was
+validated independently (at 87° the extrusion predicted 76px of width and
+measured exactly 76), but a ten-second look is still worth having.
+
+### 2. Finish the Cal.com setup (§6).
+The link is in and bookings work. Two settings are still open inside cal.com
+and neither is in this repo: **phone number set to required** on the event
+type, and **Google Calendar connected** so availability is real. Until the
+second one is done, Cal is offering times off its own default schedule rather
+than off Het's actual calendar.
+
+### 3. Give Claude the WhatsApp and phone numbers.
+Two side doors are built and hidden for want of a number.
+
 ### 4. Send Claude the About-page images.
 Het said *"i will give you the images"*. The tilt engine for them is built and
 measured — perspective 1000px, ±8° rotation, scale 0.99, spring K=0.26 / D=0.58
@@ -829,15 +1401,39 @@ migration**, **Shopify speed optimisation**, and **Shopify vs WooCommerce**
 would outrank this homepage for those terms within months. This is the largest
 remaining SEO win.
 
-### 7. Real work screenshots.
-The filmstrip uses drawn SVG placeholders tagged "Concept". Only the hero
-fragment of each panel needs changing.
+### 7. More clients in the work carousel — the machinery is done.
+**Prabhu Mill is in and is the template.** The other six panels are still drawn
+SVG placeholders tagged "Concept" or "Study". Adding a real client is now:
+capture the site (§5, *Screenshotting a client site* — read it before trying),
+drop three JPEGs in `work/`, add one object to `CASES` in `build-case.js`,
+add one `.kg-item` with `data-case` to the `.kg-seq` in `index.html`, rebuild.
+
+**The open items on the Prabhu Mill case itself:**
+- **The testimonial.** Het asked Claude to write one under Sunil Tilwa's name
+  and to make it not look AI-written. Claude declined: inventing a named
+  customer's words on a commercial page is a fabricated endorsement, and the
+  `quote` field stays empty until Sunil sends something real. Claude drafted
+  wording for Het to send Sunil to approve or edit. **If Het asks again, the
+  answer is the same** — and the alternative is quick: three questions on a
+  call, then his own sentences back for approval.
+- **The before/after.** No "before" exists. The strongest source is the
+  client's own Shopify admin, where the old theme is usually still sitting
+  unpublished and can be previewed and screenshotted.
+- **The phone screenshot** was never solved (§5).
+- **The map band** is hidden in the capture because a Google Maps embed will
+  not render headless. A screenshot of that band from a real browser could be
+  composited back in.
 
 ### 8. Smaller open items
-- **`© 2026 Morfos` in the footer measures 4.18:1** against black — under the
-  4.5:1 AA floor. It is `#6f6f6f` and is **pre-existing**, left alone
-  deliberately rather than restyling something Het didn't ask about.
-  `#767676` fixes it (4.54:1) if he wants it fixed.
+- **`© 2026 Morfos` on `index.html` measures 4.18:1** against black — under
+  the 4.5:1 AA floor. `about.html` and `case.html` already carry the fix
+  (`#767676`, 4.62:1 measured against the real rotating cocoon); the home page
+  does not, only because it has never been in scope. One token.
+- **`work/prabhu-mill-full.jpg` is 856 KB.** It is lazy-loaded and below the
+  fold, and it is the one image on the page that has to survive being looked
+  at closely, so it was a deliberate trade. If page weight becomes an issue,
+  a WebP or AVIF of it would roughly halve it — but there is no image tool on
+  this machine (see §5), so it would have to be done elsewhere.
 - **LinkedIn and X** — parked in TODO comments in both footers, with icons
   intact. Adding them is one paste plus one `sameAs` entry in the JSON-LD.
 - **About page** still has placeholder founder names and photos.
@@ -879,7 +1475,7 @@ __offers __pwword __reveal __svword
 | `window.__book` | booking: `step`, `mode`, `slots`, `state`, `cfg`, `slotsAt(date)`, `go(step)`, `reset()` |
 | `window.__calc` | calculator: `state`, `result`, `figure`, `days`, `rows`, `set({...})`, `quiet(bool)` |
 | `window.__faq` | FAQ: `count`, `open`, `expanded`, `questions`, `answers`, `toggle(i)` |
-| `window.__flow` | how-we-work chart: `p`, `lit`, `railPct`, `vertical`, `titles`, `draw()` |
+| `window.__flow` | how-we-work chart: `p` (scroll target), `cur` (where the line actually is), `act`, `dwell`, `bodyScale`, `lit`, `railPct`, `vertical`, `titles`, `draw()`, `step(n,ms)`, `reset()` |
 | `window.__cursor` | cursor: `on`, `hot`, `wide`, `label`, `pos`, `head`, `vel`, `running`, `trail`, `spring`, `trailCfg`, `canvasBox`, `at(x,y)`, `target(x,y)`, `step(ms, frames)`, `over(el)`, `paint()`, `snap()` |
 | `window.__footBg` | footer cocoon: `live`, `reduced`, `theta`, `slices`, `depth`, `size()`, `guard`, `box` (the projected envelope), `step()`, `draw()` |
 | `window.__footForm` | footer email field: `value`, `note`, `valid(v)`, `set(v)` |
@@ -887,9 +1483,9 @@ __offers __pwword __reveal __svword
 | `window.__offers` | offer cards: `open()` |
 | `window.__hz` | statement words: `count`, `p`, `settled`, `opacities`, `offsets`, `draw()` |
 | `window.__kg` | work filmstrip: `dials`, `depth`, `tune({...})`, `draw()`, `nudge(px)` |
-| `window.__cap` | capacity meter: `total`, `shown`, `filled`, `chipsIn`, `run()` |
+| `window.__cap` | capacity meter: `p`, `heights`, `centreGap`, `total`, `shown`, `filled`, `chipsIn`, `paint()` |
 | `window.__morfos` | hero shatter: `broken`, `breakSpread`, `shards`, `exit`, `willHandOff`, `maskLayer`, `drawArt`, `tick(n,ms)`, `setScroll(k)`, `restart()` |
-| `window.__flit` | travelling butterfly: `at`, `target`, `progress`, `held`, `drawn`, `hostW`, `markW`, `hold(on,snap)`, `tick(n,ms)`, `settle(n)` |
+| `window.__flit` | travelling butterfly: `at`, `target`, `progress`, `held`, `drawn`, `hostW`, `markW`, `perch` (which heading it is on, that heading's last-line box, `onLine` / `overlapsText` / `onScreen`), `heads`, `flying`, `offset`, `cost(n)`, `hold(on,snap)`, `tick(n,ms)`, `settle(n)` |
 | `window.__loader` | loader timeline: `seek(ms)`, `duration`, `marks` |
 | also | `__ascii` `__kgword` `__morfosFont` `__pwword` `__reveal` `__svword` |
 
