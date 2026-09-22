@@ -622,7 +622,7 @@ Knitting closes them instead: **1.68ms** mid-flight, 3.73ms at the hero top,
 1.07ms once past. There is also a short-circuit in `updateExit` once the
 handover is done, because that loop runs for the whole length of the page.
 
-**Fallbacks are the original behaviour, untouched.** Under 861px, under
+**Fallbacks are the original behaviour, untouched.** Under
 `prefers-reduced-motion`, or if the travelling butterfly fails to build,
 `handoffLive` stays false and the old scroll dissolution runs exactly as it
 did — verified at 800px: break 0 → 0.041 → 0.165 → 0.373 and lift 0 → 7.95 →
@@ -1599,3 +1599,72 @@ reports the same fault.
   fails silently and leaves `window.__loader` undefined.
 - Hoist allocations out of per-frame draw calls. A helper returning `{x, y}`
   cost the hero 44 object allocations every frame.
+
+## Mobile
+
+Het: *"in the mobile the header is not showing also the butterfly is also not
+travelling i want it fully mobile optimised."* Both were real and both were
+deliberate old decisions that had aged badly.
+
+**The header had no navigation at all.** Below 760px the home page set
+`.bar nav{display:none}` and `.menu{display:none}`, and `about.html` hid every
+bar link except *Home*. A phone therefore saw a wordmark and a CTA and could
+not reach Services, Work, the calculator, the guarantee or the About page from
+anywhere on the site. The links now live in a **drawer** (`#drawer`), opened by
+a 44px `.burger` that appears only under 760px. The home page has one burger in
+the hero nav and one in the sticky bar, `about.html`/`case.html` have one in
+the bar, and all of them drive the same drawer through `[data-menu]`. The
+drawer covers both headers, so it carries its own close button
+(`.burger.drawer-x`) positioned where the header's burger was. Escape closes
+it, any link closes it before the jump, `body.locked` stops the page scrolling
+underneath, and a `matchMedia("(min-width: 761px)")` listener closes it if the
+phone is rotated across the breakpoint. `window.__menu` exposes `open` and
+`set(v)` for testing.
+
+- **Pin the burger's rows.** `place-items:center` spread three auto rows over
+  the whole 44px button and put the bars **16.5px** apart, while the close
+  state assumes 7 — so the X rendered as a chevron. `grid-auto-rows:1.6px` plus
+  `row-gap:5.4px` gives the 7px the transforms collapse. Verified: open, all
+  three bars report the same centre.
+- **A 640px-tall phone** ran the list 36px past the bottom. `@media
+  (max-height:700px)` trims the rows and the gap above the CTA; it now fits
+  with no scroll and the rows are still 52px.
+
+**The butterfly stopped below 861px** — in both engines, the travelling one
+(`wide`) and the hero's handoff (`wideFlit`). It runs at every width now.
+`markCss()` draws it at **38px on a phone against 54 on a desktop**, read
+inside `sprite()` so rotating re-fits it, and the handoff size is no longer the
+hard-coded `EXIT_W = 64` but `hostW * (64/71)` — a fixed 64 would have handed a
+64px butterfly to something drawing a 50px one, a 28% jump at the swap.
+
+**`seatFrom` now takes the side with MORE room, not always above.** The corner
+words end their migration hard against the right margin about 80px from the
+top. Always preferring above wedged the mark into the strip between the header
+and the word: at 1600 wide it covered up to six of the twelve letters of OUR
+SERVICES over 24 consecutive samples, and on a 375px phone the seat was fine
+but the blend down to the next heading's seat dragged the mark back through the
+word (seat y 61→91 against a word at 80–96). `CLEAR` is 16 rather than 6
+because the idle drift is ±5.4px vertically — a 6px gap is clear at the seat
+and not clear at the position drawn.
+
+Swept at four widths, stepping the whole page and testing the mark's box
+against every letter box: **0 resting overlaps** at 366, 421, 1440 and 1600,
+and one transient crossing at 375 while it is in flight over the PROCESS label,
+which the design allows. The butterfly is never off screen and moves on ~94% of
+samples.
+
+**Other mobile fixes.**
+
+- `scroll-padding-top:clamp(66px,9vh,86px)` on `html`. The fixed bar is 55px on
+  a phone and `#process` was landing its first line at y 27 under a bar whose
+  bottom edge is 55.
+- Touch targets, all inside `@media (max-width:760px)` so nothing moves on a
+  desktop: the announcement close was 22×22, the bar wordmark 22px tall, its
+  CTA 30px, the hero pills 33–37px, the footer and booking text links 15–17px.
+  All at 44 now (38 for inline text links), and the bar's own padding comes
+  down by what the wordmark's goes up so the header stays 56–57px. Re-measured
+  at 366, 375 and 421: **no target under 38px left**.
+- No horizontal overflow at any phone width, and `scrollLeft` stays 0.
+
+**Deliberately not changed.** `client-roster.html` has no header to fix, and
+`frostbreak.html` is the unrelated scratch demo.

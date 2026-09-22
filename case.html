@@ -133,6 +133,101 @@
     .bar .mk{display:grid;place-items:center;min-height:44px;margin:-11px 0}
   }
 
+  /* ---------- mobile menu ----------
+     Below 760 this bar kept only the way home and dropped every other link,
+     so a phone could reach nothing but the home page from here. The list
+     moves into a drawer instead, opened from a button in the bar. Same
+     markup and behaviour as the home page, so the two stay in step. */
+  .burger{
+    display:none;
+    /* Rows pinned rather than left to place-items: three auto rows spread
+       over the whole 44px button put the bars 16.5px apart, and the close
+       state, which assumes 7, then rendered as a chevron instead of a cross. */
+    grid-auto-rows:1.6px;row-gap:5.4px;
+    align-content:center;justify-items:center;
+    width:44px;height:44px;margin-left:auto;margin-right:-10px;
+    padding:0;border:0;background:none;color:#fff;
+    font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  .burger i{
+    display:block;width:21px;height:1.6px;
+    background:currentColor;border-radius:2px;
+    transition:transform .34s cubic-bezier(.2,.8,.3,1),opacity .18s ease;
+  }
+  body.menu-open .burger i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.menu-open .burger i:nth-child(2){opacity:0}
+  body.menu-open .burger i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+  .drawer{
+    position:fixed;inset:0;z-index:55;
+    display:flex;flex-direction:column;
+    background:rgba(6,3,4,.975);
+    backdrop-filter:blur(20px);
+    padding:calc(env(safe-area-inset-top,0px) + 74px)
+            22px
+            calc(env(safe-area-inset-bottom,0px) + 24px);
+    overflow-y:auto;overscroll-behavior:contain;
+    opacity:0;visibility:hidden;
+    transition:opacity .32s ease,visibility 0s linear .32s;
+  }
+  body.menu-open .drawer{opacity:1;visibility:visible;transition-delay:0s,0s}
+  .drawer a{text-decoration:none;color:#fff}
+  /* sits where the bar's own burger was, so the X replaces it in place */
+  .drawer-x{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 16px);right:12px;margin:0}
+  .drawer-list{display:flex;flex-direction:column}
+  .drawer-list a{
+    display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:17px 2px;border-top:1px solid var(--rule);
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.45rem,7.4vw,2.1rem);line-height:1.05;letter-spacing:-.015em;
+    opacity:0;transform:translateY(14px);
+    transition:opacity .4s ease,transform .5s cubic-bezier(.2,.8,.3,1);
+  }
+  .drawer-list a:last-child{border-bottom:1px solid var(--rule)}
+  /* the page you are on should not look like somewhere to go */
+  .drawer-list a[aria-current="page"] span:first-child{color:var(--red)}
+  .drawer-list a .n{
+    font-family:var(--sans);font-size:10.5px;font-weight:500;
+    letter-spacing:.06em;color:var(--red);flex:none;
+  }
+  body.menu-open .drawer-list a{opacity:1;transform:none}
+  body.menu-open .drawer-list a:nth-child(1){transition-delay:.06s}
+  body.menu-open .drawer-list a:nth-child(2){transition-delay:.10s}
+  body.menu-open .drawer-list a:nth-child(3){transition-delay:.14s}
+  body.menu-open .drawer-list a:nth-child(4){transition-delay:.18s}
+  body.menu-open .drawer-list a:nth-child(5){transition-delay:.22s}
+  body.menu-open .drawer-list a:nth-child(6){transition-delay:.26s}
+  body.menu-open .drawer-list a:nth-child(7){transition-delay:.30s}
+  .drawer-foot{
+    margin-top:auto;padding-top:28px;
+    display:flex;flex-direction:column;gap:14px;
+    opacity:0;transition:opacity .4s ease .34s;
+  }
+  body.menu-open .drawer-foot{opacity:1}
+  .drawer-foot .go{
+    display:flex;align-items:center;justify-content:center;
+    min-height:52px;border-radius:999px;
+    background:var(--red);color:#fff;font-size:13.5px;font-weight:500;
+  }
+  .drawer-foot .mail{
+    font-size:12px;color:var(--muted);text-align:center;
+    min-height:44px;display:flex;align-items:center;justify-content:center;
+  }
+  /* the page behind must not scroll under the drawer */
+  body.menu-open{overflow:hidden}
+  /* A 640px-tall phone ran the list past the bottom of the screen and the
+     drawer scrolled for the sake of one row. Trimming the rows and the gap
+     above the CTA buys back enough to fit it. */
+  @media (max-height:700px){
+    .drawer{padding-top:calc(env(safe-area-inset-top,0px) + 66px)}
+    .drawer-list a{padding:13px 2px;font-size:clamp(1.3rem,6.6vw,1.85rem)}
+    .drawer-foot{padding-top:18px}
+  }
+  @media (max-width:760px){ .burger{display:grid} }
+  @media (prefers-reduced-motion:reduce){
+    .burger i,.drawer,.drawer-list a,.drawer-foot{transition:none}
+  }
+
   /* ---------- masthead ---------- */
   .mast{border-bottom:1px solid var(--rule)}
   .mast-sub{
@@ -834,7 +929,29 @@
     <a href="client-roster.html" data-hot>Client login</a>
     <a href="index.html#book" data-hot>Contact</a>
   </nav>
+  <button class="burger" type="button" data-menu aria-label="Open menu"
+          aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
 </header>
+
+<!-- The phone's navigation. The same drawer the home page uses. -->
+<div class="drawer" id="drawer" hidden>
+  <!-- The drawer covers the bar, so it carries its own way out. -->
+  <button class="burger drawer-x" type="button" data-menu aria-label="Close menu"
+          aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  <nav class="drawer-list" aria-label="Mobile">
+    <a href="index.html" data-hot><span>Home</span><span class="n">01</span></a>
+    <a href="index.html#services" data-hot><span>Services</span><span class="n">02</span></a>
+    <a href="index.html#work" data-hot><span>Work</span><span class="n">03</span></a>
+    <a href="index.html#calculator" data-hot><span>Calculator</span><span class="n">04</span></a>
+    <a href="index.html#guarantee" data-hot><span>Guarantee</span><span class="n">05</span></a>
+    <a href="about.html" data-hot aria-current="page"><span>About us</span><span class="n">06</span></a>
+    <a href="client-roster.html" data-hot><span>Client login</span><span class="n">07</span></a>
+  </nav>
+  <div class="drawer-foot">
+    <a class="go" href="index.html#book" data-hot>Book a 15-min call</a>
+    <a class="mail" href="mailto:support.morfos@gmail.com">support.morfos@gmail.com</a>
+  </div>
+</div>
 
 <!-- ================= masthead ================= -->
 <header class="mast">
@@ -1107,6 +1224,45 @@ window.MORFOS_MARK = (() => {
       '<a href="index.html#book" data-hot>Book a 15-min call</a></span>';
     cta.innerHTML = unit.repeat(8);   // two identical halves -> seamless -50% loop
   }
+
+  /* ---------- mobile menu ----------
+     One drawer, two buttons: the bar's burger and the drawer's own close.
+     The drawer carries `hidden` in the markup, so a phone with the script
+     blocked is never told about a menu it could not open; the attribute
+     comes off as soon as this runs. */
+  (() => {
+    const drawer = document.getElementById("drawer");
+    const buttons = [...document.querySelectorAll("[data-menu]")];
+    if (!drawer || !buttons.length) return;
+    drawer.hidden = false;
+
+    let open = false, lastFocus = null;
+    const setOpen = v => {
+      if (v === open) return;
+      open = v;
+      document.body.classList.toggle("menu-open", v);
+      buttons.forEach(b => {
+        b.setAttribute("aria-expanded", v ? "true" : "false");
+        b.setAttribute("aria-label", v ? "Close menu" : "Open menu");
+      });
+      if (v) {
+        lastFocus = document.activeElement;
+        const first = drawer.querySelector("a");
+        if (first) first.focus({ preventScroll: true });
+      } else if (lastFocus && lastFocus.focus) {
+        lastFocus.focus({ preventScroll: true });
+      }
+    };
+
+    buttons.forEach(b => b.addEventListener("click", () => setOpen(!open)));
+    drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+    addEventListener("keydown", e => { if (e.key === "Escape" && open) setOpen(false); });
+    /* Rotating a phone into landscape can cross the breakpoint and leave the
+       drawer open over a desktop layout with no button to shut it. */
+    matchMedia("(min-width: 761px)").addEventListener("change", e => { if (e.matches) setOpen(false); });
+
+    window.__menu = { get open() { return open; }, set(v) { setOpen(!!v); } };
+  })();
 
   /* ---------- case studies ----------
      Everything that differs between one client and the next lives here. A

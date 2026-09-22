@@ -312,7 +312,11 @@
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  /* The sticky bar is fixed and 55px tall on a phone, so an anchor jump used
+     to land the top of the target section underneath it — measured, #process
+     put its first line at y 27 with the bar's bottom edge at 55. The browser
+     offsets the landing by this instead. */
+  html{scroll-behavior:smooth;scroll-padding-top:clamp(66px,9vh,86px)}
 
   body{
     background:var(--bg);
@@ -738,6 +742,119 @@
   .bar .go{
     font-size:11px;padding:8px 15px;border-radius:999px;
     background:var(--red);color:#fff;text-decoration:none;white-space:nowrap;
+  }
+
+  /* ---------- mobile menu ----------
+     Below 760 both navs used to drop their links — the hero's .menu and the
+     sticky bar's <nav> were each display:none — which left a phone with a
+     wordmark, a CTA and no way to reach Services, Work, the calculator, the
+     guarantee or the About page at all. The links live in a drawer instead,
+     opened from a button in whichever header is on screen. One drawer serves
+     both headers, so there is a single list to keep in step.
+
+     Hidden above the breakpoint: on a desktop the links are already in the
+     bar and a second way in would only be noise. */
+  .burger{
+    display:none;
+    /* The rows are pinned rather than left to `place-items:center`, which
+       spread three auto rows over the whole 44px button: the bars came out
+       16.5px apart while the close state assumed 7, so the X rendered as a
+       chevron. 1.6 + 5.4 is the 7px the transforms below collapse. */
+    grid-auto-rows:1.6px;
+    row-gap:5.4px;
+    align-content:center;justify-items:center;
+    width:44px;height:44px;           /* a real 44px target, not a 20px icon */
+    margin-right:-10px;               /* the padding is the target, not a gap */
+    padding:0;border:0;background:none;color:#fff;
+    font:inherit;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .burger i{
+    display:block;width:21px;height:1.6px;
+    background:currentColor;border-radius:2px;
+    transition:transform .34s cubic-bezier(.2,.8,.3,1),opacity .18s ease;
+  }
+  body.menu-open .burger i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.menu-open .burger i:nth-child(2){opacity:0}
+  body.menu-open .burger i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+  .drawer{
+    position:fixed;inset:0;z-index:55;
+    display:flex;flex-direction:column;
+    background:rgba(6,3,4,.975);
+    backdrop-filter:blur(20px);
+    /* clear of the header it opened from, and of a notch or a home bar */
+    padding:calc(env(safe-area-inset-top,0px) + 74px)
+            22px
+            calc(env(safe-area-inset-bottom,0px) + 24px);
+    overflow-y:auto;overscroll-behavior:contain;
+    opacity:0;visibility:hidden;
+    transition:opacity .32s ease,visibility 0s linear .32s;
+  }
+  body.menu-open .drawer{opacity:1;visibility:visible;transition-delay:0s,0s}
+  .drawer a{text-decoration:none;color:#fff}
+  .drawer-list{display:flex;flex-direction:column}
+  .drawer-list a{
+    display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:17px 2px;                 /* ~56px tall, comfortably tappable */
+    border-top:1px solid var(--rule);
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.45rem,7.4vw,2.1rem);line-height:1.05;
+    letter-spacing:-.015em;
+    /* each line arrives a beat after the one above it */
+    opacity:0;transform:translateY(14px);
+    transition:opacity .4s ease,transform .5s cubic-bezier(.2,.8,.3,1);
+  }
+  .drawer-list a:last-child{border-bottom:1px solid var(--rule)}
+  .drawer-list a .n{
+    font-family:var(--sans);font-size:10.5px;font-weight:500;
+    letter-spacing:.06em;color:var(--red);flex:none;
+  }
+  body.menu-open .drawer-list a{opacity:1;transform:none}
+  body.menu-open .drawer-list a:nth-child(1){transition-delay:.06s}
+  body.menu-open .drawer-list a:nth-child(2){transition-delay:.10s}
+  body.menu-open .drawer-list a:nth-child(3){transition-delay:.14s}
+  body.menu-open .drawer-list a:nth-child(4){transition-delay:.18s}
+  body.menu-open .drawer-list a:nth-child(5){transition-delay:.22s}
+  body.menu-open .drawer-list a:nth-child(6){transition-delay:.26s}
+  body.menu-open .drawer-list a:nth-child(7){transition-delay:.30s}
+
+  .drawer-foot{
+    margin-top:auto;padding-top:28px;
+    display:flex;flex-direction:column;gap:14px;
+    opacity:0;transition:opacity .4s ease .34s;
+  }
+  body.menu-open .drawer-foot{opacity:1}
+  .drawer-foot .go{
+    display:flex;align-items:center;justify-content:center;
+    min-height:52px;border-radius:999px;
+    background:var(--red);color:#fff;
+    font-size:13.5px;font-weight:500;
+  }
+  .drawer-foot .mail{
+    font-size:12px;color:var(--muted);text-align:center;
+    min-height:44px;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* sits where the header's own burger was, so the X replaces it in place */
+  .drawer-x{
+    position:absolute;z-index:2;
+    top:calc(env(safe-area-inset-top,0px) + 16px);
+    right:12px;margin:0;
+  }
+  /* A 640px-tall phone ran the list 36px past the bottom of the screen and
+     the drawer scrolled for the sake of one row. Trimming the rows and the
+     gap above the CTA buys back 76px, which fits it. */
+  @media (max-height:700px){
+    .drawer{padding-top:calc(env(safe-area-inset-top,0px) + 66px)}
+    .drawer-list a{padding:13px 2px;font-size:clamp(1.3rem,6.6vw,1.85rem)}
+    .drawer-foot{padding-top:18px}
+  }
+  @media (max-width:760px){
+    .burger{display:grid}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .burger i,.drawer,.drawer-list a,.drawer-foot{transition:none}
   }
 
   /* ---------- value strip ---------- */
@@ -1989,6 +2106,28 @@
     .sec-note{margin-left:0;max-width:none}
     .bar nav{display:none}
     .card{flex-basis:82vw}
+
+    /* ---------- touch targets ----------
+       Measured on a 375px viewport before this: the announcement's close
+       button was 22x22, the header wordmark 22px tall, its CTA 30px, the
+       hero pills 33 to 37px and the footer's text links 15 to 17px. A
+       fingertip is about 44px, which is also the figure the platform
+       guidelines use, so everything below is padding bought back to 44.
+       The bar's own vertical padding comes down by the same amount the
+       wordmark's goes up, so the header stays the height it was.
+       All of it is inside this query: nothing changes on a desktop. */
+    .announce{padding-right:48px}
+    .announce .x{width:44px;height:44px;right:2px}
+    .bar{padding-block:6px}
+    .bar .mk{padding-block:11px}
+    .bar .go{min-height:44px;display:inline-flex;align-items:center}
+    .nav .brand{padding-block:14px}
+    .pill{min-height:44px}
+    .fg a,.foot-legal a,.alt a,.bk-micro a{
+      min-height:38px;display:inline-flex;align-items:center;
+    }
+    .foot-head{padding-block:6px}
+    .nudge .btn,.nudge .no{min-height:44px;display:inline-flex;align-items:center}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -2046,7 +2185,8 @@
   body.revealed .hint   {animation:fadeUp .9s ease 1.1s forwards}
 
   @media (max-width:760px){
-    .nav{grid-template-columns:1fr auto;padding:20px}
+    /* brand | Book a call | burger — the menu itself moves to the drawer */
+    .nav{grid-template-columns:1fr auto auto;padding:20px;gap:12px}
     .menu{display:none}
     .hero{cursor:auto}
     /* body.has-cursor .cur wins on specificity and a media query adds
@@ -2115,7 +2255,30 @@
     <a href="#book" data-hot>Contact</a>
   </nav>
   <a class="go" href="#book" data-hot data-magnet>Book a 15-min call</a>
+  <button class="burger" type="button" data-menu aria-label="Open menu"
+          aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
 </header>
+
+<!-- The phone's navigation. One drawer, opened from either header. -->
+<div class="drawer" id="drawer" hidden>
+  <!-- The drawer covers both headers, so it carries its own way out rather
+       than relying on the burger it was opened from. -->
+  <button class="burger drawer-x" type="button" data-menu aria-label="Close menu"
+          aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  <nav class="drawer-list" aria-label="Mobile">
+    <a href="#top" data-hot><span>Home</span><span class="n">01</span></a>
+    <a href="#services" data-hot><span>Services</span><span class="n">02</span></a>
+    <a href="#work" data-hot><span>Work</span><span class="n">03</span></a>
+    <a href="#calculator" data-hot><span>Calculator</span><span class="n">04</span></a>
+    <a href="#guarantee" data-hot><span>Guarantee</span><span class="n">05</span></a>
+    <a href="about.html" data-hot><span>About us</span><span class="n">06</span></a>
+    <a href="client-roster.html" data-hot><span>Client login</span><span class="n">07</span></a>
+  </nav>
+  <div class="drawer-foot">
+    <a class="go" href="#book" data-hot>Book a 15-min call</a>
+    <a class="mail" href="mailto:support.morfos@gmail.com">support.morfos@gmail.com</a>
+  </div>
+</div>
 
 <main class="hero" id="hero">
   <canvas id="stage" aria-hidden="true"></canvas>
@@ -2133,6 +2296,9 @@
     <div class="nav-cta">
       <a class="pill pill--ghost" href="#book" data-hot>Book a call</a>
     </div>
+
+    <button class="burger" type="button" data-menu aria-label="Open menu"
+            aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
   </nav>
 
   <div class="stage-ui">
@@ -3801,7 +3967,10 @@
   let exitX = 0, exitY = 0, exitS = 1, exitRot = 0;
   let handedOver = false, heldSent = null;
   let exitVX = 0, exitVY = 0, arrivedLast = false;
-  const wideFlit = matchMedia("(min-width: 861px)");
+  /* The travelling butterfly runs at every width now, so the hero hands over
+     at every width too. Kept as an object rather than deleted because the
+     flight below reads it every frame. */
+  const wideFlit = { matches: true };
 
 
   // dev hook: freeze the cycle / inspect the offscreen layers
@@ -3855,7 +4024,7 @@
       ms: EXIT_MS, knit: +knitK.toFixed(3),
       k: +exitK.toFixed(3), x: +exitX.toFixed(2), y: +exitY.toFixed(2),
       s: +exitS.toFixed(4), rot: +exitRot.toFixed(4), handedOver,
-      land: { x: Math.round(exitVX), y: Math.round(exitVY), w: EXIT_W },
+      land: { x: Math.round(exitVX), y: Math.round(exitVY), w: Math.round(exitW) },
       marks: { KNIT_TO, FLY_FROM, FLY_TO } }; },
     get breath() { updateBody(); return { x: +breathX.toFixed(4), y: +breathY.toFixed(4) }; },
     get lift() { updateBody(); return +liftY.toFixed(2); },
@@ -4162,7 +4331,12 @@
   /* handed over small: the two butterflies are not the same drawing — this one
      is shattered artwork under a glass refraction, that one is flat line work —
      and at 64px across the difference between them is not readable. */
-  const EXIT_W = 64;
+  /* 64 against the 71px box the other one is built at, i.e. 0.90 of it. Taken
+     from the live host width rather than hard-coded, because that box is
+     smaller on a phone and a fixed 64 would have handed a 64px butterfly to
+     something drawing a 50px one — a 28% jump at the swap. */
+  const EXIT_W_K = 64 / 71;
+  let exitW = 64;                 // the live landing width, set each frame
   const smooth01 = t => t * t * (3 - 2 * t);
 
   function updateExit(dt) {
@@ -4212,12 +4386,13 @@
        the hero canvas has scrolled far enough up that the clamp bites, which
        is past scrollK 0.96, and scrollK > 0.95 has already forced the flight
        to finish — so where it matters they are the same point. */
-    const pad = EXIT_W * 0.8;
+    exitW = hostW * EXIT_W_K;
+    const pad = exitW * 0.8;
     const tx = Math.min(Math.max(vx - box.left, pad), Math.max(pad, box.width - pad));
     const ty = Math.min(Math.max(vy - box.top,  pad), Math.max(pad, box.height - pad));
     exitVX = vx; exitVY = vy;
 
-    const want = EXIT_W / artBox.w;
+    const want = exitW / artBox.w;
     /* The artwork is not centred on the body origin — measured, it sits about
        65px to its left. Aiming the ORIGIN at the landing point therefore left
        the DRAWN butterfly 5.9px short of where the other one was placed, and
@@ -4249,7 +4424,7 @@
     if (heldSent !== wantHeld) {
       heldSent = wantHeld;
       f.hold(wantHeld, wantHeld ? null
-        : { x: vx, y: vy, s: EXIT_W / (hostW * (f.markW || 1)) });
+        : { x: vx, y: vy, s: exitW / (hostW * (f.markW || 1)) });
     } else if (wantHeld) {
       f.hold(true);            // keeps the other side's watchdog fed
     }
@@ -5424,6 +5599,51 @@ window.MORFOS_WING = {
     addEventListener("resize", sync, { passive: true });
     sync();
   }
+
+  /* ---------- mobile menu ----------
+     One drawer, two buttons: the hero's header and the sticky bar each own a
+     burger and both drive this. The drawer carries `hidden` in the markup so
+     that a phone with the script blocked is not told about a menu it cannot
+     open; the attribute comes off as soon as this runs. */
+  (() => {
+    const drawer = document.getElementById("drawer");
+    const buttons = [...document.querySelectorAll("[data-menu]")];
+    if (!drawer || !buttons.length) return;
+    drawer.hidden = false;
+
+    let open = false, lastFocus = null;
+
+    const setOpen = v => {
+      if (v === open) return;
+      open = v;
+      document.body.classList.toggle("menu-open", v);
+      /* the page behind must not scroll under the drawer, and the class is
+         the one the loader already uses for exactly this */
+      document.body.classList.toggle("locked", v);
+      buttons.forEach(b => {
+        b.setAttribute("aria-expanded", v ? "true" : "false");
+        b.setAttribute("aria-label", v ? "Close menu" : "Open menu");
+      });
+      if (v) {
+        lastFocus = document.activeElement;
+        const first = drawer.querySelector("a");
+        if (first) first.focus({ preventScroll: true });
+      } else if (lastFocus && lastFocus.focus) {
+        lastFocus.focus({ preventScroll: true });
+      }
+    };
+
+    buttons.forEach(b => b.addEventListener("click", () => setOpen(!open)));
+    /* Any link closes it. The in-page ones have to close it BEFORE the jump,
+       or the drawer is still over the section that was just scrolled to. */
+    drawer.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+    addEventListener("keydown", e => { if (e.key === "Escape" && open) setOpen(false); });
+    /* Rotating a phone into landscape can cross the breakpoint and leave the
+       drawer open over a desktop layout with no button to shut it. */
+    matchMedia("(min-width: 761px)").addEventListener("change", e => { if (e.matches) setOpen(false); });
+
+    window.__menu = { get open() { return open; }, set(v) { setOpen(!!v); } };
+  })();
 
   /* ---------- word-by-word mask reveal ----------
      The text is split on whitespace and each word is wrapped in a
@@ -7679,13 +7899,20 @@ window.MORFOS_WING = {
        drawing is the other way round, measured 144 by 114. Not cosmetic — this
        box is what the text avoidance tests against, and a box two thirds empty
        makes the butterfly refuse perfectly good places to sit. */
-    const MARK_CSS = 54, HALO = 0.16;
+    /* The drawn width on screen. It used to be a flat 54 and the butterfly
+       never ran on a phone at all, so nothing tested it there; at 54 on a
+       375px screen the mark is a seventh of the width and lands on the
+       headings it is supposed to sit beside. 38 keeps the same relationship
+       to the text that 54 has on a desktop. Read inside sprite(), which
+       re-runs on resize, so rotating the phone re-fits it. */
+    const markCss = () => innerWidth < 761 ? 38 : 54;
+    const HALO = 0.16;
     const tmp = document.createElement("canvas");
     const tg = tmp.getContext("2d");
     const canBlur = typeof g.filter === "string";
 
     function sprite() {
-      const boxW = Math.round(MARK_CSS * (1 + 2 * HALO));
+      const boxW = Math.round(markCss() * (1 + 2 * HALO));
       const boxH = Math.max(2, Math.round(boxW * bh / bw));
       host.style.width = boxW + "px";
       host.style.height = boxH + "px";
@@ -7777,14 +8004,16 @@ window.MORFOS_WING = {
       "translate(" + (-cx0).toFixed(2) + " " + (-cy0).toFixed(2) + ")");
   }
 
-  /* Below the breakpoint it is not rendered, and the corner logo keeps
-     its own butterfly instead. Watched rather than read once, so resizing
-     the window hands the mark back and forth correctly. */
-  const wide = matchMedia("(min-width: 861px)");
-  const syncWide = () => document.body.classList.toggle("has-flit", wide.matches);
-  syncWide();
-  wide.addEventListener ? wide.addEventListener("change", syncWide)
-                        : wide.addListener(syncWide);
+  /* It used to stop below 861px and hand the mark back to the static corner
+     logo, which meant the one thing that ties the page together never ran on
+     a phone — where most of the traffic is. It runs at every width now; the
+     sprite is smaller there (see markCss) and the seat solve already works in
+     viewport units, so nothing else had to change. Reduced motion is still
+     honoured — this whole engine returns early above when it is set.
+
+     `wide` stays as the gate the frame loop reads, now always open. */
+  const wide = { matches: true };
+  document.body.classList.add("has-flit");
 
 
   /* ---------- where it goes ----------
@@ -7882,25 +8111,36 @@ window.MORFOS_WING = {
     let y = atY === undefined ? box.top + box.height / 2 : atY;
     let x = box.right + GAP + hw;
     if (x + hw > innerWidth - M) {
-      /* No room beside the line, so it goes clear of it vertically: above if
-         there is room, and below if there is not. Below is new. The two
-         corner words (WORK and OUR SERVICES) finish their migration hard
-         against the right margin and sit 78px from the top, which leaves too
-         little room above for the whole mark and a lot of empty panel under
-         it — so the old code took the above branch anyway on a 6px clearance
-         and the mark came to rest ON the word. Measured at 1600 wide, it
-         covered up to six of the twelve letters of OUR SERVICES over 24
-         consecutive scroll samples.
+      /* No room beside the line, so it goes clear of it vertically — and it
+         takes whichever side has MORE room, not simply the one above.
 
-         CLEAR is 16 rather than 6 because the idle drift is +/-5.4px
-         vertically: a 6px gap is clear at the seat and not clear at the
-         position actually drawn. */
+         This is what the two corner words (WORK and OUR SERVICES) need. They
+         finish their migration hard against the right margin, about 80px from
+         the top, with the whole panel empty underneath. Always preferring
+         above put the mark in the strip between the header and the word:
+         at 1600 wide it covered up to six of the twelve letters of OUR
+         SERVICES over 24 consecutive scroll samples, and on a 375px phone the
+         seat itself was fine but the BLEND down to the next heading's seat
+         then dragged the mark straight back through the word — measured at
+         seat y 61 rising to 91 against a word occupying 80 to 96. Seating
+         below the word means the blend leaves downwards and never crosses it.
+
+         Ties and near-ties go to above, which is what every heading in the
+         middle of the page had before and still gets.
+
+         CLEAR is 16 rather than the 6 this used to leave, because the idle
+         drift is +/-5.4px vertically: a 6px gap is clear at the seat and not
+         clear at the position actually drawn. */
       const CLEAR = 16;
       const above = y - box.height / 2 - hh - CLEAR;
       const below = y + box.height / 2 + hh + CLEAR;
-      const side  = Math.min(box.right - hw * 0.2, innerWidth - M - hw);
-      if (above - hh > M) { x = side; y = above; }
-      else if (below + hh < innerHeight - M) { x = side; y = below; }
+      const fitsAbove = above - hh > M;
+      const fitsBelow = below + hh < innerHeight - M;
+      const roomAbove = above - hh - M;
+      const roomBelow = innerHeight - M - (below + hh);
+      const side = Math.min(box.right - hw * 0.2, innerWidth - M - hw);
+      if (fitsAbove && (!fitsBelow || roomAbove >= roomBelow)) { x = side; y = above; }
+      else if (fitsBelow) { x = side; y = below; }
       else { x = innerWidth - M - hw; }
     }
     return { x: cl(x, M + hw, innerWidth - M - hw),
