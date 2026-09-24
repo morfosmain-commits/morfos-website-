@@ -374,7 +374,10 @@
     padding:22px;
   }
   .band.flip .band-art{border-right:none;border-left:1px solid var(--rule)}
-  .band-art svg{width:min(150px,54%);height:auto}
+  /* White, so the mark reads the way the artwork does — black on white
+     inverted onto the plate's near-black gradient. Measured against the
+     darkest point of that gradient (#070405) at 19.9:1. */
+  .band-art svg{width:min(132px,48%);height:auto;fill:#fff}
   .band-word{
     display:flex;align-items:center;
     padding:clamp(10px,2.4vh,26px) clamp(14px,2.4vw,30px);
@@ -469,7 +472,8 @@
     flex:none;width:54px;height:54px;border:1px solid var(--rule-strong);
     display:grid;place-items:center;
   }
-  .who-mark svg{width:20px;height:auto}
+  /* the real mark, filled in by JS like the two plates above */
+  .who-mark svg{width:22px;height:auto;fill:#fff}
   .who-cell h4{
     font-family:var(--serif);font-weight:400;font-size:clamp(1.15rem,2vw,1.6rem);
     text-transform:uppercase;color:#fff;line-height:1.1;margin-bottom:5px;
@@ -590,6 +594,16 @@
      padding is cancelled by an equal negative margin */
   .fg a{display:inline-grid;align-items:center;min-height:44px;margin-block:-12px}
   .fg a:hover{color:var(--red)}
+
+  /* ---------- Shopify Partner ----------
+     A line in the footer's first column rather than a pill: the column is
+     already small caps, so the glyph and the words are the whole badge. The
+     mark is drawn here rather than pulled from Shopify, whose own Partner
+     badge is an asset they issue under their brand guidelines. */
+  .fg .partner{display:inline-flex;align-items:center;gap:7px}
+  .fg .partner-mark{display:grid;place-items:center;flex:none;color:var(--red)}
+  .fg .partner-mark svg{width:13px;height:13px;display:block}
+
   .fg a:focus-visible{outline:2px solid var(--yellow);outline-offset:3px;border-radius:2px}
 
   /* ---- the two big headings ---- */
@@ -1059,6 +1073,16 @@
           <b>Morfos</b>
           <span>Shopify and 3D web studio</span>
           <span>Founded 2026</span>
+          <span class="partner">
+            <span class="partner-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.6 7.4h14.8l-1 12a1.7 1.7 0 0 1-1.7 1.6H7.3a1.7 1.7 0 0 1-1.7-1.6Z"/>
+                <path d="M8.9 9.6V6.6a3.1 3.1 0 0 1 6.2 0v3"/>
+              </svg>
+            </span>
+            <span>Shopify Partner</span>
+          </span>
         </div>
         <div class="fg">
           <b>Mumbai</b>
@@ -1520,6 +1544,19 @@ window.MORFOS_MARK = (() => {
   // the footer engine reads it from here rather than carrying its own copy
   window.COCOON_SHARED = { d: COCOON_D, w: COCOON_W, h: COCOON_H };
 
+  /* ---------- the mark on the two feature plates ----------
+     One filled path whose pattern is already holes in it, so it sits on the
+     plates' gradient without needing a solid colour to punch against — which
+     is why this uses COCOON_D and the card above uses MORFOS_MARK. Filled
+     from the same traced outline the loader and the footer use, so there is
+     one mark on the page and it cannot drift. */
+  document.querySelectorAll("[data-cocoon-logo]").forEach(g => {
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("d", COCOON_D);
+    // no fill here: the plate's stylesheet sets it, so the colour lives in CSS
+    g.replaceChildren(p);
+  });
+
   /* ---------- the cocoon turning behind the footer ----------
      The reference runs a WebGL object behind its sign-off. This is the same
      idea in 2D: the traced cocoon extruded into depth slices and turned about
@@ -1596,20 +1633,89 @@ window.MORFOS_MARK = (() => {
        well under the space available — it is a mark under a word now, not a
        backdrop for the whole screen. */
     function place() {
+      if (W <= 760) { placeNarrow(); return; }
       const cvT = cv.getBoundingClientRect();
       let top = H * 0.30, left = W * 0.06;
       if (headEl) {
         const h = headEl.getBoundingClientRect();
-        top = h.bottom - cvT.top + (W > 900 ? 24 : 16);
+        top = h.bottom - cvT.top + 24;
         left = h.left - cvT.left;
       }
       const room = Math.max(120, (guard - 22) - top);
-      const capH = Math.min(room, W > 900 ? 244 : 196);
-      const capW = W * (W > 900 ? 0.3 : 0.62);
+      const capH = Math.min(room, 244);
+      const capW = W * 0.3;
       S = Math.min(capH / PH, capW / PW);
       const halfW = PW * S / 2, halfH = PH * S / 2;
       cx = Math.min(Math.max(left + halfW, halfW + 8), W - halfW - 8);
       cy = top + halfH;
+    }
+
+    /* ---------- the phone ----------
+       One column, and the spot the mark uses on a desktop is where the copy
+       is. The lines do not run the full width though — the headings and the
+       paragraph both wrap short — so there is a gutter on the right, and this
+       finds it by measuring what is actually drawn rather than by guessing
+       where the text breaks.
+
+       Two candidate bands, because one was not enough: the headings alone,
+       and the headings plus the paragraph under them. Widening the band adds
+       height but also lets the longest line set the gutter for everything
+       above it, and which of those wins changes with the screen. Measured:
+       375px takes the taller band (118 x 181), 320px the shorter one
+       (82 x 126), and both clear every line of copy.
+
+       Nothing is ever placed beside the email field, which spans the full
+       width, so it bounds the search from below.
+
+       If neither band can hold the mark at a sensible size the footer simply
+       does without it. A missing ornament reads as a design; the same
+       ornament sitting under the one paragraph asking for the visitor's
+       email does not. */
+    function placeNarrow() {
+      const cvT = cv.getBoundingClientRect();
+      const topOf = el => el.getBoundingClientRect().top - cvT.top;
+
+      const heads = foot.querySelector(".foot-heads");
+      const para  = foot.querySelector(".foot-cta p");
+      const field = foot.querySelector(".fieldw");
+
+      const start = heads ? topOf(heads) : H * 0.34;
+      const hardBot = field ? topOf(field) - 10 : guard - 22;
+
+      /* the right edge of every piece of copy inside a band */
+      const gutter = (t, b) => {
+        let obs = 0;
+        foot.querySelectorAll(".foot-head, .foot-cta p, .foot-meta .fg > *")
+          .forEach(e => {
+            if (!(e.textContent || "").trim()) return;
+            const r = e.getBoundingClientRect();
+            if (r.bottom - cvT.top <= t || r.top - cvT.top >= b) return;
+            const right = r.right - cvT.left;
+            if (right > obs) obs = right;
+          });
+        return Math.max(obs + 14, W * 0.5);
+      };
+
+      const MIN_W = 60, MIN_H = 96;
+      let best = null;
+      const bands = [];
+      if (para) bands.push([start, Math.min(topOf(para) - 8, hardBot)]);
+      bands.push([start, hardBot]);
+
+      for (const [t, b] of bands) {
+        const capH = b - t;
+        if (capH < MIN_H) continue;
+        const left = gutter(t, b);
+        const capW = W - left - 10;
+        if (capW < MIN_W) continue;
+        const s = Math.min(capH / PH, capW / PW);
+        if (!best || s > best.s) best = { s: s, t: t, capH: capH };
+      }
+
+      if (!best) { S = 0; return; }          // nowhere it can go: leave it out
+      S = best.s;
+      cx = W - 10 - PW * S / 2;
+      cy = best.t + best.capH / 2;
     }
 
     function draw() {

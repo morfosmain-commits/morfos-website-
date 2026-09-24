@@ -1668,3 +1668,82 @@ samples.
 
 **Deliberately not changed.** `client-roster.html` has no header to fix, and
 `frostbreak.html` is the unrelated scratch demo.
+
+## This round of changes
+
+**The About page's four stamps are the real mark now.** Two on the feature
+plates and two beside the founder bios were drawing a bare outline ring with a
+coloured bar over it — a stand-in from before the artwork existed, which is why
+it read as a placeholder. All four are filled from `COCOON_D`, the same traced
+cocoon the loader and the footer use, so there is one mark on the page. Built
+in JS from `[data-cocoon-logo]` rather than pasted in four times: the path is
+5,009 characters. Verified by rasterising what the page actually renders —
+**290 of 354 scanlines carry two or more separate runs of ink**, up to four,
+so the interior pattern is there; a plain filled oval would report exactly one
+on every row.
+
+`COCOON_D` is the right source here and `MORFOS_MARK` is not: the plates have a
+gradient behind them, and `COCOON_D` already carries the pattern as holes in a
+single path, while `MORFOS_MARK` needs a solid colour to punch the cuts
+against. That is why the panel card beside "No ghosting" still uses the other
+one.
+
+**The hero's corner CTA books in place.** Anything with `data-book-now` opens
+the Cal.com modal instead of scrolling to `#book`. It does not call Cal's API
+— it clicks the booking card's own `#bkCalOpen`, so there is one path the modal
+is ever opened by. Three measurements make that safe from the top of the page:
+`#bkCalOpen` exists from first paint (the card writes its markup immediately;
+`start()` only fetches the script), the script is warmed on hover, focus and
+touchstart, and the modal appears **synchronously** once Cal is bound. Measured:
+**191ms cold from a standing start, 17.6ms warm, and the page does not move**.
+If Cal never lands the anchor's own `#book` destination is used instead —
+verified by stubbing the button's click, which fell back at **4,059ms** against
+a 4,000ms budget and landed `#book` at y 78, clear of the header.
+
+To put another CTA on the modal, add `data-book-now` to it. The sticky bar and
+the drawer were deliberately left scrolling — Het asked for the hero one.
+
+**The booking email addresses are brand red.** One was the section's label
+yellow. The other had no rule at all and was being drawn in the browser's
+default link blue — measured `rgb(0,0,238)` on the card's `#0c0c0c`, which is
+**1.4:1 and effectively invisible**. Both are `#fd2702` now at 5.4:1 and 5.1:1.
+
+**FAQ 01 no longer quotes figures.** Het asked for the exact prices out of the
+answer. The FAQ answer and the `FAQPage` structured data are the same sentence
+and have to stay identical or the rich result disagrees with the page, so both
+were rewritten together — verified equal by reading the JSON-LD back out of the
+live DOM.
+
+Still carrying numbers, deliberately, because they were not part of the ask:
+the `priceRange` and `Offer` in the JSON-LD, and the calculator's own
+"from ₹30,000" eyebrow and its engine.
+
+**Shopify Partner.** A pill under the statement on the home page — the first
+thing after the hero — and a line in the first footer column, which puts it on
+the About and case pages too. The glyph is a plain bag drawn in MORFOS red, not
+Shopify's own badge: theirs is an asset they issue under their brand
+guidelines. Swap the `<svg>` for their image if you would rather use it.
+
+**The footer cocoon is off the copy on a phone.** On a wide screen it hangs
+under the word MORFOS, where the right-hand half of the footer is empty. Below
+760px the footer stacks into one column and that spot is occupied — measured at
+375px, the mark's ink box was x 25–113, y 392–535, sitting behind "Let's build
+yours", the paragraph under it and the email field, and dropping their contrast
+from 20.3:1 to **8.3:1** and from 13.7:1 to **6.0:1** against a solid red body.
+
+`placeNarrow()` puts it in the gutter the stacked column leaves to the right of
+the copy, found by measuring the rendered line boxes rather than guessing where
+they wrap. Two candidate bands are tried — the headings alone, and the headings
+plus the paragraph — and the one that yields the larger mark wins, because
+widening the band adds height but lets the longest line set the gutter for
+everything above it. Nothing is ever placed beside the email field, which spans
+the full width. Swept: **0 text elements overlap the mark at 326, 375, 414, 700
+or 1280**, against 3 before, and 1280 is the untouched desktop path.
+
+- **globalAlpha cannot dim a stack.** The first attempt fell back to drawing
+  the mark in place at `globalAlpha` 0.18. It applies per fill, and the object
+  is 64 slices: the stack composites back to **alpha 253 of 255**, and the
+  brightest pixel behind the heading measured `rgb(117,15,5)` — no better than
+  leaving it alone. A real watermark needs an offscreen buffer composited once.
+  Not worth rewriting a tuned renderer for a 320px screen, so when there is
+  genuinely nowhere to put it, it is not drawn at all.

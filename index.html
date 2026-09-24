@@ -202,7 +202,7 @@
           "name": "How much does a Shopify store cost in India?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A Morfos build starts at ₹30,000 for a straightforward store and rises with catalogue size, custom templates and add-ons like migration or subscriptions, up to around ₹1,50,000 for a large one. The calculator on this page gives you a band in a few seconds without an email, and a 20-minute call turns that band into a real number for your build."
+            "text": "It depends on the build, and anyone who quotes you a figure before seeing the job is guessing. What moves the number is the size of the catalogue, how much of the design is custom, and add-ons like migration or subscriptions — a simple store and a large one are not the same piece of work. The calculator on this page gives you a realistic band in a few seconds without asking for an email, and a 15-minute call turns that band into a real number for your build, agreed with you before any deposit."
           }
         },
         {
@@ -891,6 +891,35 @@
   @media (max-width:760px){
     .hz-text{max-width:100%;font-size:clamp(1.3rem,6.4vw,2rem)}
   }
+
+  /* ---------- Shopify Partner ----------
+     Het: "i want you to mention somewhere that we are shopify partner also add
+     there small icon so everyone can see we are shopify partners."
+
+     Under the statement, which is the first thing after the hero, and again in
+     the footer so it is on the About and case pages too. The glyph is drawn
+     here rather than pulled from Shopify: their own Partner badge is an asset
+     they issue under their brand guidelines, so the mark is a plain bag in
+     MORFOS's own red and the words carry the claim. Drop Shopify's badge
+     image in place of the <svg> if you would rather use theirs. */
+  .partner{
+    display:inline-flex;align-items:center;gap:9px;
+    margin-top:clamp(20px,3vh,32px);
+    padding:7px 14px 7px 10px;
+    border:1px solid rgba(253,39,2,.4);border-radius:999px;
+    font-size:11.5px;line-height:1;letter-spacing:.01em;
+    color:#cfcfcf;
+  }
+  .partner b{color:#fff;font-weight:500}
+  .partner-mark{display:grid;place-items:center;flex:none;color:var(--red)}
+  .partner-mark svg{width:15px;height:15px;display:block}
+
+  /* in the footer it sits in a small-caps column, so it loses the pill */
+  .fg .partner{
+    margin-top:2px;padding:0;border:0;border-radius:0;
+    font-size:inherit;letter-spacing:inherit;color:inherit;
+  }
+  .fg .partner b{font-weight:inherit;color:inherit}
 
   /* ---------- work: perspective filmstrip (kargo-studio) ----------
      Panels are sized from their distance to a focal point at the
@@ -1683,7 +1712,10 @@
   .btn--ghost{background:transparent;color:#fff;border:1px solid var(--rule)}
   .btn--ghost:hover{border-color:#fff;box-shadow:none}
   .book .alt{display:block;margin-top:18px;font-size:11.5px;color:#6a6a6a}
-  .book .alt a{color:var(--yellow);text-decoration:none;border-bottom:1px solid rgba(246,241,103,.35)}
+  /* Brand red, on Het's instruction — it was the yellow the section uses for
+     labels, which made the address read as a label rather than as a link. */
+  .book .alt a{color:var(--red);text-decoration:none;border-bottom:1px solid rgba(253,39,2,.4)}
+  .book .alt a:hover{border-bottom-color:var(--red)}
 
   /* ---------- booking card ----------
      Two columns: the pitch stays on the left where it always was, the
@@ -1820,6 +1852,11 @@
   .bk-go[disabled]{opacity:.5}
   .bk-micro{font-size:11px;color:var(--muted);text-align:center;margin:0;line-height:1.6}
   .bk-micro b{color:#bbb;font-weight:400}
+  /* This had no rule at all and was being drawn in the browser's default link
+     blue — measured rgb(0,0,238) on the card's #0c0c0c, which is 1.4:1 and
+     effectively unreadable. Brand red, matching the address above it: 5.0:1. */
+  .bk-micro a{color:var(--red);text-decoration:none;border-bottom:1px solid rgba(253,39,2,.4)}
+  .bk-micro a:hover{border-bottom-color:var(--red)}
 
   .bk-alt{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--rule)}
   .bk-alt button{
@@ -2294,7 +2331,10 @@
     </div>
 
     <div class="nav-cta">
-      <a class="pill pill--ghost" href="#book" data-hot>Book a call</a>
+      <!-- data-book-now opens the Cal.com modal in place. href stays #book so
+           it is still a real destination without JS, and so it degrades to the
+           old scroll if the booking script is blocked. -->
+      <a class="pill pill--ghost" href="#book" data-hot data-book-now>Book a call</a>
     </div>
 
     <button class="burger" type="button" data-menu aria-label="Open menu"
@@ -2327,6 +2367,17 @@
     <div class="wrap">
       <!-- words are split and driven in JS -->
       <p class="hz-text" id="hzText">Morfos builds Shopify stores and 3D websites for founders and brands. Live in 7 days, a 14-day refund, and a rebuild until it is right.</p>
+
+      <p class="partner">
+        <span class="partner-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.6 7.4h14.8l-1 12a1.7 1.7 0 0 1-1.7 1.6H7.3a1.7 1.7 0 0 1-1.7-1.6Z"/>
+            <path d="M8.9 9.6V6.6a3.1 3.1 0 0 1 6.2 0v3"/>
+          </svg>
+        </span>
+        <span>Morfos is a <b>Shopify Partner</b></span>
+      </p>
     </div>
   </section>
 
@@ -3339,7 +3390,7 @@
             </button>
           </h3>
           <div class="faq-a" id="faqA0" role="region" aria-labelledby="faqQ0">
-            <div><p>A Morfos build starts at ₹30,000 for a straightforward store and rises with catalogue size, custom templates and add-ons like migration or subscriptions, up to around ₹1,50,000 for a large one. The calculator on this page gives you a band in a few seconds without an email, and a 20-minute call turns that band into a real number for your build.</p></div>
+            <div><p>It depends on the build, and anyone who quotes you a figure before seeing the job is guessing. What moves the number is the size of the catalogue, how much of the design is custom, and add-ons like migration or subscriptions — a simple store and a large one are not the same piece of work. The calculator on this page gives you a realistic band in a few seconds without asking for an email, and a 15-minute call turns that band into a real number for your build, agreed with you before any deposit.</p></div>
           </div>
         </li>
         <li class="faq-item">
@@ -3407,6 +3458,16 @@
           <b>Morfos</b>
           <span>Shopify and 3D web studio</span>
           <span>Founded 2026</span>
+          <span class="partner">
+            <span class="partner-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.6 7.4h14.8l-1 12a1.7 1.7 0 0 1-1.7 1.6H7.3a1.7 1.7 0 0 1-1.7-1.6Z"/>
+                <path d="M8.9 9.6V6.6a3.1 3.1 0 0 1 6.2 0v3"/>
+              </svg>
+            </span>
+            <span>Shopify Partner</span>
+          </span>
         </div>
         <div class="fg">
           <b>Mumbai</b>
@@ -6557,20 +6618,89 @@ window.MORFOS_WING = {
        well under the space available — it is a mark under a word now, not a
        backdrop for the whole screen. */
     function place() {
+      if (W <= 760) { placeNarrow(); return; }
       const cvT = cv.getBoundingClientRect();
       let top = H * 0.30, left = W * 0.06;
       if (headEl) {
         const h = headEl.getBoundingClientRect();
-        top = h.bottom - cvT.top + (W > 900 ? 24 : 16);
+        top = h.bottom - cvT.top + 24;
         left = h.left - cvT.left;
       }
       const room = Math.max(120, (guard - 22) - top);
-      const capH = Math.min(room, W > 900 ? 244 : 196);
-      const capW = W * (W > 900 ? 0.3 : 0.62);
+      const capH = Math.min(room, 244);
+      const capW = W * 0.3;
       S = Math.min(capH / PH, capW / PW);
       const halfW = PW * S / 2, halfH = PH * S / 2;
       cx = Math.min(Math.max(left + halfW, halfW + 8), W - halfW - 8);
       cy = top + halfH;
+    }
+
+    /* ---------- the phone ----------
+       One column, and the spot the mark uses on a desktop is where the copy
+       is. The lines do not run the full width though — the headings and the
+       paragraph both wrap short — so there is a gutter on the right, and this
+       finds it by measuring what is actually drawn rather than by guessing
+       where the text breaks.
+
+       Two candidate bands, because one was not enough: the headings alone,
+       and the headings plus the paragraph under them. Widening the band adds
+       height but also lets the longest line set the gutter for everything
+       above it, and which of those wins changes with the screen. Measured:
+       375px takes the taller band (118 x 181), 320px the shorter one
+       (82 x 126), and both clear every line of copy.
+
+       Nothing is ever placed beside the email field, which spans the full
+       width, so it bounds the search from below.
+
+       If neither band can hold the mark at a sensible size the footer simply
+       does without it. A missing ornament reads as a design; the same
+       ornament sitting under the one paragraph asking for the visitor's
+       email does not. */
+    function placeNarrow() {
+      const cvT = cv.getBoundingClientRect();
+      const topOf = el => el.getBoundingClientRect().top - cvT.top;
+
+      const heads = foot.querySelector(".foot-heads");
+      const para  = foot.querySelector(".foot-cta p");
+      const field = foot.querySelector(".fieldw");
+
+      const start = heads ? topOf(heads) : H * 0.34;
+      const hardBot = field ? topOf(field) - 10 : guard - 22;
+
+      /* the right edge of every piece of copy inside a band */
+      const gutter = (t, b) => {
+        let obs = 0;
+        foot.querySelectorAll(".foot-head, .foot-cta p, .foot-meta .fg > *")
+          .forEach(e => {
+            if (!(e.textContent || "").trim()) return;
+            const r = e.getBoundingClientRect();
+            if (r.bottom - cvT.top <= t || r.top - cvT.top >= b) return;
+            const right = r.right - cvT.left;
+            if (right > obs) obs = right;
+          });
+        return Math.max(obs + 14, W * 0.5);
+      };
+
+      const MIN_W = 60, MIN_H = 96;
+      let best = null;
+      const bands = [];
+      if (para) bands.push([start, Math.min(topOf(para) - 8, hardBot)]);
+      bands.push([start, hardBot]);
+
+      for (const [t, b] of bands) {
+        const capH = b - t;
+        if (capH < MIN_H) continue;
+        const left = gutter(t, b);
+        const capW = W - left - 10;
+        if (capW < MIN_W) continue;
+        const s = Math.min(capH / PH, capW / PW);
+        if (!best || s > best.s) best = { s: s, t: t, capH: capH };
+      }
+
+      if (!best) { S = 0; return; }          // nowhere it can go: leave it out
+      S = best.s;
+      cx = W - 10 - PW * S / 2;
+      cy = best.t + best.capH / 2;
     }
 
     function draw() {
@@ -8713,6 +8843,83 @@ const CAL_ON = (() => {
 })();
 
 if (!CAL_ON) window.__cal = { on: false, link: CAL_CFG.link };
+
+/* ---------- book from wherever the visitor already is ----------
+   Het: "in the hero section the corner cta is there the book a call one if we
+   click on it it takes you down on the book a call section i want that they
+   direct book a call from hero section."
+
+   Anything carrying data-book-now opens the Cal.com modal on the spot instead
+   of scrolling. It does not talk to Cal's API directly — it clicks the card's
+   own #bkCalOpen, which is the one path already proven to work, so there is a
+   single way the modal is ever opened.
+
+   Three things make that safe from the top of a long page:
+
+   - #bkCalOpen exists from first paint. The booking card writes its own
+     markup immediately; start() only fetches Cal's script.
+   - Cal's script is lazy, so it is warmed on hover, focus and touchstart —
+     a visitor is reaching for the button for ~200ms before the click lands.
+   - The modal appears SYNCHRONOUSLY once Cal is bound (measured: visible on
+     the same tick, 10ms to state "loaded"). So one click and one check is
+     enough; if nothing opened, Cal has not landed yet and it retries.
+
+   If it never lands — script blocked, Cal down, CAL_ON false — the anchor's
+   own destination is used and the visitor gets the booking section, which is
+   exactly what happened before any of this. */
+(() => {
+  const ctas = [...document.querySelectorAll("[data-book-now]")];
+  if (!ctas.length) return;
+
+  const BUDGET = 4000;             // ms to wait for Cal before falling back
+  const visible = () => [...document.querySelectorAll("cal-modal-box")]
+    .some(el => getComputedStyle(el).visibility !== "hidden");
+
+  let opening = false;
+
+  const fallback = () => {
+    opening = false;
+    const sec = document.getElementById("book");
+    if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const warm = () => {
+    const cal = window.__cal;
+    if (cal && cal.on && cal.start) cal.start();
+  };
+
+  const open = e => {
+    const cal = window.__cal;
+    const btn = document.getElementById("bkCalOpen");
+    // Cal off, or the popup card never rendered: leave the anchor alone
+    if (!cal || !cal.on || !btn) return;
+    e.preventDefault();
+    if (opening) return;
+    opening = true;
+    warm();
+
+    const t0 = performance.now();
+    (function attempt() {
+      btn.click();
+      if (visible()) { opening = false; return; }
+      if (performance.now() - t0 > BUDGET) { fallback(); return; }
+      setTimeout(attempt, 150);
+    })();
+  };
+
+  ctas.forEach(el => {
+    el.addEventListener("click", open);
+    /* once each, and passive: this only kicks off a script fetch */
+    ["pointerenter", "focus", "touchstart"].forEach(t =>
+      el.addEventListener(t, warm, { once: true, passive: true }));
+  });
+
+  window.__bookNow = {
+    get ctas() { return ctas.length; },
+    get modalOpen() { return visible(); },
+    open(el) { open({ preventDefault() {} }); return true; }
+  };
+})();
 
 (() => {
   const card = document.getElementById("bkCard");
