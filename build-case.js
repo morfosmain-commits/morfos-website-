@@ -1,9 +1,19 @@
-/* Builds case.html from about.html.
-   It is generated rather than written by hand so the header, the footer, the
+/* Builds the case-study pages from about.html.
+   They are generated rather than written by hand so the header, the footer, the
    cursor, the fonts and the design tokens are literally the same bytes as the
    About page and cannot drift — the same reason the footer was ported by script
    rather than copied. Only the content between the masthead and the CTA
-   marquee is replaced. */
+   marquee is replaced.
+
+   One shared template, several outputs: case.html carries every case and picks
+   by ?c=, and each case also gets a real page of its own — prabhu-mill.html,
+   aura-learn.html — that names itself in <html data-case>. The per-case files
+   exist because a query string is the one part of a URL a static host feels
+   free to throw away: `serve`, Netlify pretty URLs, Vercel cleanUrls and
+   friends all 301 /case.html?c=aura-learn to /case, and the page then fell
+   back to the first case and quietly served Prabhu Mill instead. A path
+   survives that redirect; a query does not. case.html keeps working and
+   forwards to the real page when it is given a live ?c=. */
 const fs = require("fs");
 /* run from the project root: node build-case.js */
 const SRC = require("path").join(__dirname, "about.html");
@@ -60,6 +70,27 @@ rep("  /* ---------- word-by-word mask reveal ---------- */",
 
 fs.writeFileSync(DST, s);
 console.log("case.html", (s.length / 1024).toFixed(1) + "KB");
+
+/* ---------------- one real page per case ----------------
+   The same bytes as case.html with two edits: the id on <html>, which the
+   renderer reads in preference to the query string, and a canonical that
+   points at this page rather than the shared one. Add a case to CASES and add
+   its id here. */
+const IDS = ["prabhu-mill", "aura-learn"];
+for (const id of IDS) {
+  if (s.indexOf('"' + id + '": {') < 0) throw new Error(id + ": no case data");
+  const one = (a, b, label) => {
+    const n = p.split(a).length - 1;
+    if (n !== 1) throw new Error(id + " " + label + ": " + n + " hits");
+    p = p.split(a).join(b);
+  };
+  let p = s;
+  one('<html lang="en">', '<html lang="en" data-case="' + id + '">', "html tag");
+  one('<link rel="canonical" href="https://www.morfos.in/case.html" />',
+      '<link rel="canonical" href="https://www.morfos.in/' + id + '.html" />', "canonical");
+  fs.writeFileSync(require("path").join(__dirname, id + ".html"), p);
+  console.log(id + ".html", (p.length / 1024).toFixed(1) + "KB");
+}
 
 /* ==================================================================== */
 
@@ -360,10 +391,66 @@ function JS() { return `  /* ---------- case studies ----------
       method: "Median of five cold loads &mdash; cache and cookies cleared before each &mdash; driven headless at 1440&times;900 from a single location in September 2026. The spread across those five runs was 0.31s to 2.51s, so treat the median as the figure and the spread as the weather. Measure it yourself before quoting it anywhere that matters.",
       /* not yet supplied: contract{}, before, quote. See HANDOFF. */
     },
+
+    "aura-learn": {
+      no: "02",
+      kind: "Client build",
+      client: "Aura Learn",
+      brand: "Aura Learn",
+      place: "Pune, Maharashtra",
+      sector: "Children&rsquo;s cognitive learning &amp; education",
+      title: "Aura Learn",
+      stand: "Aura Learn teaches thinking rather than syllabus &mdash; three programmes in computational thinking, design thinking and cognitive training, for children between six and sixteen. The site had to do the job a parent does in about a minute: work out which programme fits the child&rsquo;s age, see what the twelve weeks actually consist of, and book a trial without filling in a form first.",
+      owner: "Shlok Chopde",
+      /* Het supplied all four: signed the 17th, handed over the 22nd, which
+         is five days. The price is the one he gave, not an inference. */
+      contract: [
+        ["Price agreed", "₹50,000"],
+        ["Signed", "17 Sep 2026"],
+        ["Handed over", "22 Sep 2026"],
+        ["Build time", "5 days"],
+      ],
+      /* quote: absent. Shlok Chopde has not been asked for a testimonial yet,
+         and a testimonial is a real person's words. The parent videos on the
+         client's own site are their parents talking about them, not about
+         Morfos, so they are not a quote for this page either. */
+      url: "https://auralearn.com/",
+      urlLabel: "auralearn.com",
+      hero: "work/aura-learn-hero.jpg",
+      heroCap: "auralearn.com &mdash; the opening screen at 1440&times;900.",
+      full: "work/aura-learn-full.jpg",
+      scrollNote: "Scroll inside the frame",
+      jobs: [
+        ["Let a parent self-select in one screen",
+         "Every programme card leads with the two things that decide it &mdash; the age band and the length. Computational Thinking &amp; AI is 8&ndash;15 over 12 weeks, Design Thinking 9&ndash;16 over 10, Neurobics 6&ndash;14 over 8 &mdash; so a parent rules two of the three out before reading a word of the description."],
+        ["Say what the child comes away with",
+         "Each card carries its own outcomes rather than a shared list: problem solving and coding fundamentals on one, empathy and innovation on another, memory, focus and attention on the third. It is the answer to &ldquo;what will this actually do for my child&rdquo;, on the card that raises the question."],
+        ["Show the method, because the category is crowded",
+         "The teaching approach is on the page &mdash; project-based, inquiry-based and gamified learning, an assessment framework, parent insights &mdash; so the claim of a brain-first method is something a parent can inspect rather than take on trust."],
+        ["Two ways in, and neither is a contact form",
+         "The page asks for one of two things: explore the programmes, or book a trial session. A parent who is convinced and a parent who is still deciding each get a next step that fits where they are."],
+      ],
+      /* perf: deliberately absent. Five cold loads came back 549KB/0.4s to
+         9.4MB/3.8s depending on whether the testimonial videos and their
+         posters had landed before loadEventEnd, and a figure with that much
+         weather in it is not a measurement. It goes in when it can be
+         measured properly, and not before. */
+    },
   };
 
   (() => {
-    const q = new URLSearchParams(location.search).get("c") || Object.keys(CASES)[0];
+    /* Which case this page is. A per-case page says so on <html data-case>,
+       which no host can rewrite; case.html has to ask the query string, and a
+       query string is exactly the part a static host will drop when it
+       redirects /case.html to /case. So when the shared page is handed a live
+       ?c= it forwards to that case's own page instead of rendering it here. */
+    const own = document.documentElement.dataset.case || "";
+    const asked = new URLSearchParams(location.search).get("c");
+    if (!own && asked && CASES[asked]) {
+      location.replace(asked + ".html" + location.hash);
+      return;
+    }
+    const q = own || asked || Object.keys(CASES)[0];
     const c = CASES[q];
     const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
 
@@ -433,7 +520,7 @@ function JS() { return `  /* ---------- case studies ----------
       about: { "@type": "Organization", name: c.client, url: c.url },
       author: { "@type": "Organization", name: "Morfos", url: "https://www.morfos.in/" },
       inLanguage: "en-IN",
-      url: "https://www.morfos.in/case.html?c=" + q,
+      url: "https://www.morfos.in/" + q + ".html",
     });
 
     window.__case = {

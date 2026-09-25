@@ -167,6 +167,34 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       if(s.transform&&s.transform!=='none') el.style.setProperty('transform','none','important');
     }); true;` });
 
+  /* POSTER=1 — a video embed renders in headless Chrome no better than a
+     Google Maps one does: auralearn.com's testimonial rail photographed as
+     four blank 9:16 boxes with the names underneath. This swaps each YouTube
+     iframe for the poster frame YouTube itself serves for that video, which
+     is exactly what the embed shows until someone presses play. It puts the
+     page's own content back where a box could not be photographed; it does
+     not invent anything. maxres does not exist for every video, so each one
+     falls back to hqdefault, which always does. Runs before the decode wait
+     below so the posters are waited on with everything else. */
+  if (process.env.POSTER) {
+    const swapped = (await send("Runtime.evaluate", { returnByValue: true, expression:
+      `(()=>{let n=0;
+        document.querySelectorAll('iframe').forEach(f=>{
+          const m=(f.src||'').match(/youtube(?:-nocookie)?\\.com\\/embed\\/([\\w-]{6,})/);
+          if(!m) return;
+          const img=document.createElement('img');
+          img.referrerPolicy='no-referrer';
+          img.onerror=function(){ if(!this.dataset.fb){ this.dataset.fb=1;
+            this.src='https://i.ytimg.com/vi/'+m[1]+'/hqdefault.jpg'; } };
+          img.src='https://i.ytimg.com/vi/'+m[1]+'/maxresdefault.jpg';
+          img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+          f.replaceWith(img); n++;
+        });
+        return n})()` })).result.value;
+    console.log("  poster-swapped", swapped, "video embed(s)");
+    await sleep(2500);
+  }
+
   /* and wait for every image actually to have decoded — a hero that is still
      in flight photographs as a flat colour wash */
   for (let i = 0; i < 60; i++) {

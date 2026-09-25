@@ -111,11 +111,16 @@
     font-family:var(--logo-serif);font-weight:500;
     letter-spacing:.055em;text-transform:uppercase;line-height:1;
     color:#fff;white-space:nowrap;
-    padding-right:.24em;            /* room for the butterfly */
+    padding-right:.92em;            /* room for the butterfly */
   }
+  /* it was .26 x .30em — 3.6 x 4.2px against the bar's 14px wordmark, which
+     is small enough to read as nothing at all. The home page can afford
+     that because its travelling butterfly covers the corner; this page has
+     no travelling one, so the accent is the only butterfly on it. Sized to
+     the wordmark's own cap height, on the artwork's 200x233 aspect. */
   .mk-lock i{
-    position:absolute;right:0;top:-.04em;
-    width:.26em;height:.30em;
+    position:absolute;right:0;top:.04em;
+    width:.80em;height:.93em;
     background:var(--butterfly) center / contain no-repeat;
   }
   .bar{
@@ -494,6 +499,12 @@
     text-transform:uppercase;color:#fff;line-height:1.1;margin-bottom:5px;
   }
   .who-cell p{font-size:12.5px;line-height:1.65;color:#b6b6b6}
+  .who-cell p.who-name{
+    font-family:var(--sans);font-weight:600;font-size:11.5px;
+    letter-spacing:.04em;color:#fff;line-height:1.5;margin-bottom:6px;
+  }
+  .who-name a{color:var(--red);text-decoration:none}
+  .who-name a:hover{text-decoration:underline}
   /* it was set across the full 679px of the wrap, 84 characters to the line,
      and it carried the only inline style left on the page */
   .who-note{max-width:62ch;padding-top:14px}
@@ -589,17 +600,13 @@
   }
   @media (min-width:900px){.foot-meta{grid-template-columns:repeat(5,1fr)}}
   .fg{display:flex;flex-direction:column;gap:5px;min-width:0}
-  /* column 3 is left empty on wide screens: it is the gap the cocoon turns in,
-     so the last two cells jump to columns 4 and 5 */
-  @media (min-width:900px){.foot-meta .fg:nth-child(3){grid-column:4}
-                           .foot-meta .fg:nth-child(4){grid-column:5}}
   .fg b{
     font-family:var(--sans);font-weight:500;
     font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;
   }
   /* #d4d4d4 rather than --muted: these lines sit over the turning cocoon, and
      --muted measured 1.96:1 against its brightest pixel. This holds 5.9:1. */
-  .fg span,.fg a{
+  .fg span,.fg a,.fg button{
     font-family:var(--sans);font-weight:400;
     font-size:11px;letter-spacing:.11em;text-transform:uppercase;
     color:#d4d4d4;text-decoration:none;line-height:1.75;
@@ -607,8 +614,14 @@
   }
   /* the meta links measured 215x19; the row keeps its leading because the
      padding is cancelled by an equal negative margin */
-  .fg a{display:inline-grid;align-items:center;min-height:44px;margin-block:-12px}
-  .fg a:hover{color:var(--red)}
+  .fg a,.fg button{display:inline-grid;align-items:center;min-height:44px;margin-block:-12px}
+  /* the button needs its own box reset — it is a <button> rather than an
+     <a> so a synthetic retry-click never fires a real navigation before
+     Cal's own listener has attached (see the footer's booking script).
+     Box only: a font/letter-spacing/text-transform reset here would beat
+     the rule above and the line came out 15px and lower case. */
+  .fg button{background:none;border:0;padding:0;text-align:left;justify-items:start}
+  .fg a:hover,.fg button:hover{color:var(--red)}
 
   /* ---------- Shopify Partner ----------
      A line in the footer's first column rather than a pill: the column is
@@ -616,10 +629,20 @@
      mark is drawn here rather than pulled from Shopify, whose own Partner
      badge is an asset they issue under their brand guidelines. */
   .fg .partner{display:inline-flex;align-items:center;gap:7px}
-  .fg .partner-mark{display:grid;place-items:center;flex:none;color:var(--red)}
-  .fg .partner-mark svg{width:13px;height:13px;display:block}
+  /* the same credential on the masthead's own line of small caps */
+  .lab-partner{display:inline-flex;align-items:center;gap:7px;color:#fff}
+  /* Sized on .partner-mark itself rather than under .fg: scoping it to the
+     footer left the masthead's glyph at 0x0, because an inline <span> with no
+     rule of its own gives an SVG with no width nothing to size against. */
+  .partner-mark{display:grid;place-items:center;flex:none}
+  .partner-mark svg{width:13px;height:13px;display:block}
+  /* Repeated at both specificities on purpose: `.fg span` already colours the
+     footer column, and an unscoped `.partner-mark` loses to it — which turned
+     the footer glyph grey when the masthead one was fixed. */
+  .lab-partner .partner-mark,
+  .fg .partner .partner-mark{color:var(--red)}
 
-  .fg a:focus-visible{outline:2px solid var(--yellow);outline-offset:3px;border-radius:2px}
+  .fg a:focus-visible,.fg button:focus-visible{outline:2px solid var(--yellow);outline-offset:3px;border-radius:2px}
 
   /* ---- the two big headings ---- */
   .foot-heads{
@@ -847,6 +870,7 @@
       <span class="lab">About the studio</span>
       <span class="lab">No. <b>01</b> &middot; The founding batch edition</span>
       <span class="lab"><b>12</b> builds a month</span>
+      <span class="lab lab-partner"><span class="partner-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 7.4h14.8l-1 12a1.7 1.7 0 0 1-1.7 1.6H7.3a1.7 1.7 0 0 1-1.7-1.6Z"/><path d="M8.9 9.6V6.6a3.1 3.1 0 0 1 6.2 0v3"/></svg></span>Shopify Partner</span>
     </div>
   </div>
 </header>
@@ -1048,7 +1072,8 @@
         </span>
         <div>
           <h4>Founder, build</h4>
-          <p>Scopes the store, agrees the number with you, and runs the 7-day build. Signs the scope document you get before any deposit.</p>
+          <p class="who-name">Marmik Pansuriya &middot; <a href="tel:+919924622247" data-hot>+91 99246 22247</a></p>
+          <p>Scopes the store and agrees the number with you. Signs the scope document you get before any deposit.</p>
         </div>
       </div>
 
@@ -1058,12 +1083,11 @@
         </span>
         <div>
           <h4>Founder, launch</h4>
-          <p>Handles handover, the 30-Day Safety Net, and everything after launch. The named contact on your Always-On line.</p>
+          <p class="who-name">Het Vachhani &middot; <a href="tel:+919913299955" data-hot>+91 99132 99955</a></p>
+          <p>Runs the 7-day build, handles handover, the 30-Day Safety Net, and everything after launch. The named contact on your Always-On line.</p>
         </div>
       </div>
     </div>
-
-    <p class="lab who-note">Names go here once you send them &mdash; nothing invented in the meantime.</p>
   </div>
 </section>
 
@@ -1100,9 +1124,15 @@
           <span>India</span>
         </div>
         <div class="fg">
-          <b>Say hello</b>
+          <b>Founders</b>
+          <a href="tel:+919924622247" data-hot>Marmik Pansuriya</a>
+          <a href="tel:+919913299955" data-hot>Het Vachhani</a>
+        </div>
+        <div class="fg">
+          <b>Book a call</b>
+          <button type="button" id="footCalOpen" data-hot data-cal-link="morfos-toylos/15min"
+                  data-cal-config='{"layout":"month_view"}'>Book a 15-min call</button>
           <a href="mailto:support.morfos@gmail.com" data-hot>support.morfos@gmail.com</a>
-          <a href="https://www.instagram.com/morfos.social/" target="_blank" rel="noopener me" data-hot>Instagram</a>
         </div>
         <div class="fg">
           <b>The terms</b>
@@ -1164,6 +1194,107 @@
 
     </div>
   </footer>
+
+<script>
+/* ---------- book a call, straight from this page's footer ----------
+   This page carries no booking card of its own — index.html does the
+   full pick -> details -> done state machine. All the footer's
+   [data-cal-link] button needs is Cal.com's own popup, which binds
+   itself to any element carrying that attribute. Same event, same
+   brand colour, same config as the home page's card. */
+(function (C, A, L) {
+  let p = function (a, ar) { a.q.push(ar); };
+  let d = C.document;
+  C.Cal = C.Cal || function () {
+    let cal = C.Cal; let ar = arguments;
+    if (!cal.loaded) {
+      cal.ns = {}; cal.q = cal.q || [];
+      d.head.appendChild(d.createElement("script")).src = A;
+      cal.loaded = true;
+    }
+    if (ar[0] === L) {
+      const api = function () { p(api, arguments); };
+      const namespace = ar[1];
+      api.q = api.q || [];
+      if (typeof namespace === "string") {
+        cal.ns[namespace] = cal.ns[namespace] || api;
+        p(cal.ns[namespace], ar);
+        p(cal, ["initNamespace", namespace]);
+      } else p(cal, ar);
+      return;
+    }
+    p(cal, ar);
+  };
+})(window, "https://app.cal.com/embed/embed.js", "init");
+Cal("init", { origin: "https://cal.com" });
+/* preload, not just init: without it a click that lands before embed.js
+   has fully attached its own delegation can fall through to the anchor's
+   plain href instead of opening the popup — the same reason index.html's
+   card preloads on hover before a visitor ever clicks. */
+Cal("preload", { calLink: "morfos-toylos/15min" });
+Cal("ui", {
+  theme: "dark",
+  hideEventTypeDetails: true,
+  layout: "month_view",
+  cssVarsPerTheme: {
+    dark: {
+      "cal-brand": "#fd2702",
+      "cal-bg": "#0c0c0c",
+      "cal-bg-emphasis": "#151515",
+      "cal-border": "rgba(255,255,255,.12)",
+      "cal-text": "#f0dfe2",
+      "cal-text-emphasis": "#ffffff"
+    }
+  }
+});
+
+/* A single click can land before embed.js has actually attached its own
+   delegated listener to [data-cal-link] — measured on the home page's
+   own card, which is why that one retries too rather than trusting a
+   single click. Same fix here: keep re-clicking the button every 150ms
+   until a visible cal-modal-box shows up or a budget runs out, then send
+   the visitor to the home page's own booking section. It is a <button>,
+   not a link, specifically so a retry's own synthetic click never fires a
+   real navigation on its own — a plain <a> did exactly that the first
+   time this was tried. isTrusted tells a real click apart from the
+   retry's synthetic ones, so this does not call itself forever. */
+(() => {
+  const btn = document.getElementById("footCalOpen");
+  if (!btn) return;
+
+  const BUDGET = 4000;
+  const visible = () => [...document.querySelectorAll("cal-modal-box")]
+    .some(el => getComputedStyle(el).visibility !== "hidden");
+
+  /* any box at all, not just a visible one: once Cal has taken a click it
+     owns the modal, and clicking again would open a second one — measured,
+     two clicks 150ms apart left two cal-modal-boxes stacked on the page.
+     Cal("preload") creates none, so this only ever means "the click took". */
+  const taken = () => document.querySelector("cal-modal-box");
+
+  let opening = false;
+  const warm = () => window.Cal && Cal("preload", { calLink: btn.dataset.calLink });
+
+  btn.addEventListener("click", e => {
+    if (!e.isTrusted || opening) return;
+    opening = true;
+    warm();
+    /* the first check waits a beat rather than running now: Cal may well
+       have handled this very click itself, and clicking again inside the
+       same tick is what put two modals on the page while this was being
+       measured. Only if nothing opened does the retry start. */
+    const t0 = performance.now();
+    setTimeout(function attempt() {
+      if (taken() || visible()) { opening = false; return; }
+      if (performance.now() - t0 > BUDGET) { opening = false; location.href = "index.html#book"; return; }
+      btn.click();
+      setTimeout(attempt, 150);
+    }, 150);
+  });
+  ["pointerenter", "focus", "touchstart"].forEach(t =>
+    btn.addEventListener(t, warm, { once: true, passive: true }));
+})();
+</script>
 
 <canvas class="cur-trail" id="curTrail" aria-hidden="true"></canvas>
 <div class="cur" id="cur" aria-hidden="true"></div>

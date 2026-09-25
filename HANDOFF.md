@@ -8,36 +8,58 @@ finished, and what to do next — in priority order.
 > 1. Read §2. Those are standing instructions from Het and they apply to every
 >    task, not just the first one. The short version: **measure, do not assert**,
 >    keep the scope exactly as asked, and never invent an image or a quote.
-> 2. Skim §5 for whatever area the new task touches. Most of the expensive
->    mistakes on this project have already been made once and written down.
+> 2. Skim §5 for whatever area the new task touches, and §9 for what the last
+>    session changed. Most of the expensive mistakes on this project have
+>    already been made once and written down.
 > 3. Take a backup of the file before editing it (§4), and run the integrity
 >    check in §8 afterwards.
 >
-> **If Het has not said what he wants yet, the answer is §7.1: deploy.** The
-> work has been finished and verified for several sessions and is still not
-> live — and it now includes a working booking system, which makes shipping
-> worth more than it was.
+> **If Het has not said what he wants yet, the answer is §7.1: commit, then
+> deploy.** The work has been finished and verified for several sessions and is
+> still not live — and it now includes a working booking system, a mobile
+> navigation and a mobile-correct butterfly, which makes shipping worth more
+> than it was.
 
-Last updated: 2026-09-21 (second session of the day).
-Last commit: `7691d37 "Update website"` — a **good** state, everything in it
-is verified. Working tree clean apart from this file.
+Last updated: **2026-09-25**.
+Last commit: `8d8a7fa "Update website"`.
+**The working tree is dirty and none of the latest work is committed** —
+`index.html`, `about.html`, `case.html`, `client-roster.html`, `build-case.js`,
+`capture-site.js`, `sitemap.xml`, three new files in `work/`, the two new
+generated case pages `prabhu-mill.html` and `aura-learn.html`, and this file all
+carry uncommitted changes. Everything in them has been measured and verified;
+see §9 for what they are and §0 for the one thing in `index.html` that was
+**not** written by a Claude session.
+
+**The most recent session** (see §9.5) rebuilt the footer's third column into
+**Founders** and **Book a call**, added **Aura Learn** as the second real
+client with a full case study, and made the About page's butterfly visible.
 
 ---
 
-## 0. The two things to know first
+## 0. The four things to know first
 
 1. **Nothing is deployed.** `www.morfos.in` is still serving an older build.
    Until the current files ship, none of the SEO work, none of the copy, none
    of the bug fixes and none of the case-study work is live. **This is the
    single highest-value thing left to do** and it is step 1 of §7.
-2. **The site takes bookings and silently drops them.** `BOOK_CFG.endpoint` is
-   empty, so the form validates, says thank you, and posts nowhere. The Apps
-   Script that receives them is written and sitting in `morfos-booking.gs`,
-   unpasted. See §6. This is the highest business risk on the list.
-
-Everything is committed and the last commit is a good state to fall back to,
-which was **not** true in earlier sessions — the note that used to be here
-about `546d4ca` being a bad intermediate no longer applies.
+2. **Bookings work, but Cal.com is not finished.** Cal.com is live and stores
+   every booking (§6) — the old `BOOK_CFG.endpoint` drop is gone. Two settings
+   are still open **inside cal.com, by Het**: phone number set to required, and
+   Google Calendar connected. Until the second one is done Cal offers times off
+   its own default schedule rather than Het's real calendar, so it can
+   double-book him. This is the highest business risk on the list.
+3. **The tree is dirty, so commit before doing anything else.** Four HTML files
+   carry verified, uncommitted work (§9). `8d8a7fa` is a good state to fall
+   back to, but falling back now would throw away a session's worth of fixes.
+4. **`index.html` contains edits no Claude session made.** Someone changed the
+   `<title>` to "MORFOS — Shopify & Web Design Agency | 3D Websites", rewrote
+   the meta description and the `og:`/`twitter:` values, and added a second,
+   standalone `Organization` JSON-LD block. The page already declares an
+   `Organization` inside its `@graph`, so **`index.html` now has two JSON-LD
+   blocks describing the same entity** — the integrity check reports `ld:2`
+   where it used to report `ld:1`. Duplicate entities can confuse search
+   parsers. Ask Het whether the new copy is what he wants, then merge the two
+   into the `@graph` rather than leaving both. Do not silently revert his copy.
 
 ---
 
@@ -152,18 +174,19 @@ constantly; assume they apply even when unstated.
 
 | File | Size | What it is |
 |---|---|---|
-| `index.html` | 424 KB | **The main site.** Most work happens here. Was `morfos.html` — renamed. |
-| `about.html` | 104 KB | About page. Broadsheet layout. Same site header, cursor engine **and footer** as the home page. Carries the dither-reveal panel. |
-| `case.html` | 111 KB | **Generated — do not hand-edit.** One file serves every case study; `?c=<id>` picks one. Rebuild with `node build-case.js`. |
-| `build-case.js` | 21 KB | Generates `case.html` from `about.html`. **The `CASES` object in here is where all case-study copy lives.** Dev tool, not served. |
-| `capture-site.js` | 10 KB | Screenshots a client site for a case study. Driven over CDP; needs nothing installed. Read §5 *Screenshotting a client site* before touching it. Dev tool, not served. |
-| `work/` | 1.1 MB | Client-site screenshots. `prabhu-mill-card.jpg` (560×1680, the carousel panel), `-hero.jpg` (2160×1350), `-full.jpg` (1800×8914, the scroll-through). |
+| `index.html` | 474 KB | **The main site.** Most work happens here. Was `morfos.html` — renamed. |
+| `about.html` | 116 KB | About page. Broadsheet layout. Same site header, cursor engine **and footer** as the home page. Carries the dither-reveal panel. |
+| `case.html` | 132 KB | **Generated — do not hand-edit.** The shared renderer; given `?c=<id>` it forwards to that case's own page (§9.6). Rebuild with `node build-case.js`. |
+| `prabhu-mill.html`, `aura-learn.html` | 132 KB each | **Generated — do not hand-edit.** One real page per case study, which is what the work panels link to. Same bytes as `case.html` bar `<html data-case>` and the canonical (§9.6). |
+| `build-case.js` | 23 KB | Generates `case.html` and the per-case pages from `about.html`. **The `CASES` object in here is where all case-study copy lives**, and `IDS` next to the write step lists the pages to emit. Dev tool, not served. |
+| `capture-site.js` | 11 KB | Screenshots a client site for a case study. Takes `POSTER=1` for sites with video embeds (§9.5). Driven over CDP; needs nothing installed. Read §5 *Screenshotting a client site* before touching it. Dev tool, not served. |
+| `work/` | 2.2 MB | Client-site screenshots, three per client. `prabhu-mill-card.jpg` (560×1680, the carousel panel), `-hero.jpg` (2160×1350), `-full.jpg` (1800×8914, the scroll-through); `aura-learn-card.jpg` (560×1680), `-hero.jpg` (2133×1206), `-full.jpg` (1780×7504). |
 | `butterfly-photo.jpg` | 24 KB | Het's photograph, 736×1308. Feeds the dither panel on `about.html`. |
-| `client-roster.html` | 164 KB | Client portal, PIN-gated. `noindex,nofollow`. |
+| `client-roster.html` | 133 KB | Client portal, PIN-gated. `noindex,nofollow`. Demo PIN `4471`. Runs the home page's travelling butterfly (§9.3). |
 | `frostbreak.html` | 18 KB | Unrelated scratch demo. Live but `noindex,nofollow`. |
 | `morfos-booking.gs` | 5 KB | Google Apps Script for the booking endpoint. **Not part of the site** — it gets pasted into script.google.com. |
 | `robots.txt` | 0.2 KB | Allows all, disallows portal + demo, points at the sitemap. |
-| `sitemap.xml` | 0.6 KB | 3 URLs: `/`, `/about.html`, `/case.html?c=prabhu-mill`. |
+| `sitemap.xml` | 0.8 KB | 4 URLs: `/`, `/about.html`, `/prabhu-mill.html`, `/aura-learn.html`. |
 | `og-image.png` | 74 KB | 1200×630 social share card, drawn in the site's own faces. |
 | `favicon-64.png` | 2 KB | The favicon actually linked. |
 | `apple-touch-icon.png` | 6.7 KB | 180×180 home-screen icon. |
@@ -238,7 +261,7 @@ Thirteen scroll- and pointer-driven engines, all verified. Condensed:
 | **Loader** | Traced-SVG wordmark timeline, skippable. |
 | **Hero** | Canvas butterfly that shatters into 22 shards on pointer proximity and reassembles. Click impulse, drag with throw, wing beat, magnetic pills. Leaving the hero knits it back together and flies it out — see below. The **MORFOS wordmark behind it** arrives on a curtain mask reveal. |
 | **Statement** (`#statement`) | Word-by-word mask reveal, retimed to finish mid-screen. |
-| **Work** (`#work`) | 3D perspective filmstrip, draggable, cloned panels. Six are drawn SVG concepts; **one is a real client** (Prabhu Mill) whose panel is a photograph and which opens a case study. A tap opens it — see *the click that never reached the card* below. |
+| **Work** (`#work`) | 3D perspective filmstrip, draggable, cloned panels. Eight panels: six drawn SVG concepts and **two real clients** — Prabhu Mill and Aura Learn (§9.5) — whose panels are photographs and which open case studies. A tap opens it — see *the click that never reached the card* below. |
 | **Services** (`#services`) | Three stepped panels + ASCII canvas + per-letter corner word. |
 | **How we work** (`#process`) | Flow chart: a rail that draws itself, four nodes lighting in order, **stopping on each one for 950ms** and picking it out. Vertical on phones. |
 | **Offers** (`#referral`) | Two torn two-part coupon tickets, viewBox 300×186, notches cut with an SVG `<mask>`. Each carries the real traced cocoon mark at 28 units tall. |
@@ -248,7 +271,7 @@ Thirteen scroll- and pointer-driven engines, all verified. Condensed:
 | **Booking** (`#book`) | Full state machine. See §6. |
 | **Footer** | Full-viewport closing screen. See below. |
 | **Cursor** | Spring-damper follow + tapered trail ribbon. See below. |
-| **Case studies** | `case.html`, one file per every client via `?c=<id>`. See below. |
+| **Case studies** | One generated page per client — `prabhu-mill.html`, `aura-learn.html` — from the `case.html` template. See below and §9.6. |
 
 ### Section order — the booking card sits under How we work
 
@@ -945,13 +968,16 @@ introduced by the rearrangement; the oversized type had been hiding it.
 ### Case studies
 
 Het asked for client sites in the work section, each opening a detailed case
-study. `case.html` is that page and it serves **every** client from one file:
-`?c=prabhu-mill` picks the case out of the `CASES` object near the bottom of
-the script. Adding a client is adding an object, not another 109 KB page to
-keep in step with this one. Both paths are proven over `file://` (the dev
-server strips query strings, which hides the switch): a known id renders the
-case, an unknown one renders "Case not found" and removes the content sections
-while keeping the header and footer.
+study. One template serves **every** client: the copy lives in the `CASES`
+object near the bottom of the script, and the build emits a real page per case —
+`prabhu-mill.html`, `aura-learn.html` — plus the shared `case.html`. Adding a
+client is adding an object and an id, not another 109 KB page to keep in step
+with this one — **Aura Learn was added that way in §9.5, and that entry is the
+worked example to copy.** Why real pages rather than `?c=<id>` alone, and what
+`case.html` still does, is §9.6 — the short version is that hosts drop query
+strings when they tidy `/case.html` to `/case`, and that shipped as a bug. An
+unknown id still renders "Case not found" and removes the content sections while
+keeping the header and footer.
 
 **`case.html` is generated, not written.** `build-case.js` takes `about.html`
 and replaces only the region between the masthead and the CTA marquee, so the
@@ -1332,13 +1358,18 @@ Don't "fix" it to `application/json`.
 
 ## 7. What to do next — in priority order
 
-### 1. Deploy. Nothing else matters until this happens.
-Everything is committed at `7691d37` and verified. It is just not *live* —
-`www.morfos.in` still serves an older build, and has through several sessions
-of work now.
+### 1. Commit, then deploy. Nothing else matters until this happens.
+The tree is dirty (§0.3). Commit the four HTML files first — they are verified,
+but an uncommitted session is one lost temp directory away from gone. Resolve
+the duplicate `Organization` JSON-LD (§0.4) with Het before or as part of that
+commit.
+
+Then deploy. `www.morfos.in` still serves an older build, and has through
+several sessions of work now.
 
 Everything in the repo goes up, including the newer files that have never
-shipped: `case.html`, `build-case.js`, `work/`, `robots.txt`, `sitemap.xml`,
+shipped: `case.html` with `prabhu-mill.html` and `aura-learn.html` beside it,
+`build-case.js`, `work/`, `robots.txt`, `sitemap.xml`,
 `og-image.png`, `favicon-64.png`, `apple-touch-icon.png`, `butterfly.png`,
 `butterfly-photo.jpg`.
 
@@ -1349,11 +1380,11 @@ After deploying, sanity-check live: `/robots.txt`, `/sitemap.xml` and
 `/og-image.png` should all return 200, and the share card should render when
 the URL is pasted into WhatsApp.
 
-**Check `?c=` survives on the real host.** The local dev server (`npx serve`)
-strips query strings, which hides the case-study switch entirely — every URL
-renders the first case. It was verified over `file://` instead. If the
-production host rewrites the same way, `case.html?c=prabhu-mill` will need to
-become a path (`/work/prabhu-mill`) or read the id from the hash.
+**The `?c=` question is settled — it did not survive, and no page depends on it
+any more.** Hosts that tidy `/case.html` to `/case` drop the query with it, and
+the case study silently became the wrong client. Each case is now a path of its
+own, `/prabhu-mill.html` and `/aura-learn.html`; see §9.6. Nothing to check on
+deploy beyond the two URLs returning 200.
 
 **Then look at the footer and the cursor in a real browser.** Both were
 verified by measurement, but the preview pane freezes `requestAnimationFrame`,
@@ -1444,6 +1475,18 @@ add one `.kg-item` with `data-case` to the `.kg-seq` in `index.html`, rebuild.
 - **Homepage inlines the butterfly as a 32 KB base64 data URI.** `butterfly.png`
   now exists as a file; pointing the homepage at it too would cut 32 KB of
   uncacheable payload. Low risk, not yet done.
+- **The sticky bar and drawer CTAs still scroll to `#book`** instead of opening
+  the Cal.com modal. The hero one books in place (§9.2). Making the others match
+  is adding `data-book-now` to each — one attribute. Left alone because Het
+  asked for the hero one specifically.
+- **Prices still appear in three places** that were outside the FAQ ask (§9.2):
+  the calculator's "from ₹30,000" eyebrow, and `priceRange` and `Offer` in the
+  JSON-LD. If Het wants figures off the page entirely, those are the three.
+- **The portal's `.count-note` wraps to its own line under 760px.** That is the
+  clearance fix for the butterfly (§9.3). If Het wants it back inline, the space
+  has to be reserved some other way — do not simply revert the rule.
+- **`client-roster.html` has no site header,** so it has no mobile drawer. It is
+  a standalone gated page and was left that way deliberately.
 
 ### Known and deliberately left alone
 
@@ -1546,10 +1589,28 @@ for (const f of ['index.html','about.html']) {
 }"
 ```
 
-Expect: **`index.html` 7 js / 0 errors / 1 ld / 1 h1 / ~396KB**, and
-**`about.html` 2 js / 0 errors / 1 ld / 1 h1 / ~63KB**.
+Expect, as of 2026-09-25:
+
+| file | js | errors | ld | h1 | size |
+|---|---|---|---|---|---|
+| `index.html` | 7 | 0 | **2** | 1 | 474 KB |
+| `about.html` | 3 | 0 | 1 | 1 | 121 KB |
+| `case.html` | 3 | 0 | 0 | 1 | 132 KB |
+| `prabhu-mill.html` | 3 | 0 | 0 | 1 | 132 KB |
+| `aura-learn.html` | 3 | 0 | 0 | 1 | 132 KB |
+| `client-roster.html` | 2 | 0 | 0 | 2 | 133 KB |
+
+`about.html` and `case.html` went from 2 scripts to 3 in §9.5: the third is the
+footer's own Cal.com popup, which those pages need because neither carries the
+booking card.
+
+`index.html`'s `ld:2` is the duplicate `Organization` block in §0.4, not a
+pass — it should go back to 1 once that is merged. `client-roster.html`'s two
+`h1`s are the gate and the client name.
 
 Then load the page and confirm 21 hooks on `index.html` and 0 console errors.
+On `client-roster.html`, unlock with PIN `4471` and confirm `window.__flit`
+exists and `__flit.perch` names a heading.
 
 ### The biggest recurring lesson
 
@@ -1600,7 +1661,198 @@ reports the same fault.
 - Hoist allocations out of per-frame draw calls. A helper returning `{x, y}`
   cost the hero 44 object allocations every frame.
 
-## Mobile
+---
+
+## 9. The session of 2026-09-25 — what changed and why
+
+All of this is **uncommitted** (§0.3). The asks, in the order Het made them.
+
+| § | ask | files touched |
+|---|---|---|
+| 9.6 | "i cant open the aura learn page ... display it like the prabhumill case study a separate page" — each case study became its own page, because the host was eating `?c=` | `index.html`, `build-case.js`, `case.html`, **`prabhu-mill.html`**, **`aura-learn.html`**, `sitemap.xml` |
+| 9.5 | footer: founders' names and numbers, "Say hello" replaced by a **Book a call** that books in place; About's founder roles; the About butterfly; **Aura Learn** added to the work section | `index.html`, `about.html`, `case.html`, `build-case.js`, `capture-site.js`, `sitemap.xml`, `work/` |
+| 9.0 | the butterfly sat on the corner labels; work cards would not open on click | `index.html` |
+| 9.1 | "in the mobile the header is not showing also the butterfly is also not travelling" | `index.html`, `about.html`, `case.html` |
+| 9.2 | About stamps, hero CTA books in place, red email links, prices out of the FAQ, Shopify Partner, footer cocoon on mobile | `index.html`, `about.html`, `case.html` |
+| 9.3 | the portal should run the home page's travelling butterfly | `client-roster.html` |
+| 9.4 | "we are a Shopify Partner", in one or two more good places, not everywhere | `index.html`, `about.html`, `case.html` |
+
+**Remember `case.html` is generated.** Every `about.html` edit above was
+followed by `node build-case.js`. If you edit `about.html` and forget, the case
+pages silently keep the old markup.
+
+### 9.5 The footer's founders and Book a call, the About butterfly, Aura Learn
+
+Het: *"remove the execution part from the founder build add it to founder
+launch and also add their details ... also add this name and details in footer
+of all the pages also in the footer the text say hello remove that old cta and
+add the new cta book a call also make sure they can book the call directly from
+the footer and also make sure the footer is mobile optimized."*
+
+**The founders are named now, so stop writing round them.**
+**Marmik Pansuriya, Founder build, 99246 22247.**
+**Het Vachhani, Founder launch, 99132 99955.** The `who-note` that used to say
+"Names go here once you send them" is gone — it was the placeholder for exactly
+this. On About, running the 7-day build moved **off** Founder build and **onto**
+Founder launch, which is what Het meant by the execution part; build now scopes,
+agrees the number and signs the scope document, and launch runs the build,
+the handover, the 30-Day Safety Net and the Always-On line.
+
+**The footer meta row is five columns of content now, not four in five slots.**
+Column 3 used to be deliberately empty — it was the gap the cocoon turned in,
+and the old note here said closing it "moves two cells Het did not ask to move".
+The cocoon has since moved under the MORFOS heading, so that column was a hole
+for no reason; **Founders** fills it and **Book a call** replaces *Say hello*.
+The two `nth-child` overrides that pushed the last two cells to columns 4 and 5
+are **deleted** — with five children the natural grid flow lands them 1..5. The
+Instagram text link went with *Say hello*; Instagram is still in the icon row
+directly below, so nothing was lost.
+
+- **Measured, because the cocoon was the reason that column was empty:** every
+  pixel of the `#footBg` canvas behind the whole `.foot-meta` row reads **0 lit
+  pixels, max luminance 0**, at 1280 and at 375. The new columns sit on pure
+  black, so all of them hold **14.17:1** — the same `#d4d4d4` the other columns
+  already measured at.
+- **Mobile: 0 overlaps, 18px between every stacked row, no horizontal
+  overflow** at 375 on both pages, and every new link is **44px** tall because
+  the existing `.fg a` rule already buys the tap target back.
+
+**Booking from the footer works differently on each page, and it has to.**
+`index.html` has the booking card, so its footer link is just another
+`data-book-now` and the proven handler in §6 does the rest. `about.html` and
+`case.html` have no card, so they carry **their own small Cal.com popup** —
+init, preload, the brand's dark `cssVarsPerTheme`, and a retry. Three things
+were measured into that retry and all three were wrong first:
+
+- **The trigger must be a `<button>`, not an `<a href>`.** The retry works by
+  re-clicking the element until Cal's own delegated listener has attached. On
+  an anchor, each synthetic `.click()` fires the anchor's *own* navigation —
+  nothing had called `preventDefault` on that new event — so the first retry
+  navigated to `index.html#book` instead of opening anything. As a button there
+  is no default action to fire. `.fg button` therefore needs a box reset.
+- **Reset the box only.** A `font:inherit; letter-spacing:inherit;
+  text-transform:inherit` in that reset beat the `.fg span,.fg a,.fg button`
+  rule above it and the line rendered **15px and lower case** against its
+  sibling's 11px uppercase. Measured both against each other; they now match on
+  colour, size, letter-spacing, transform and the 44px height.
+- **Wait a beat before the first retry.** Cal usually handles the real click
+  itself, so clicking again inside the same tick opened **two stacked
+  `cal-modal-box`es** — measured, twice. The first check is now on a 150ms
+  timer and stops if any box exists at all. `Cal("preload")` creates none, so a
+  box can only mean the click took. Verified: **exactly one modal, state
+  `loaded`**, iframe on the right event, on both pages.
+- Budget is 4000ms; past it the visitor is sent to `index.html#book`, which is
+  where the link went before any of this.
+
+**The About page's butterfly was there all along — it was 3.6 x 4.2px.**
+`.mk-lock i` is `.26em x .30em` against the bar's 14px wordmark. The home page
+can afford that because `body.has-flit` hides the accent and the travelling
+butterfly covers the corner; **about.html has no travelling butterfly**, so the
+accent is the only butterfly on the page and it read as nothing. It is
+**.80em x .93em — 11.2 x 13px** now, on the artwork's own 200x233 aspect, with
+`padding-right` up from `.24em` to `.92em` to keep the room. Measured: **1.7px
+clear of the wordmark's ink, inside the bar, centred on its cap height.** Het
+asked to keep the existing one rather than port the travelling one.
+
+**Aura Learn is the second real client.** auralearn.com, Pune, Maharashtra;
+owner **Shlok Chopde**; **Rs 50,000**, signed **17 Sep 2026**, handed over
+**22 Sep 2026**, five days. A children's cognitive-learning platform — three
+programmes with age bands and durations. The panel is in the filmstrip beside
+Prabhu Mill and opens `aura-learn.html`; the case lives in `CASES` in
+`build-case.js` like every other one, and the URL is in `sitemap.xml`.
+
+- **`capture-site.js` gained `POSTER=1`.** The testimonial rail is four YouTube
+  embeds, and a video embed photographs in headless Chrome exactly as well as
+  the Google Maps one did: four blank 9:16 boxes with the names underneath.
+  `POSTER=1` swaps each YouTube iframe for the poster frame YouTube itself
+  serves for that video — what the embed shows until someone presses play —
+  with a `maxresdefault` to `hqdefault` fallback. **The white-run test went
+  from 70 rows to 15**, against the ~25 that is this site's own padding and the
+  ~68 that was the dead map band. Use it on any client site with video.
+- **The white-run test can cry wolf on a light site.** Aura Learn's testimonial
+  and FAQ sections are genuinely `bg-white`, so some of that first 70 was real
+  design. Look at the band before believing the number — the four blank video
+  boxes were real, the FAQ whitespace was not.
+- **The card crop is 560x1680 and needed the scrollbar compensated.** Built the
+  documented way — a wrapper page re-rendering the full capture at 560 wide,
+  cropped to 1:3, captured. Asking for a 560 window gave **542x1680, aspect
+  3.1**, because the scrollbar gutter takes 18px; asking for **578** lands
+  exactly 560x1680, aspect 3.0, matching the Prabhu card.
+- Sampling ratios match the shipped standard: **hero 1.89x, scroll-through
+  1.59x** against the documented 1.91x and 1.61x.
+- **`perf` is deliberately absent on this case.** Five cold loads came back
+  anywhere from 549KB / 0.4s to 9.4MB / 3.8s depending on whether the
+  testimonial videos and posters had landed before `loadEventEnd`. A figure
+  with that much weather in it is not a measurement. TTFB was the one stable
+  number (median 10ms). It goes in when it can be measured properly.
+- The case study carries **no quote**: Shlok Chopde has not been asked for one.
+  The parent videos on the client's own site are parents talking about Aura
+  Learn, not about Morfos.
+
+**The filmstrip's panels ride a scroll-driven corridor**, so a coordinate click
+measured a moment earlier often misses — focusing the anchor and pressing Return
+is the reliable check that a panel opens its case.
+
+### 9.6 Each case study is its own page, because the query string was not safe
+
+Het: *"i cant open the aura learn page ... currently if i click on them i am not
+able to see their page."* Clicking the Aura Learn panel landed on **Prabhu
+Mill**, and this was not a local-only quirk, which is what §9.5 first claimed.
+
+The cause: the panel pointed at `case.html?c=aura-learn`, and a static host will
+tidy `/case.html` to `/case` with a 301 **that drops the query string**. The
+renderer then found no `?c=`, fell through to `Object.keys(CASES)[0]` and drew
+the first case. `serve` does it, and so do Netlify pretty URLs, Vercel
+`cleanUrls` and the rest, so the assumption that "production does not strip
+`.html`" was not one to build on. A **path** survives that redirect; a query
+does not.
+
+So `build-case.js` now writes **one real page per case** — `prabhu-mill.html`
+and `aura-learn.html` — from the same template as `case.html`. They differ from
+it in exactly two lines, and a `diff` will show only those:
+
+1. `<html lang="en" data-case="<id>">`, which the renderer reads **in preference
+   to the query string**. Nothing in the URL can rewrite it.
+2. `<link rel="canonical">` pointing at that page rather than at `case.html`.
+   The JSON-LD `url` follows the same rule.
+
+`case.html` is still generated and still works. Given a live `?c=<id>` it
+`location.replace`s to that case's own page, so there is one canonical URL per
+case study and the old links keep resolving; given an unknown id it still shows
+**Case not found**; given nothing it renders the first case as before.
+
+**To add a case you now touch two places in `build-case.js`:** the `CASES`
+object *and* the `IDS` array next to the write step. The build throws if an id
+in `IDS` has no case data, and throws if either of the two per-page edits does
+not hit exactly once.
+
+Measured after the change: `/aura-learn.html` (no query anywhere) renders case
+**02**, Aura Learn, Pune, Shlok Chopde, the four contract rows, four jobs and
+both images decoded — 2133x1206 and 1780x7504; `/prabhu-mill.html` renders case
+01 with its `perf` block; the legacy `/case?c=aura-learn` forwards to
+`/aura-learn`; `/case?c=nope` still says Case not found; and the panel itself,
+opened by keyboard from the filmstrip, lands on Aura Learn. Both client panels
+report `data-cursor="Open"` and the cursor reads **Open** over either one —
+that part was already identical and needed no change. No console errors on
+`index`, `about`, `prabhu-mill` or `aura-learn`.
+
+### 9.0 The butterfly on the corner labels, and the work section
+
+The travelling butterfly was resting **on** the OUR SERVICES / PROCESS labels
+rather than beside them. The first fix went at the wrong branch: `seatFrom`'s
+last-resort clamp looked like the culprit, and adding a `below` option to it
+changed nothing when measured. The actual fault was the `above` branch leaving a
+6px gap against a ±5.4px idle drift — clear at the seat, not clear at the pixel
+drawn. See §9.1 for the rule it ended up with.
+
+**The work filmstrip opens on click now.** It was drag-only, which Het called
+useless. The guard was accumulating total pointer travel, so the tiny jitter of
+a real click added up past the threshold and swallowed it. It measures
+`Math.abs(e.clientX - startX)` against `DRAG_MIN = 8` instead — net distance,
+not distance travelled. Dragging still works; `.kg-item` is `cursor:pointer` and
+the hint reads "Click a project to open it".
+
+### 9.1 Mobile
 
 Het: *"in the mobile the header is not showing also the butterfly is also not
 travelling i want it fully mobile optimised."* Both were real and both were
@@ -1669,7 +1921,7 @@ samples.
 **Deliberately not changed.** `client-roster.html` has no header to fix, and
 `frostbreak.html` is the unrelated scratch demo.
 
-## This round of changes
+### 9.2 About stamps, the hero CTA, red links, the FAQ, Shopify Partner, the footer cocoon
 
 **The About page's four stamps are the real mark now.** Two on the feature
 plates and two beside the founder bios were drawing a bare outline ring with a
@@ -1747,3 +1999,80 @@ or 1280**, against 3 before, and 1280 is the untouched desktop path.
   leaving it alone. A real watermark needs an offscreen buffer composited once.
   Not worth rewriting a tuned renderer for a 320px screen, so when there is
   genuinely nowhere to put it, it is not drawn at all.
+
+### 9.3 The client portal runs the home page's butterfly
+
+Het: *"i want the client portal butterfly to be replaced by our home page small
+butterfly, it should be moving in the same manner as it is in home page ... not
+the hero section big butterfly, the small butterfly that is travelling through
+sections to sections."*
+
+`client-roster.html` had two butterflies, both PNGs: one did a single CSS
+keyframe flight across the hero and vanished, and one sat inline beside the
+"Your build" heading. Both are gone. The travelling engine is ported in whole
+— the seat solve, the spring, the flight arc and the wing beat are the home
+page's code unchanged, so the two genuinely move alike rather than looking
+alike. **If the home page's drawing is ever retuned, re-copy the three routines
+with it.** They are the same code, not a second version.
+
+What had to change, and why:
+
+- **The drawing came with it.** On the home page the travelling butterfly
+  borrows `window.__morfos.drawArt` from the hero canvas. The portal has no
+  hero, so `wingPath`, `drawWing` and `drawButterfly` are copied in — they are
+  self-contained, using only canvas calls and `Math`. With `drawArt` local and
+  unmissable, the flat-SVG fallback branch went with `MORFOS_WING`.
+- **No corner logo, so no dock.** `dockPoint`, `DOCK_P`/`LAND_P` and the whole
+  hero handoff (`setHeld`, `HOLD_TTL`, `willHandOff`) are gone. `target()` is
+  now just the perch: it is on a heading from the first frame.
+- **The hold is the PIN gate instead.** `locked()` reads the gate's own
+  `unlocked` class. The first version read `gate.offsetParent !== null`, which
+  is **always null** for a `position:fixed` element — so the butterfly was
+  loose over the lock screen.
+
+**Three seats, not seven.** `HEAD_SEL` is `#client-name`, `.section-head h2`
+and `footer`. The board's four column heads were in at first and had to come
+out: the seat sits just past the end of a heading's last line, which works when
+a heading owns the rest of its row, and a column head does not — its own cards
+are directly under that space. Measured, the "Done" seat put the mark on a
+card's text at scroll 600. Three seats over 1657px is denser than the home
+page's nine over 9000 anyway.
+
+**The heading's note moves down on a phone.** `.section-head` is a flex row
+with the h2 and a `.count-note`. On a phone the heading wraps to two lines and
+the note sits hard against it, leaving the seat a **2px** gap — the mark's box
+ended at 131 and the note began at 133, so the idle drift put it on the words
+in 5 of 14 resting samples. The note takes its own line under the heading now.
+
+Swept both widths, testing the drawn box against every text node's Range rects
+rather than its block box (a block box is the full measure and reports a false
+hit the moment the mark sits past the end of a short line):
+
+| | samples | at rest | resting on text | off screen |
+|---|---|---|---|---|
+| 1280 | 40 | 24 | **0** | 0 |
+| 375 | 90 | 26 | **0** | 0 |
+
+Crossings while in flight are left alone — the home page's rule is that
+crossing text on the way is fine and sitting on it is not. The portal is only
+783px of scroll, so it makes two hops: it holds the client's name, rides "Your
+build" up the screen from y 431 to 131, then flies to the sign-off.
+
+### 9.4 Shopify Partner, in four places
+
+"Morfos is a Shopify Partner" reads as a third party describing the studio, so
+it is **"We are a Shopify Partner"** now. Het asked for it somewhere else as
+well, and explicitly not everywhere, so it is in four:
+
+| where | form |
+|---|---|
+| home, under the statement | a pill, first thing after the hero |
+| home, the booking chip row | a chip among the other things worth knowing at the moment someone decides to talk |
+| About, the masthead line | a credential beside "12 builds a month" |
+| footer, first column | on every page, including the case studies |
+
+- **Scope the glyph's rules to the glyph.** `.partner-mark`'s size lived under
+  `.fg`, so the masthead's copy rendered at **0x0**. Moving it out fixed that
+  and broke the footer's colour instead — `.fg span` already colours that
+  column, and an unscoped `.partner-mark` loses to it, so the glyph went grey.
+  The colour is now declared at both specificities on purpose.
