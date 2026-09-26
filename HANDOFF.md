@@ -20,13 +20,12 @@ finished, and what to do next — in priority order.
 > navigation and a mobile-correct butterfly, which makes shipping worth more
 > than it was.
 
-Last updated: **2026-09-25**.
-Last commit: `8d8a7fa "Update website"`.
-**The working tree is dirty and none of the latest work is committed** —
-`index.html`, `about.html`, `case.html`, `client-roster.html`, `build-case.js`,
-`capture-site.js`, `sitemap.xml`, three new files in `work/`, the two new
-generated case pages `prabhu-mill.html` and `aura-learn.html`, and this file all
-carry uncommitted changes. Everything in them has been measured and verified;
+Last updated: **2026-09-26**.
+Last commit: `2436c49 "Update website"`, which finally landed the whole
+2026-09-25 session — the footer rebuild, Aura Learn, the per-case pages and
+`work/`. **Still uncommitted:** the support-address correction of §9.7, in
+`index.html`, `about.html`, `client-roster.html`, the three generated case
+pages and this file. Everything in them has been measured and verified;
 see §9 for what they are and §0 for the one thing in `index.html` that was
 **not** written by a Claude session.
 
@@ -112,7 +111,7 @@ explicitly told otherwise.
   good, verified state. Het also commits from outside the Claude session, so
   check `git log` at the start rather than assuming.
 - **Host:** Vercel, Mumbai edge (`bom1`). TTFB ~7ms, ~111KB gzipped.
-- **Contact:** `support.morfos@gmail.com`
+- **Contact:** `morfos.support@gmail.com`
 - **Instagram:** `https://www.instagram.com/morfos.social/` (the only social
   account that exists; LinkedIn and X are parked in TODO comments)
 
@@ -801,7 +800,7 @@ than the old 26 slices were, because the object is a quarter of the area.
 - The cocoon path is shared: `window.COCOON_SHARED = { d, w: 610, h: 885 }`.
   The coupons draw from the same constant.
 - **The email field has no backend.** There is no newsletter endpoint, so it
-  composes a `mailto:support.morfos@gmail.com`. Validation is tested across 8
+  composes a `mailto:morfos.support@gmail.com`. Validation is tested across 8
   cases. Don't make it look like it stores anything until it does.
 - The old giant "MORFOS" wordmark that used to close the footer (`#footMark`)
   was **removed at Het's request** — the new footer already says the name.
@@ -1665,10 +1664,12 @@ reports the same fault.
 
 ## 9. The session of 2026-09-25 — what changed and why
 
-All of this is **uncommitted** (§0.3). The asks, in the order Het made them.
+All of this except §9.7 is now in `2436c49`. The asks, in the order Het made
+them.
 
 | § | ask | files touched |
 |---|---|---|
+| 9.7 | "our mail is wrong" — the public address is **`morfos.support@gmail.com`**, not `support.morfos@gmail.com`. Replaced in all 37 places across the served pages: every `mailto:`, the visible text, the `Organization` JSON-LD, the booking fallback and the portal's contact strip. `morfos-booking.gs` keeps `morfosmain@gmail.com` — that is the Apps Script's own account and notify target, a different address. | `index.html`, `about.html`, `client-roster.html`, and the three generated case pages |
 | 9.6 | "i cant open the aura learn page ... display it like the prabhumill case study a separate page" — each case study became its own page, because the host was eating `?c=` | `index.html`, `build-case.js`, `case.html`, **`prabhu-mill.html`**, **`aura-learn.html`**, `sitemap.xml` |
 | 9.5 | footer: founders' names and numbers, "Say hello" replaced by a **Book a call** that books in place; About's founder roles; the About butterfly; **Aura Learn** added to the work section | `index.html`, `about.html`, `case.html`, `build-case.js`, `capture-site.js`, `sitemap.xml`, `work/` |
 | 9.0 | the butterfly sat on the corner labels; work cards would not open on click | `index.html` |
