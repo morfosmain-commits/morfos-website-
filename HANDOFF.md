@@ -2121,14 +2121,18 @@ of the admin database rather than retyped from the artifact's rendered page:
 | `name` | Brand Aid — Store Build | `businessName` + the house suffix |
 | `dayBadge` | Day 1 of 7 | `buildDay` |
 | `intro` | empty | `overviewNotes` is empty, so the intro note hides itself |
-| `meta` | Launch date 1 Oct 2026 · Tier Founding Batch · Your contact Hitesh | `launchDate` is `d/m/yyyy` in the database and gets spelled out here |
+| `meta` | Launch date 1 Oct 2026 · Tier Founding Batch · Your contact Het Vachhani · WhatsApp 9913299955 | `launchDate` is `d/m/yyyy` in the database and gets spelled out here |
 | `cards` | 14, in `order`, 12 to-do and 2 waiting | `clients/brand-aid-7dlx/cards` |
 | `deliverables` | none yet | subcollection is empty |
 | `documents` | Fixed quote, Signed Scope, Client Service Agreement, Welcome Document | `clients/brand-aid-7dlx/documents`, in `order` |
 
-**There is no WhatsApp row** because `contactPhone` is empty on the record.
-Studio Aarna has four meta rows, Brand Aid has three. If Het fills the phone in
-later, add a fourth `{ label: "WhatsApp", value: ... }`.
+**The contact started out as "Hitesh" with no phone and was corrected the same
+day** to Het Vachhani on 9913299955. The WhatsApp row exists only when
+`contactPhone` is non-empty — while it was blank Brand Aid had three meta rows
+against Studio Aarna's four, and filling the number in is what adds the fourth
+`{ label: "WhatsApp", value: ... }`. Watch for stray double spaces in names
+typed into the admin: the record holds `"Het  Vachhani"`, and although HTML
+collapses that on screen, the portal source should carry a single space.
 
 **Verified, not assumed.** The `CLIENTS` block was parsed back out of the saved
 file and compared field by field against the database — including recomputing
@@ -2155,7 +2159,7 @@ afterwards and the PIN hash, the fourteen cards, the four Drive links and the
 
 ### 10.3 Two things for Het
 
-- **Brand Aid's portal artifact is private.** Hitesh cannot open
+- **Brand Aid's portal artifact is private.** The client cannot open
   `claude.ai/artifact/1ncPijSiTybxxBrtjSoncD` until it is shared from the
   page's Share menu. Claude cannot change that. The alternative — and the
   better one once the site ships — is to send him the website portal instead,
