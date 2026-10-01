@@ -2122,8 +2122,8 @@ of the admin database rather than retyped from the artifact's rendered page:
 | `dayBadge` | Day 1 of 7 | `buildDay` |
 | `intro` | empty | `overviewNotes` is empty, so the intro note hides itself |
 | `meta` | Launch date 1 Oct 2026 · Tier Founding Batch · Your contact Het Vachhani · WhatsApp 9913299955 | `launchDate` is `d/m/yyyy` in the database and gets spelled out here |
-| `cards` | 14, in `order`, 12 to-do and 2 waiting | `clients/brand-aid-7dlx/cards` |
-| `deliverables` | none yet | subcollection is empty |
+| `cards` | 14, in `order`; the column split changes as the build moves, so read it, never assume it | `clients/brand-aid-7dlx/cards` |
+| `deliverables` | none as of 1 Oct | subcollection is empty |
 | `documents` | Fixed quote, Signed Scope, Client Service Agreement, Welcome Document | `clients/brand-aid-7dlx/documents`, in `order` |
 
 **The contact started out as "Hitesh" with no phone and was corrected the same
@@ -2169,6 +2169,27 @@ afterwards and the PIN hash, the fourteen cards, the four Drive links and the
   `https://www.morfos.in/client-roster.html` itself, not just locally: PIN
   `7392` opens Brand Aid with all fourteen cards and four documents, `4471`
   still opens the Studio Aarna demo untouched, and `0000` is refused.
+
+### 10.5 The board moves, so re-sync is routine
+
+Het works the kanban in the admin through the day, and every card he drags
+writes `synced: false` back onto the client record. **That flag is the signal
+to re-sync** — the record's own fields can be completely unchanged and the
+board still be days out of date, so never decide a client is current by
+looking at `updatedAt` on the client document alone. Pull the `cards`
+subcollection and compare.
+
+Re-syncing a moved board is a `col` change and nothing else: the card ids,
+`order`, `day`, `title`, `sub` and `need` all stay put. Match each card by its
+**title** rather than by line number, and scope the edit to the Brand Aid
+block — Studio Aarna's demo shares several card titles with it, and a careless
+global replace will quietly rewrite the demo's board too.
+
+A measurement trap worth knowing: `documentElement.clientWidth` reads **0**
+while the Browser pane is hidden, which makes every element on the page look
+like it overflows. An overflow number that appears out of nowhere is usually
+this, not a regression — set an explicit viewport with `resize_window` and
+measure again before believing it.
 
 ### 10.4 Next time a client needs syncing
 
