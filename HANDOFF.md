@@ -14,11 +14,11 @@ finished, and what to do next — in priority order.
 > 3. Take a backup of the file before editing it (§4), and run the integrity
 >    check in §8 afterwards.
 >
-> **If Het has not said what he wants yet, the answer is §7.1: commit, then
-> deploy.** The work has been finished and verified for several sessions and is
-> still not live — and it now includes a working booking system, a mobile
-> navigation and a mobile-correct butterfly, which makes shipping worth more
-> than it was.
+> **If Het has not said what he wants yet, the answer is §7.1: Google Search
+> Console.** The site is live and current as of 2026-10-01 (§0.1), so shipping
+> is no longer the bottleneck. Submitting the sitemap and requesting indexing
+> is — none of the SEO work can pay off until Google is told the site exists,
+> and that is a job only Het can do.
 
 Last updated: **2026-10-01**.
 Last commit: `d448ef2 "Update website"`, which landed the support-address
@@ -37,19 +37,24 @@ own live portal artifact.
 
 ## 0. The four things to know first
 
-1. **Nothing is deployed.** `www.morfos.in` is still serving an older build.
-   Until the current files ship, none of the SEO work, none of the copy, none
-   of the bug fixes and none of the case-study work is live. **This is the
-   single highest-value thing left to do** and it is step 1 of §7.
+1. **The site is deployed and current.** This was the standing warning for
+   several sessions and it no longer applies. `www.morfos.in` serves `main`:
+   on 2026-10-01 the live bytes of `index.html`, `about.html`,
+   `aura-learn.html`, `prabhu-mill.html`, `sitemap.xml` and `robots.txt` were
+   each compared against the repo and matched exactly. **Deploying is a
+   `git push origin main`** — Vercel builds from the GitHub repo and the new
+   build was serving within about five seconds. Do not re-verify by eye;
+   compare `curl` bytes against the file on disk.
 2. **Bookings work, but Cal.com is not finished.** Cal.com is live and stores
    every booking (§6) — the old `BOOK_CFG.endpoint` drop is gone. Two settings
    are still open **inside cal.com, by Het**: phone number set to required, and
    Google Calendar connected. Until the second one is done Cal offers times off
    its own default schedule rather than Het's real calendar, so it can
    double-book him. This is the highest business risk on the list.
-3. **The tree is dirty, so commit before doing anything else.** Four HTML files
-   carry verified, uncommitted work (§9). `8d8a7fa` is a good state to fall
-   back to, but falling back now would throw away a session's worth of fixes.
+3. **The tree is clean as of 2026-10-01.** Everything through §10 is committed
+   and pushed; `11fa298` is the current verified state. Het also commits from
+   outside the Claude session, so run `git status` and `git log` at the start
+   rather than trusting this line.
 4. **`index.html` contains edits no Claude session made.** Someone changed the
    `<title>` to "MORFOS — Shopify & Web Design Agency | 3D Websites", rewrote
    the meta description and the `og:`/`twitter:` values, and added a second,
@@ -1357,25 +1362,16 @@ Don't "fix" it to `application/json`.
 
 ## 7. What to do next — in priority order
 
-### 1. Commit, then deploy. Nothing else matters until this happens.
-The tree is dirty (§0.3). Commit the four HTML files first — they are verified,
-but an uncommitted session is one lost temp directory away from gone. Resolve
-the duplicate `Organization` JSON-LD (§0.4) with Het before or as part of that
-commit.
+### 1. Search Console — the deploy itself is done.
+**This step used to read "commit, then deploy" and that part is finished.**
+The whole repo is live (§0.1), case pages and all, and deploying from here is
+just `git push origin main`.
 
-Then deploy. `www.morfos.in` still serves an older build, and has through
-several sessions of work now.
+What was never done is the part that makes Google notice. In Google Search
+Console: submit `https://www.morfos.in/sitemap.xml` and request indexing on
+`/`. That is what starts the clock, and only Het can do it.
 
-Everything in the repo goes up, including the newer files that have never
-shipped: `case.html` with `prabhu-mill.html` and `aura-learn.html` beside it,
-`build-case.js`, `work/`, `robots.txt`, `sitemap.xml`,
-`og-image.png`, `favicon-64.png`, `apple-touch-icon.png`, `butterfly.png`,
-`butterfly-photo.jpg`.
-
-Then in Google Search Console: submit `https://www.morfos.in/sitemap.xml` and
-request indexing on `/`. That is what starts the clock.
-
-After deploying, sanity-check live: `/robots.txt`, `/sitemap.xml` and
+While there, sanity-check live: `/robots.txt`, `/sitemap.xml` and
 `/og-image.png` should all return 200, and the share card should render when
 the URL is pasted into WhatsApp.
 
@@ -2164,8 +2160,11 @@ afterwards and the PIN hash, the fourteen cards, the four Drive links and the
   page's Share menu. Claude cannot change that. The alternative — and the
   better one once the site ships — is to send him the website portal instead,
   which is now carrying his build.
-- **The repo portal is still not deployed**, so the website copy of Brand Aid
-  is not reachable yet. §0 and §7.1 still apply: commit, then deploy.
+- **The website portal is live with Brand Aid on it.** Committed as `11fa298`
+  and pushed; Vercel had it serving within about five seconds. Verified on
+  `https://www.morfos.in/client-roster.html` itself, not just locally: PIN
+  `7392` opens Brand Aid with all fourteen cards and four documents, `4471`
+  still opens the Studio Aarna demo untouched, and `0000` is refused.
 
 ### 10.4 Next time a client needs syncing
 
