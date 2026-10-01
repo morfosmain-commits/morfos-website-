@@ -20,18 +20,18 @@ finished, and what to do next — in priority order.
 > navigation and a mobile-correct butterfly, which makes shipping worth more
 > than it was.
 
-Last updated: **2026-09-26**.
-Last commit: `2436c49 "Update website"`, which finally landed the whole
-2026-09-25 session — the footer rebuild, Aura Learn, the per-case pages and
-`work/`. **Still uncommitted:** the support-address correction of §9.7, in
-`index.html`, `about.html`, `client-roster.html`, the three generated case
-pages and this file. Everything in them has been measured and verified;
-see §9 for what they are and §0 for the one thing in `index.html` that was
-**not** written by a Claude session.
+Last updated: **2026-10-01**.
+Last commit: `d448ef2 "Update website"`, which landed the support-address
+correction of §9.7 along with the rest of the 2026-09-25 session.
+**Still uncommitted:** the Brand Aid client added to `client-roster.html`
+(§10) and this file. Both have been measured and verified; see §10 for what
+changed and §0 for the one thing in `index.html` that was **not** written by
+a Claude session.
 
-**The most recent session** (see §9.5) rebuilt the footer's third column into
-**Founders** and **Book a call**, added **Aura Learn** as the second real
-client with a full case study, and made the About page's butterfly visible.
+**The most recent session** (see §10) synced **Brand Aid** — the first real
+client to reach the portal — out of the Client Roster admin artifact and into
+`client-roster.html`, and corrected the stale support address on Brand Aid's
+own live portal artifact.
 
 ---
 
@@ -2077,3 +2077,103 @@ well, and explicitly not everywhere, so it is in four:
   and broke the footer's colour instead — `.fg span` already colours that
   column, and an unscoped `.partner-mark` loses to it, so the glyph went grey.
   The colour is now declared at both specificities on purpose.
+
+---
+
+## 10. The session of 2026-10-01 — Brand Aid synced into the portal
+
+Het: *"sync the brand aid client portal like which is made in this artifact"*,
+with the Client Roster admin artifact attached.
+
+**What "sync" means on this project.** There are three places a client's build
+status lives, and they are not the same thing:
+
+1. **The Client Roster admin** — a Claude artifact at
+   `claude.ai/artifact/GqbEAMYkywx8zCeycLu8c7`, titled *Morfos Client Roster*.
+   This is where Het edits: a card per client, a drag-and-drop kanban, a
+   deliverables and documents list, and a PIN. It stores everything in the
+   artifact's own database under `clients/<slug>` plus the subcollections
+   `cards`, `deliverables` and `documents`. **This is the source of truth.**
+   It cannot push anything by itself — its own sync banner says to *"ask Claude
+   to sync client <name>"*, which means a session reads the database and
+   copies it outward.
+2. **The client's own live portal** — a separate one-client artifact whose
+   link is stored back on the client record as `publicUrl`. Brand Aid's is
+   `claude.ai/artifact/1ncPijSiTybxxBrtjSoncD`. This is the link the client is
+   sent.
+3. **`client-roster.html` in this repo** — the portal served from the website.
+   It is multi-client: one object per client in the `var CLIENTS = [ ... ]`
+   block near the top of its script, each gated by a SHA-256 hash of the PIN so
+   the plain PIN is never in the page source. The file's own comment points at
+   the admin's "Export for website" button.
+
+Only (3) was out of date. Brand Aid was created in the admin on 1 Oct and
+published to its own artifact the same morning, but the repo file still knew
+about nothing except the Studio Aarna demo.
+
+### 10.1 Brand Aid added to `client-roster.html`
+
+One object appended to `CLIENTS`, after the demo. Nothing else in the file was
+touched — the diff is 37 added lines and 0 removed. Its contents, all read out
+of the admin database rather than retyped from the artifact's rendered page:
+
+| field | value | from |
+|---|---|---|
+| `slug` | `brand-aid` | internal only; used by `morfosPortal.preview()` |
+| `pinHash` | SHA-256 of `7392` | `clients/brand-aid-7dlx.pin` |
+| `demo` | `false` | so the amber demo ribbon stays hidden |
+| `name` | Brand Aid — Store Build | `businessName` + the house suffix |
+| `dayBadge` | Day 1 of 7 | `buildDay` |
+| `intro` | empty | `overviewNotes` is empty, so the intro note hides itself |
+| `meta` | Launch date 1 Oct 2026 · Tier Founding Batch · Your contact Hitesh | `launchDate` is `d/m/yyyy` in the database and gets spelled out here |
+| `cards` | 14, in `order`, 12 to-do and 2 waiting | `clients/brand-aid-7dlx/cards` |
+| `deliverables` | none yet | subcollection is empty |
+| `documents` | Fixed quote, Signed Scope, Client Service Agreement, Welcome Document | `clients/brand-aid-7dlx/documents`, in `order` |
+
+**There is no WhatsApp row** because `contactPhone` is empty on the record.
+Studio Aarna has four meta rows, Brand Aid has three. If Het fills the phone in
+later, add a fourth `{ label: "WhatsApp", value: ... }`.
+
+**Verified, not assumed.** The `CLIENTS` block was parsed back out of the saved
+file and compared field by field against the database — including recomputing
+the SHA-256 of `7392` and checking it against the stored `pinHash` — and every
+group matched. Then the file was served over `npx serve` and driven in a
+browser: PIN `7392` unlocks Brand Aid (14 cards split 12/0/2/0 across the
+columns, 0/14 and a 0% bar, four Drive documents, "Nothing here yet." under
+Deliverables, no demo ribbon); PIN `4471` still unlocks the Studio Aarna demo
+unchanged (4/14 done, ribbon showing, its one deliverable and two documents,
+four meta rows); `0000` is rejected and the gate stays shut. No console errors,
+no horizontal overflow at 350px or 1280px, and the progress bar still starts on
+`#fd2702`.
+
+### 10.2 The live portal's support address was still the wrong one
+
+Brand Aid's own artifact already matched the database exactly — same PIN hash,
+same fourteen cards, same four documents — so no data needed pushing. But its
+footer still read `support.morfos@gmail.com`, the address §9.7 corrected
+everywhere else on 25 Sep. That one line was changed to
+`morfos.support@gmail.com` and the artifact republished to the same URL
+(version 2). Nothing else in that page moved: the published file was read back
+afterwards and the PIN hash, the fourteen cards, the four Drive links and the
+`<h1>` are all still there.
+
+### 10.3 Two things for Het
+
+- **Brand Aid's portal artifact is private.** Hitesh cannot open
+  `claude.ai/artifact/1ncPijSiTybxxBrtjSoncD` until it is shared from the
+  page's Share menu. Claude cannot change that. The alternative — and the
+  better one once the site ships — is to send him the website portal instead,
+  which is now carrying his build.
+- **The repo portal is still not deployed**, so the website copy of Brand Aid
+  is not reachable yet. §0 and §7.1 still apply: commit, then deploy.
+
+### 10.4 Next time a client needs syncing
+
+Read `clients/<slug>` and its three subcollections out of the admin artifact's
+database with the artifact-database tool, sort `cards`, `deliverables` and
+`documents` by their `order` field, and write one `CLIENTS` entry. Hash the PIN
+with `printf '<pin>' | sha256sum` — the portal hashes the PIN string with no
+trailing newline, so `echo` would give the wrong hash. Then re-verify by
+parsing `CLIENTS` back out of the file and diffing it against the database,
+and by driving the gate in a browser with the real PIN, a second client's PIN
+and a wrong PIN.
